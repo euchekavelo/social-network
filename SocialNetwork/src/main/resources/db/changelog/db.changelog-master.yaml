@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 1
-      author: AlexandrL
-      comment: init base tables
-      sqlFile:
-        encoding: UTF-8
-        path: migrations/001-create-schema.sql
-        relativeToChangelogFile: true
