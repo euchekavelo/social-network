@@ -3,51 +3,50 @@ package ru.skillbox.social_network.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.skillbox.social_network.model.rqdto.LoginDto;
-import ru.skillbox.social_network.model.rsdto.ErrorResponse;
-import ru.skillbox.social_network.model.rsdto.profile.CityResponse;
-import ru.skillbox.social_network.model.rsdto.profile.CountryResponse;
-import ru.skillbox.social_network.model.rsdto.profile.DataResponse;
-import ru.skillbox.social_network.model.rsdto.profile.ProfileResponse;
+import ru.skillbox.social_network.model.rsdto.ProfileDto;
+
+import java.util.Hashtable;
 
 @RequiredArgsConstructor
 @Service
 public class AuthService {
 
-    public Object getLoginResponse(LoginDto request){
+    public ProfileDto getLoginResponse(LoginDto request){
+        ProfileDto response = new ProfileDto();
 
         if (request.getEmail().equals("petr@mail.ru") && request.getPassword().equals("111111")) {
-            ProfileResponse response = new ProfileResponse();
-
-            CityResponse cityResponse = new CityResponse();
-            cityResponse.setId(1);
-            cityResponse.setTitle("Москва");
-
-            CountryResponse countryResponse = new CountryResponse();
-            countryResponse.setId(1);
-            countryResponse.setTitle("Россия");
-
-            DataResponse dataResponse = new DataResponse();
-            dataResponse.setId(1);
-            dataResponse.setFirst_name("Петр");
-            dataResponse.setLast_name("Петрович");
-            dataResponse.setRegDate(1559751301818L);
-            dataResponse.setBirthDate(1559751301818L);
-            dataResponse.setEmail("petr@mail.ru");
-            dataResponse.setPhoto("");
-            dataResponse.setAbout("Родился в небольшой, но честной семье");
-            dataResponse.setCity(cityResponse);
-            dataResponse.setCountry(countryResponse);
-            dataResponse.setMessagesPermission("ALL");
-            dataResponse.setLastOnlineTime(1559751301818L);
-            dataResponse.setBlocked(false);
-            dataResponse.setToken("1q2e3e3r4t5");
-
+            Hashtable<String, Object> cityHash = new Hashtable<>();
+            Hashtable<String, Object> countryHash = new Hashtable<>();
+            Hashtable<String, Object> dataHash = new Hashtable<>();
+            cityHash.put("id", 1);
+            cityHash.put("title", "Москва");
+            countryHash.put("id", 1);
+            countryHash.put("title", "Россия");
+            dataHash.put("id", 1);
+            dataHash.put("first_name", "Петр");
+            dataHash.put("last_name", "Петрович");
+            dataHash.put("reg_date", 1559751301818L);
+            dataHash.put("birth_date", 1559751301818L);
+            dataHash.put("email", "petr@mail.ru");
+            dataHash.put("phone", "89100000000");
+            dataHash.put("photo", "");
+            dataHash.put("about", "Родился в небольшой, но честной семье");
+            dataHash.put("city", cityHash);
+            dataHash.put("country", countryHash);
+            dataHash.put("messages_permission", "ALL");
+            dataHash.put("last_online_time", 1559751301818L);
+            dataHash.put("is_blocked", false);
+            dataHash.put("token", "1q2e3e3r4t5");
             response.setError("string");
             response.setTimestamp(1559751301818L);
-            response.setData(dataResponse);
+            response.setData(dataHash);
+
             return response;
         }
 
-        return new ErrorResponse();
+        response.setError("invalid_request");
+        response.setErrorDescription("string");
+
+        return response;
     }
 }
