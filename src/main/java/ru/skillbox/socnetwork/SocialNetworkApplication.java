@@ -1,4 +1,4 @@
-package ru.skillbox.social_network;
+package ru.skillbox.socnetwork;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
