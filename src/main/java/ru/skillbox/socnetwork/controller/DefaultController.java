@@ -1,4 +1,4 @@
-package ru.skillbox.social_network.controller;
+package ru.skillbox.socnetwork.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
