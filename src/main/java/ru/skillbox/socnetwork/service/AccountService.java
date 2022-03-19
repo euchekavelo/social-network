@@ -1,10 +1,10 @@
-package ru.skillbox.social_network.service;
+package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.skillbox.social_network.model.rqdto.RegisterDto;
-import ru.skillbox.social_network.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
+import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 
 import java.util.Properties;
 

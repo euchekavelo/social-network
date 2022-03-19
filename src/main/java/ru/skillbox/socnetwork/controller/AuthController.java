@@ -1,4 +1,5 @@
-package ru.skillbox.social_network.controller;
+
+package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -6,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.social_network.model.rqdto.LoginDto;
-import ru.skillbox.social_network.model.rsdto.GeneralResponse;
-import ru.skillbox.social_network.service.AuthService;
+import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.service.AuthService;
 
 @RequiredArgsConstructor
 @RestController

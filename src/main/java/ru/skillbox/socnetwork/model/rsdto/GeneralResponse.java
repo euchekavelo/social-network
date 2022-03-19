@@ -1,5 +1,5 @@
 
-package ru.skillbox.social_network.model.rsdto;
+package ru.skillbox.socnetwork.model.rsdto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
