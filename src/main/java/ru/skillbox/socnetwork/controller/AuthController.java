@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.social_network.model.rqdto.LoginDto;
-import ru.skillbox.social_network.model.rsdto.ProfileDto;
+import ru.skillbox.social_network.model.rsdto.GeneralResponse;
 import ru.skillbox.social_network.service.AuthService;
 
 @RequiredArgsConstructor
@@ -19,12 +19,8 @@ public class AuthController {
 
     //test l: petr@mail.ru p: 111111
     @PostMapping(value = "/login")
-    public ResponseEntity<ProfileDto> login(@RequestBody LoginDto request) {
+    public ResponseEntity<GeneralResponse> login(@RequestBody LoginDto request) {
 
-        if (request.getEmail().equals("") || request.getPassword().equals("")) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(authService.getLoginResponse(request));
+        return authService.getLoginResponse(request);
     }
 }
