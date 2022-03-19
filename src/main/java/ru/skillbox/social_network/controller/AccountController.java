@@ -6,21 +6,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.social_network.model.rqdto.LoginDto;
+import ru.skillbox.social_network.model.rqdto.RegisterDto;
 import ru.skillbox.social_network.model.rsdto.GeneralResponse;
-import ru.skillbox.social_network.service.AuthService;
+import ru.skillbox.social_network.service.AccountService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+@RequestMapping("/api/v1/account")
+public class AccountController {
 
-    private final AuthService authService;
+    AccountService accountService;
 
-    //test l: petr@mail.ru p: 111111
-    @PostMapping(value = "/login")
-    public ResponseEntity<GeneralResponse> login(@RequestBody LoginDto request) {
+    @PostMapping(value = "/register")
+    public ResponseEntity<GeneralResponse> register(@RequestBody RegisterDto request) {
 
-        return authService.getLoginResponse(request);
+        return accountService.getRegisterResponse(request);
     }
 }
