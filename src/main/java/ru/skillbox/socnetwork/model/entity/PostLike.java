@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 public class PostLike {
   int id;
   LocalDateTime time;
-  int personId;
+  int UserId;
   int postId;
 }

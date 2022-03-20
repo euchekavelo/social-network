@@ -6,6 +6,6 @@ import lombok.Data;
 public class Friendship {
   int id;
   int statusId;
-  int srcPersonId;
-  int dstPersonId;
+  int srcUserId;
+  int dstUserId;
 }
