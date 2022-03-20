@@ -1,4 +1,4 @@
-package ru.skillbox.social_network.model.rqdto;
+package ru.skillbox.socnetwork.model.rqdto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

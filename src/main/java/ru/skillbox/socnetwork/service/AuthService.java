@@ -1,9 +1,9 @@
-package ru.skillbox.social_network.service;
+package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.skillbox.social_network.model.rqdto.LoginDto;
-import ru.skillbox.social_network.model.rsdto.ProfileDto;
+import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.model.rsdto.ProfileDto;
 
 import java.util.Hashtable;
 
