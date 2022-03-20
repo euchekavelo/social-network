@@ -17,11 +17,11 @@ public class ProfileController {
 
   @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getMyProfile() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.PROFILE_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.PROFILE_RESPONSE);
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getProfileById(@PathVariable int id) {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.PROFILE_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.PROFILE_RESPONSE);
   }
 }

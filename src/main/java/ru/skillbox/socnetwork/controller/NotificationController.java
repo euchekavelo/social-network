@@ -15,6 +15,6 @@ public class NotificationController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getNotification() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.TAG_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
   }
 }

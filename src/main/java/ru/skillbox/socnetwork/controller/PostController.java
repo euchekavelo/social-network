@@ -20,11 +20,11 @@ public class PostController {
 
   @GetMapping(path = "{id}",produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getPostById(@PathVariable int id) {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.POSTS_FEEDS_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.POSTS_FEEDS_RESPONSE);
   }
 
   @GetMapping(path = "{id}/comments",produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getCommentsByPostId(@PathVariable int id) {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.COMMENTS_TO_POST_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.COMMENTS_TO_POST_RESPONSE);
   }
 }

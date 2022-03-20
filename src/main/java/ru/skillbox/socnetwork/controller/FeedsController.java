@@ -15,6 +15,6 @@ public class FeedsController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getFeeds() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.POSTS_FEEDS_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.POSTS_FEEDS_RESPONSE);
   }
 }

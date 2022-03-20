@@ -15,17 +15,17 @@ public class FriendsController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getFriends() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.FRIENDS_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.FRIENDS_RESPONSE);
   }
 
   @GetMapping(path = "/request", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAddFriendRequest() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.FRIENDS_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.FRIENDS_RESPONSE);
   }
 
   @GetMapping(path = "/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getFriendsRecommendations() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.FRIENDS_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.FRIENDS_RESPONSE);
   }
 
 }
