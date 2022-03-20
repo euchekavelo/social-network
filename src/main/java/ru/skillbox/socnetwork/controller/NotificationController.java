@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 
 @RestController
-@RequestMapping("/api/v1/tags/")
-public class TagController {
+@RequestMapping("/api/v1/notifications")
+public class NotificationController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getMyProfile() {
+  public ResponseEntity<Object> getNotification() {
     return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.TAG_RESPONSE);
   }
 }

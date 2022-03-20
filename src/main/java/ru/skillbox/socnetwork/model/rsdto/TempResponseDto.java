@@ -6,11 +6,11 @@ import java.util.Map;
 
 public class TempResponseDto {
 
-  public static final Map<String, Object> PLACE = Map
+  private static final Map<String, Object> PLACE = Map
       .of("id", 1,
           "title", "city/country");
 
-  public static final Map<String, Object> USER = Map.ofEntries(
+  private static final Map<String, Object> USER = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("id", 1),
       new AbstractMap.SimpleEntry<>("first_name", "Petr"),
       new AbstractMap.SimpleEntry<>("last_name", "Петрович"),
@@ -27,7 +27,7 @@ public class TempResponseDto {
       new AbstractMap.SimpleEntry<>("is_blocked", false)
   );
 
-  public static final Map<String, Object> COMMENTS = Map.ofEntries(
+  private static final Map<String, Object> COMMENTS = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("parent_id", 1),
       new AbstractMap.SimpleEntry<>("comment_text", "string"),
       new AbstractMap.SimpleEntry<>("id", 1),
@@ -52,7 +52,7 @@ public class TempResponseDto {
           "data", List.of(COMMENTS)
       );
 
-  public static final Map<String, Object> FEED_DATA_MAP = Map.ofEntries
+  private static final Map<String, Object> FEED_DATA_MAP = Map.ofEntries
       (
           new AbstractMap.SimpleEntry<>("id", 1),
           new AbstractMap.SimpleEntry<>("time", 1559751301818L),
@@ -91,6 +91,21 @@ public class TempResponseDto {
           "data", List.of(
               new AbstractMap.SimpleEntry<>("id", 1),
               new AbstractMap.SimpleEntry<>("tag", "tag_name")
+          )
+      );
+
+  public static final Map<String, Object> NOTIFICATION_RESPONSE = Map
+      .of("error", "string",
+          "timestamp", 1559751301818L,
+          "total", 0,
+          "offset", 0,
+          "perPage", 20,
+          "data", List.of(
+              new AbstractMap.SimpleEntry<>("id", 1),
+              new AbstractMap.SimpleEntry<>("type_id", 1),
+              new AbstractMap.SimpleEntry<>("sent_time", 1559751301818L),
+              new AbstractMap.SimpleEntry<>("entity_id", 1),
+              new AbstractMap.SimpleEntry<>("info", "info_text")
           )
       );
 }
