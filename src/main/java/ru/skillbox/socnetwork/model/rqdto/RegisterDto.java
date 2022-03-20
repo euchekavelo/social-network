@@ -1,4 +1,3 @@
-
 package ru.skillbox.socnetwork.model.rqdto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

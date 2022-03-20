@@ -1,21 +1,11 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 55cf96e5b82c2c784195b47ec203d41587ff2dcd
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
-<<<<<<< HEAD
-import ru.skillbox.socnetwork.model.rsdto.ProfileDto;
-
-import java.util.Hashtable;
-=======
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import java.util.Properties;
->>>>>>> 55cf96e5b82c2c784195b47ec203d41587ff2dcd
 
 @RequiredArgsConstructor
 @Service

@@ -1,4 +1,3 @@
-
 package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;

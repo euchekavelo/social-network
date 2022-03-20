@@ -1,4 +1,3 @@
-
 package ru.skillbox.socnetwork;
 
 import org.springframework.boot.SpringApplication;
