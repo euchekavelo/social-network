@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.model.rsdto.ForDataResponse;
+import ru.skillbox.socnetwork.model.rsdto.DataResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import java.util.Properties;
 
 @RequiredArgsConstructor
 @Service
@@ -13,34 +14,31 @@ public class AuthService {
 
     public ResponseEntity<GeneralResponse> getLoginResponse(LoginDto request) {
         if (request.getEmail().equals("petr@mail.ru")
-                && request.getPassword().equals("111111")) {
-            Properties properties = new Properties();
-            Properties city = new Properties();
-            Properties country = new Properties();
-            city.put("id", 1);
-            city.put("city", "Москва");
-            country.put("id", 1);
-            country.put("country", "Россия");
-            properties.put("id", 1);
-            properties.put("first_name", "Петр");
-            properties.put("last_name", "Петрович");
-            properties.put("reg_date", 1559751301818L);
-            properties.put("birth_date", 1559751301818L);
-            properties.put("email", "petr@mail.ru");
-            properties.put("phone", "89100000000");
-            properties.put("photo", "");
-            properties.put("about", "Родился в небольшой, но честной семье");
-            properties.put("city", city);
-            properties.put("country", country);
-            properties.put("messages_permission", "ALL");
-            properties.put("last_online_time", 1559751301818L);
-            properties.put("is_blocked", false);
-            properties.put("token", "1q2e3e3r4t5");
-
+                && request.getPassword().equals("11111111")) {
             return ResponseEntity.ok(new GeneralResponse(
                     "string",
                     1559751301818L,
-                    properties));
+                    new DataResponse(
+                            1,
+                            "Петр",
+                            "Петрович",
+                            1559751301818L,
+                            1559751301818L,
+                            "petr@mail.ru",
+                            "89100000000",
+                            "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg",
+                            "Родился в небольшой, но честной семье",
+                            new ForDataResponse(
+                                    1,
+                                    "Москва"),
+                            new ForDataResponse(
+                                    1,
+                                    "Россия"),
+                            "ALL",
+                            1559751301818L,
+                            false,
+                            "1q2e3e3r4t5"
+                    )));
         }
 
         return ResponseEntity
