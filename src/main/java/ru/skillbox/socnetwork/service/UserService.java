@@ -2,21 +2,21 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.model.entity.User;
-import ru.skillbox.socnetwork.repository.UserRepository;
+import ru.skillbox.socnetwork.model.entity.Person;
+import ru.skillbox.socnetwork.repository.PersonRepository;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
+  private PersonRepository userRepository;
 
-    public List<User> getAll() {
-        return this.userRepository.getAll();
-    }
+  public List<Person> getAll() {
+    return this.userRepository.getAll();
+  }
 
-    public User getByEmail(String email) {
-        return this.userRepository.getByEmail(email);
-    }
+  public Person getByEmail(String email) {
+    return this.userRepository.getByEmail(email);
+  }
 }
