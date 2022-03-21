@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class PersonService {
   private PersonRepository userRepository;
 
   public List<Person> getAll() {
