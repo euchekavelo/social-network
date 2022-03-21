@@ -20,8 +20,9 @@ public class TempResponseDto {
       new AbstractMap.SimpleEntry<>("phone", "89100000000"),
       new AbstractMap.SimpleEntry<>("photo", "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg"),
       new AbstractMap.SimpleEntry<>("about", "Родился"),
-      new AbstractMap.SimpleEntry<>("city", PLACE),
-      new AbstractMap.SimpleEntry<>("country", PLACE),
+      //TODO найдена ошибка на свагере, у city и country ключ не мапа, а строка
+      new AbstractMap.SimpleEntry<>("city", "Arkham"),
+      new AbstractMap.SimpleEntry<>("country", "USA"),
       new AbstractMap.SimpleEntry<>("messages_permission", "ALL"),
       new AbstractMap.SimpleEntry<>("last_online_time", 1559751301818L),
       new AbstractMap.SimpleEntry<>("is_blocked", false)

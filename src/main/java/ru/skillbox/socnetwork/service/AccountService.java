@@ -1,23 +1,31 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.ForDataResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.repository.PersonRepository;
+
+import java.util.Properties;
 
 @RequiredArgsConstructor
 @Service
 public class AccountService {
 
-    public ResponseEntity<GeneralResponse> getRegisterResponse (RegisterDto request) {
+    @Autowired
+    private PersonRepository personRepository;
 
-        if (request.getEmail().equals("")) {
+    public ResponseEntity<GeneralResponse> getRegisterResponse (RegisterDto PersonDto) {
+
+        if (PersonDto.getEmail().equals("")) {
+            Properties properties = new Properties();
+            properties.put("message", "ok");
             return ResponseEntity.ok(new GeneralResponse(
                     "string",
                     1559751301818L,
-                    new ForDataResponse("ok")
+                    properties
             ));
         }
         return ResponseEntity

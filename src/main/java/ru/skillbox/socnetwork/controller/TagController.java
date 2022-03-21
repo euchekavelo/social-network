@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +13,6 @@ public class TagController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getMyProfile() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.TAG_RESPONSE);
+    return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
   }
 }
