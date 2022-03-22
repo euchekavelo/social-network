@@ -13,7 +13,8 @@ create table person (
     password varchar(512),
     photo varchar(255),
     about text,
-    town varchar(255),
+    city varchar(100),
+    country varchar(100),
     confirmation_code varchar(20),
     is_approved boolean,
     messages_permission permission_type,
@@ -34,22 +35,25 @@ create table block_history (
     primary key (id)
 );
 
+create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
+
+create table friendship_status (
+   id serial,
+   time timestamp,
+   name varchar(50),
+   code code_type,
+   primary key (id)
+);
+
 create table friendship (
     id serial,
     status_id int4,
     src_person_id int4,
     dst_person_id int4,
-    primary key (id)
-);
-
-create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
-
-create table friendship_status (
-    id serial,
-    time timestamp,
-    name varchar(50),
-    code code_type,
-    primary key (id)
+    primary key (id),
+    FOREIGN KEY (status_id) REFERENCES friendship_status (id) ON DELETE CASCADE,
+    FOREIGN KEY (src_person_id) REFERENCES person (id) ON DELETE CASCADE,
+    FOREIGN KEY (dst_person_id) REFERENCES person (id) ON DELETE CASCADE
 );
 
 create type read_status_type as enum ('SENT', 'READ');
