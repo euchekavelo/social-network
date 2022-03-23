@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Post2Tag {
 
-  int id;
-  int tagId;
-  int postId;
+  private int id;
+  private int tagId;
+  private int postId;
 }
