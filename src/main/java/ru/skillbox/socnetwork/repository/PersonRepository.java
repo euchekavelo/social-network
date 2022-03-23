@@ -26,4 +26,23 @@ public class PersonRepository {
   public List<Person> getAll() {
     return new ArrayList<>();
   }
+
+  public List<Person> getListRecommendedFriends() {
+    return jdbc.query("" +
+            "WITH subquery AS (\n" +
+            "\tSELECT f.dst_person_id AS id\n" +
+            "\tFROM friendship f INNER JOIN friendship_status fs ON f.status_id = fs.id\n" +
+            "\tWHERE f.src_person_id = 2 AND fs.code = 'FRIEND'\n" +
+            "\tUNION\n" +
+            "\tSELECT f.src_person_id AS id\n" +
+            "\tFROM friendship f INNER JOIN friendship_status fs ON f.status_id = fs.id\n" +
+            "\tWHERE f.dst_person_id = 2 AND fs.code = 'FRIEND'\n" +
+            ")\n" +
+            "SELECT * \n" +
+            "FROM person\n" +
+            "WHERE id <> 2 AND id NOT IN (SELECT * FROM subquery)\n" +
+            "ORDER BY RANDOM()\n" +
+            "LIMIT 20", new PersonMapper());
+  }
+
 }
