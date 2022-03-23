@@ -7,20 +7,20 @@ import java.time.LocalDateTime;
 
 @Data
 public class Person {
-  int id;
-  String firstName;
-  String lastName;
-  LocalDateTime timestamp;
-  LocalDate birthDate;
-  String email;
-  String phone;
-  String password;
-  String photo;
-  String about;
-  String town;
-  String confirmationCode;
-  boolean isApproved = true;
-  TypePermission messagesPermission = TypePermission.ALL;
-  LocalDateTime lastOnlineTime;
-  boolean isBlocked = false;
+  private int id;
+  private String firstName;
+  private String lastName;
+  private LocalDateTime timestamp;
+  private LocalDate birthDate;
+  private String email;
+  private String phone;
+  private String password;
+  private String photo;
+  private String about;
+  private String town;
+  private String confirmationCode;
+  private boolean isApproved = true;
+  private TypePermission messagesPermission = TypePermission.ALL;
+  private LocalDateTime lastOnlineTime;
+  private boolean isBlocked = false;
 }

@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class Post {
-  int id;
-  LocalDateTime time;
-  int authorId;
-  String title;
-  String postText;
-  boolean isBlocked = false;
+  private int id;
+  private LocalDateTime time;
+  private int authorId;
+  private String title;
+  private String postText;
+  private boolean isBlocked = false;
 }

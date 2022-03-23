@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class Notification {
-  int id;
-  int typeId;
-  LocalDateTime sentTime;
-  int personId;
-  int notificationTypeId;
-  String contact;
+  private int id;
+  private int typeId;
+  private LocalDateTime sentTime;
+  private int personId;
+  private int notificationTypeId;
+  private String contact;
 }

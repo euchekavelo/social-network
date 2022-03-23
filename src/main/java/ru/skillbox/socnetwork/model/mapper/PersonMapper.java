@@ -30,8 +30,8 @@ public class PersonMapper implements RowMapper<Person> {
     //TODO   добавить по надобности остальные:
     //      confirmation_code varchar(20),
     //      is_approved boolean,
-    //        messages_permission permission_type,
-    //        is_blocked boolean,
+    //      messages_permission permission_type,
+    //      is_blocked boolean,
     return mapper;
   }
 }

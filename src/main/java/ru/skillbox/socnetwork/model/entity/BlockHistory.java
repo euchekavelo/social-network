@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class BlockHistory {
-  int id;
-  LocalDateTime time;
-  int personId;
-  int postId;
-  int commentId;
-  TypeAction action;
+  private int id;
+  private LocalDateTime time;
+  private int personId;
+  private int postId;
+  private int commentId;
+  private TypeAction action;
 }
