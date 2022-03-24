@@ -58,32 +58,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
           .httpBasic().disable()
-          .cors()
-        .and()
+//          .cors()
+//        .and()
           .csrf().disable()
           .exceptionHandling()
           .authenticationEntryPoint(unauthorizedHandler)
         .and()
           .authorizeRequests()
-//        .antMatchers("/api/v1/auth/**").permitAll()
-//        .antMatchers("/api/v1/auth/**").permitAll()
-            .antMatchers("/**").permitAll()
+              .antMatchers("/api/v1/auth/**").permitAll()
+              .antMatchers("/static/**", "/api/v1/platform/**").permitAll()
+              .antMatchers("/*").permitAll()
             .anyRequest().authenticated()
-//        .and()
-//            .formLogin()
-//            .defaultSuccessUrl("/", true)
+        .and()
+            .formLogin()
+            .loginProcessingUrl("/login")
+            .defaultSuccessUrl("/", true)
         .and()
           .sessionManagement()
           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
           .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
-//    http
-//        .formLogin()
-//            .loginPage("/api/v1/auth/login")
-//            .loginProcessingUrl("/login")
-//        .defaultSuccessUrl("/", true);
-//    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 }

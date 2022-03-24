@@ -3,6 +3,8 @@ package ru.skillbox.socnetwork.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Slf4j
 @Controller
@@ -13,5 +15,11 @@ public class DefaultController {
         log.info("Test page opened!");
         return "index";
     }
+
+  @RequestMapping(method = {RequestMethod.OPTIONS, RequestMethod.GET},value = {"/shift-email", "/*/{path:^[^\\.]}"})
+  public String redirectToIndex() {
+//    log.info("Test page opened!");
+    return "index";
+  }
 
 }
