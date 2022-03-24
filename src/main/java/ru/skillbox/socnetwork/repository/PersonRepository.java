@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,12 +17,11 @@ public class PersonRepository {
   public Person getById(int id) {
     return jdbc.queryForObject("select * from person where id =" + id, new PersonMapper());
   }
-  //TODO getByEmail getAll
   public Person getByEmail(String email) {
-    return new Person();
+    return jdbc.queryForObject("select * from person where e_mail = '" + email + "'", new PersonMapper());
   }
 
   public List<Person> getAll() {
-    return new ArrayList<>();
+    return jdbc.query("select * from person", new PersonMapper());
   }
 }

@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.security;
+package ru.skillbox.socnetwork.security.jwt;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
