@@ -1,6 +1,6 @@
 package ru.skillbox.socnetwork.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.dto.PersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
@@ -9,14 +9,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FriendsService {
 
     private final PersonRepository personRepository;
-
-    @Autowired
-    public FriendsService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 
     public List<PersonDto> getListRecommendedFriends() {
         return personRepository.getListRecommendedFriends().stream()

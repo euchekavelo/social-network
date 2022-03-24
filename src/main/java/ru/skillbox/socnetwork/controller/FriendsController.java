@@ -1,6 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +13,11 @@ import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 import ru.skillbox.socnetwork.service.FriendsService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/friends")
 public class FriendsController {
 
   private final FriendsService friendsService;
-
-  @Autowired
-  public FriendsController(FriendsService friendsService) {
-    this.friendsService = friendsService;
-  }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getFriends() {

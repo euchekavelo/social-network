@@ -9,8 +9,8 @@ import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class PersonRepository {
 
   private final JdbcTemplate jdbc;
