@@ -27,4 +27,8 @@ public class PersonService {
   public CorrectShortResponse<OkMessage> saveFromRegistration(Person person) {
     return personRepository.saveFromRegistration(person);
   }
+
+  public Person getById(int id) {
+    return personRepository.getById(id);
+  }
 }

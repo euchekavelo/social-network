@@ -3,6 +3,7 @@ package ru.skillbox.socnetwork.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
@@ -21,7 +22,7 @@ public class AccountService {
         }
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
-        person.setPassword(registerDto.getSecondPassword());
+        person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
 

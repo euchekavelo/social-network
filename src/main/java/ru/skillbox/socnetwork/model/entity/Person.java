@@ -15,13 +15,20 @@ public class Person {
   private String email;
   private String phone;
   private String password;
-  private String photo = "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg";
+  private String photo;
   private String about;
   private String city;
   private String country;
   private String confirmationCode;
-  private boolean isApproved = true;
-  private TypePermission messagesPermission = TypePermission.ALL;
+  private boolean isApproved;
+  private TypePermission messagesPermission;
   private LocalDateTime lastOnlineTime;
-  private boolean isBlocked = false;
+  private boolean isBlocked;
+
+  public Person() {
+    this.photo = "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg";
+    this.messagesPermission = TypePermission.ALL;
+    this.isApproved = true;
+    this.isBlocked = false;
+  }
 }

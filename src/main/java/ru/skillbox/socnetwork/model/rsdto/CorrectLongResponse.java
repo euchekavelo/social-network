@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class DialogResponse<T> {
+public class CorrectLongResponse<T> {
   private String error = "string";
   private long timestamp = System.currentTimeMillis();
   private int total = 0;

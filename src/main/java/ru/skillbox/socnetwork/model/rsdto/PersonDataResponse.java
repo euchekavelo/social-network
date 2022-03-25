@@ -55,16 +55,10 @@ public class PersonDataResponse {
     }
 
     private long getLong(LocalDateTime time) {
-        if (time != null) {
-        return time.toEpochSecond(ZoneOffset.of("Europe/Berlin"));
-        }
-        return -1;
+        return time.toEpochSecond(ZoneOffset.of("+03:00"));
     }
 
     private long getLong(LocalDate date) {
-        if (date != null) {
-            return date.toEpochDay();
-        }
-        return -1;
+        return date.toEpochDay();
     }
 }
