@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Person;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 @Data
@@ -36,20 +36,35 @@ public class DataResponse {
     private boolean isBlocked;
     private String token;
 
-    public DataResponse (Person person) {
+    public DataResponse (Person person, String token) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
-//        this.regDate = person.getRegDate().toEpochSecond(ZoneOffset.of("Europe/Berlin"));
-//        this.birthDate = person.getBirthDate().toEpochDay();
+        this.regDate = getLong(person.getRegDate());
+        this.birthDate = getLong(person.getBirthDate());
         this.email = person.getEmail();
         this.phone = person.getPhone();
         this.photo = person.getPhoto();
         this.about = person.getAbout();
         this.city = person.getCity();
         this.country = person.getCountry();
-//        this.messagesPermission = person.getMessagesPermission().toString();
-//        this.lastOnlineTime = person.getLastOnlineTime().toEpochSecond(ZoneOffset.of("Europe/Berlin"));
+        this.messagesPermission = person.getMessagesPermission().toString();
+        this.lastOnlineTime = getLong(person.getLastOnlineTime());
         this.isBlocked = person.isBlocked();
+        this.token = token;
+    }
+
+    private long getLong(LocalDateTime time) {
+        if (time != null) {
+        return time.toEpochSecond(ZoneOffset.of("Europe/Berlin"));
+        }
+        return -1;
+    }
+
+    private long getLong(LocalDate date) {
+        if (date != null) {
+            return date.toEpochDay();
+        }
+        return -1;
     }
 }

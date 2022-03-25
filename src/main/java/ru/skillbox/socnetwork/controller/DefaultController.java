@@ -12,14 +12,14 @@ public class DefaultController {
 
     @GetMapping("/")
     public String mainPage() {
-        log.info("Test page opened!");
+//        log.info("Test page opened!");
         return "index";
     }
 
-  @RequestMapping(method = {RequestMethod.OPTIONS, RequestMethod.GET},value = {"/shift-email", "/*/{path:^[^\\.]}"})
-  public String redirectToIndex() {
-//    log.info("Test page opened!");
-    return "index";
-  }
+    //    @RequestMapping(method = {RequestMethod.OPTIONS, RequestMethod.GET}, value = {"/shift-email", "/*/{path:^[^\\.]}"})
+    @RequestMapping(method = {RequestMethod.OPTIONS, RequestMethod.GET}, value = "*")
+    public String redirectToIndex() {
+        return "forward:/";
+    }
 
 }
