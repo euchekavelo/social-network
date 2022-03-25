@@ -17,7 +17,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    //test l: petr@mail.ru p: 111111
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginDto request) {
         return authService.getLoginResponse(request);

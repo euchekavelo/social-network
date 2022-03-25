@@ -4,30 +4,31 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.repository.PersonRepository;
-
-import java.util.Properties;
 
 @RequiredArgsConstructor
 @Service
 public class AccountService {
 
     @Autowired
-    private PersonRepository personRepository;
+    PersonService personService;
 
-    public ResponseEntity<GeneralResponse> getRegisterResponse (RegisterDto PersonDto) {
-
-        if (PersonDto.getEmail().equals("")) {
-            Properties properties = new Properties();
-            properties.put("message", "ok");
-            return ResponseEntity.ok(new GeneralResponse(
-                    "string",
-                    1559751301818L,
-                    properties
-            ));
+    public ResponseEntity<?> getRegisterResponse (RegisterDto registerDto) {
+        if (!registerDto.getFirstPassword().equals(registerDto.getSecondPassword()) || !personService.isEmptyEmail(registerDto.getEmail())) {
+            return errorResponse();
         }
+        Person person = new Person();
+        person.setEmail(registerDto.getEmail());
+        person.setPassword(registerDto.getSecondPassword());
+        person.setFirstName(registerDto.getFirstName());
+        person.setLastName(registerDto.getLastName());
+
+        return ResponseEntity.ok(personService.saveFromRegistration(person));
+    }
+
+    private ResponseEntity<?> errorResponse() {
         return ResponseEntity
                 .badRequest()
                 .body(new GeneralResponse(

@@ -3,16 +3,16 @@ package ru.skillbox.socnetwork.model.rsdto;
 import lombok.Data;
 
 @Data
-public class ForDataResponse {
+public class CityDataResponse {
     private int id;
     private String title;
     private String message;
 
-    public ForDataResponse(String message) {
+    public CityDataResponse(String message) {
         this.message = message;
     }
 
-    public ForDataResponse(int id, String title) {
+    public CityDataResponse(int id, String title) {
         this.id = id;
         this.title = title;
     }

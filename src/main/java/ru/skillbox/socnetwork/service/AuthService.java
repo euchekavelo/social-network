@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
-import ru.skillbox.socnetwork.model.rsdto.DataResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.security.jwt.JwtUtils;
 
@@ -29,10 +29,10 @@ public class AuthService {
   JwtUtils jwtUtils;
 
   public ResponseEntity<?> getLoginResponse(LoginDto loginDto) {
-    Person person = personService.getByEmail(loginDto.getEmail());
-    if (person.getEmail() == null) {
-      return getErrorResponse();
+    if (personService.isEmptyEmail(loginDto.getEmail())) {
+      return errorResponse();
     }
+    Person person = personService.getByEmail(loginDto.getEmail());
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -43,7 +43,7 @@ public class AuthService {
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new GeneralResponse(
         "string",
         System.currentTimeMillis(),
-        new DataResponse(person, token)
+        new PersonDataResponse(person, token)
     ));
   }
 
@@ -56,7 +56,7 @@ public class AuthService {
 //      return ResponseEntity.ok(new GeneralResponse(
 //          "string",
 //          1559751301818L,
-//          new DataResponse(
+//          new PersonDataResponse(
 //              1,
 //              "Петр",
 //              "Петрович",
@@ -78,7 +78,7 @@ public class AuthService {
 //    return getErrorResponse();
 //  }
 
-  private ResponseEntity<GeneralResponse> getErrorResponse() {
+  private ResponseEntity<?> errorResponse() {
     return ResponseEntity
         .badRequest()
         .body(new GeneralResponse(

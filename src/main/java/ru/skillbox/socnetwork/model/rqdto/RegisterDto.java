@@ -9,7 +9,7 @@ public class RegisterDto {
     @JsonProperty("passwd1")
     private String firstPassword;
     @JsonProperty("passwd2")
-    private String lastPassword;
+    private String secondPassword;
     private String firstName;
     private String lastName;
     private String code;

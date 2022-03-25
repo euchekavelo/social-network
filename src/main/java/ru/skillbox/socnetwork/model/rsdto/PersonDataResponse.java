@@ -12,7 +12,7 @@ import java.time.ZoneOffset;
 
 @Data
 @AllArgsConstructor
-public class DataResponse {
+public class PersonDataResponse {
     private int id;
     @JsonProperty("first_name")
     private String firstName;
@@ -36,7 +36,7 @@ public class DataResponse {
     private boolean isBlocked;
     private String token;
 
-    public DataResponse (Person person, String token) {
+    public PersonDataResponse(Person person, String token) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();

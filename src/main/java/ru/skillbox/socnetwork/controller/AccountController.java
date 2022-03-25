@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.service.AccountService;
 
 @RequiredArgsConstructor
@@ -15,11 +14,10 @@ import ru.skillbox.socnetwork.service.AccountService;
 @RequestMapping("/api/v1/account")
 public class AccountController {
 
-    AccountService accountService;
+    private final AccountService accountService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<GeneralResponse> register(@RequestBody RegisterDto request) {
-
+    public ResponseEntity<?> register(@RequestBody RegisterDto request) {
         return accountService.getRegisterResponse(request);
     }
 }

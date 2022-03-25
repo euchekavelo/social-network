@@ -18,21 +18,19 @@ public class DialogsController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getDialog() {
-    DialogResponse response = new DialogResponse();
+    DialogResponse<LastMessageDataResponse> response = new DialogResponse<LastMessageDataResponse>();
     response.setData(new LastMessageDataResponse());
     return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(response);
+        .ok(response);
   }
 
   @GetMapping(path = "/unreaded",produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getUnread() {
-    DialogResponse response = new DialogResponse();
+    DialogResponse<LastMessageDataResponse> response = new DialogResponse<LastMessageDataResponse>();
     LastMessageDataResponse lastMessageDataResponse = new LastMessageDataResponse();
     lastMessageDataResponse.setLastMessage(List.of(new Message()));
     response.setData(lastMessageDataResponse);
     return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(response);
+        .ok(response);
   }
 }
