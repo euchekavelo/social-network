@@ -10,7 +10,7 @@ public class Person {
   private int id;
   private String firstName;
   private String lastName;
-  private LocalDateTime regDate;
+  private LocalDateTime timestamp;
   private LocalDate birthDate;
   private String email;
   private String phone;

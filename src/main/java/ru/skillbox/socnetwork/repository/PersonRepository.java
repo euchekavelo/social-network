@@ -11,8 +11,8 @@ import ru.skillbox.socnetwork.model.rsdto.OkMessage;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class PersonRepository {
 
     private final JdbcTemplate jdbc;
@@ -33,7 +33,6 @@ public class PersonRepository {
         return jdbc.query("select * from person", new PersonMapper());
     }
 
-
     public CorrectShortResponse<OkMessage> saveFromRegistration(Person person) {
         person.setRegDate(LocalDateTime.now());
         jdbc.execute("insert into person (first_name, last_name, reg_date, e_mail, password) values ('" +
@@ -47,4 +46,23 @@ public class PersonRepository {
         response.setData(new OkMessage());
         return response;
     }
+
+    public List<Person> getListRecommendedFriends() {
+        return jdbc.query("" +
+                "WITH subquery AS (\n" +
+                "\tSELECT f.dst_person_id AS id\n" +
+                "\tFROM friendship f INNER JOIN friendship_status fs ON f.status_id = fs.id\n" +
+                "\tWHERE f.src_person_id = 2 AND fs.code = 'FRIEND'\n" +
+                "\tUNION\n" +
+                "\tSELECT f.src_person_id AS id\n" +
+                "\tFROM friendship f INNER JOIN friendship_status fs ON f.status_id = fs.id\n" +
+                "\tWHERE f.dst_person_id = 2 AND fs.code = 'FRIEND'\n" +
+                ")\n" +
+                "SELECT * \n" +
+                "FROM person\n" +
+                "WHERE id <> 2 AND id NOT IN (SELECT * FROM subquery)\n" +
+                "ORDER BY RANDOM()\n" +
+                "LIMIT 20", new PersonMapper());
+    }
+
 }

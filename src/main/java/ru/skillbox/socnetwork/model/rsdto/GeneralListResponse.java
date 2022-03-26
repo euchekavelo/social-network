@@ -6,11 +6,21 @@ import java.util.List;
 
 @Data
 public class GeneralListResponse<T> {
-    private String error = "string";
-    private String errorDesc;
+
+    private String error;
     private Long timestamp;
-    private Long total;
-    private Integer offset;
-    private Integer perPage;
+    private int total;
+    private int offset;
+    private int perPage;
     private List<T> data;
+
+    public GeneralListResponse(List<T> data, int offset, int perPage) {
+        error = "string";
+        timestamp = System.currentTimeMillis();
+        total = data.size();
+        this.offset = offset;
+        this.perPage = perPage;
+        this.data = data;
+    }
+
 }

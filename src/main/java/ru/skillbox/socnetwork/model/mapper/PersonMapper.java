@@ -2,13 +2,13 @@ package ru.skillbox.socnetwork.model.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.skillbox.socnetwork.model.entity.Person;
+import ru.skillbox.socnetwork.model.entity.TypePermission;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 public class PersonMapper implements RowMapper<Person> {
 
