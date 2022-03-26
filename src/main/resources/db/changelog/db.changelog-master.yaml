@@ -23,3 +23,11 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/003-change-users-password.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 4
+      author: Alexandr Luzyanin
+      comment: change users password to crypto 11111111
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/004-change-users-password-to-crypto.sql
+        relativeToChangelogFile: true
