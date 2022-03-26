@@ -54,6 +54,10 @@ public class PersonDataResponse {
         this.token = token;
     }
 
+    public PersonDataResponse(Person person) {
+        this(person, "");
+    }
+
     private long getLong(LocalDateTime time) {
         return time.toEpochSecond(ZoneOffset.of("+03:00"));
     }

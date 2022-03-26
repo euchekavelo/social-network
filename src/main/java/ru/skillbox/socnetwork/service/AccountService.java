@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.IncorrectShortResponse;
 
 @RequiredArgsConstructor
 @Service
@@ -32,8 +32,6 @@ public class AccountService {
     private ResponseEntity<?> errorResponse() {
         return ResponseEntity
                 .badRequest()
-                .body(new GeneralResponse(
-                "invalid_request",
-                "string"));
+                .body(new IncorrectShortResponse());
     }
 }

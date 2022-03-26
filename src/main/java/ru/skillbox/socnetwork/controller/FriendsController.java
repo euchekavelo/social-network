@@ -7,17 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.dto.PersonDto;
-import ru.skillbox.socnetwork.model.rsdto.GeneralListResponse;
+import ru.skillbox.socnetwork.model.rsdto.CorrectLongResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
 import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
-import ru.skillbox.socnetwork.service.FriendsService;
+import ru.skillbox.socnetwork.service.PersonService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/friends")
 public class FriendsController {
 
-  private final FriendsService friendsService;
+  private final PersonService personService;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getFriends() {
@@ -30,14 +32,13 @@ public class FriendsController {
   }
 
   @GetMapping("/recommendations")
-  public ResponseEntity<GeneralListResponse<PersonDto>> getListRecommendedFriends(
+  public ResponseEntity<?> getListRecommendedFriends(
           @RequestParam(value = "offset", defaultValue = "0") int offset,
-          @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
-
-    GeneralListResponse<PersonDto> generalListResponse =
-            new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage);
-
-    return ResponseEntity.ok(generalListResponse);
+          @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+    CorrectLongResponse<List<PersonDataResponse>> response = new CorrectLongResponse<>();
+    response.setData(personService.getRecommendedFriendsList());
+    response.setOffset(offset);
+    response.setPerPage(perPage);
+    return ResponseEntity.ok(response);
   }
-
 }

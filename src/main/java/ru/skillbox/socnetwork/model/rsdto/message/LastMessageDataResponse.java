@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.model.rsdto;
+package ru.skillbox.socnetwork.model.rsdto.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.entity.Message;
 import ru.skillbox.socnetwork.model.rsdto.CorrectLongResponse;
-import ru.skillbox.socnetwork.model.rsdto.LastMessageDataResponse;
+import ru.skillbox.socnetwork.model.rsdto.message.LastMessageDataResponse;
 
 import java.util.List;
 @RestController
