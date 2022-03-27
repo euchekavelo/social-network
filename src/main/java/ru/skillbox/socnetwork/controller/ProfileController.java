@@ -1,13 +1,11 @@
 package ru.skillbox.socnetwork.controller;
 
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.rsdto.CorrectLongResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
-import ru.skillbox.socnetwork.security.jwt.JwtUtils;
 import ru.skillbox.socnetwork.service.PersonService;
 
 
@@ -16,21 +14,20 @@ import ru.skillbox.socnetwork.service.PersonService;
 @RequestMapping("/api/v1/users/")
 public class ProfileController {
 
-  @Autowired
   PersonService personService;
-  @Autowired
-  JwtUtils jwtUtils;
+//  JwtUtils jwtUtils;
 
   @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getMyProfile(@RequestHeader("Authorization") String token) {
-    PersonDataResponse personDataResponse = personService.getByEmail(jwtUtils.getUserNameFromJwtToken(token));
+    String email = "";
+    PersonDataResponse personDataResponse = new PersonDataResponse(personService.getByEmail(email));
     CorrectLongResponse<PersonDataResponse> response = getResponse(token, personDataResponse);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getProfileById(@PathVariable int id, @RequestHeader("Authorization") String token) {
-    PersonDataResponse personDataResponse = personService.getById(id);
+    PersonDataResponse personDataResponse = new PersonDataResponse(personService.getById(id));
     CorrectLongResponse<PersonDataResponse> response = getResponse(token, personDataResponse);
     return ResponseEntity.ok(response);
   }

@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Person;
@@ -18,33 +19,38 @@ public class PersonRepository {
     private final JdbcTemplate jdbc;
 
     public Person getById(int id) {
-        return jdbc.queryForObject("select * from person where id =" + id, new PersonMapper());
+        String sql = "select * from person where id = ?";
+        return jdbc.queryForObject(sql, new PersonMapper(), id);
     }
 
     public Person getByEmail(String email) {
-        return jdbc.queryForObject("select * from person where e_mail = '" + email + "'", new PersonMapper());
+        String sql = "select * from person where e_mail = ";
+        return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
     public boolean isEmptyEmail(String email) {
-        return jdbc.query("select * from person where e_mail = '" + email + "'", new PersonMapper()).size() == 0;
+        try {
+            getByEmail(email);
+        } catch (DataAccessException e) {
+            return false;
+        }
+        return true;
     }
 
     public List<Person> getAll() {
         return jdbc.query("select * from person", new PersonMapper());
     }
 
-    public CorrectShortResponse<OkMessage> saveFromRegistration(Person person) {
+    public Person saveFromRegistration(Person person) {
         person.setRegDate(LocalDateTime.now());
-        jdbc.execute("insert into person (first_name, last_name, reg_date, e_mail, password) values ('" +
-                person.getFirstName() + "', '" +
-                person.getLastName() + "', '" +
-                person.getRegDate() + "', '" +
-                person.getEmail() + "', '" +
-                person.getPassword() + "')");
-        CorrectShortResponse<OkMessage> response = new CorrectShortResponse<>();
-        response.setTimestamp(person.getRegDate().toLocalDate().toEpochDay());
-        response.setData(new OkMessage());
-        return response;
+        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password) values (?, ?, ?, ?, ?)";
+        jdbc.update(sql,
+                person.getFirstName(),
+                person.getLastName(),
+                person.getRegDate(),
+                person.getEmail(),
+                person.getPassword());
+        return person;
     }
 
     public List<Person> getListRecommendedFriends() {
@@ -64,5 +70,4 @@ public class PersonRepository {
                 "ORDER BY RANDOM()\n" +
                 "LIMIT 20", new PersonMapper());
     }
-
 }
