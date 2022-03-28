@@ -3,6 +3,9 @@ package ru.skillbox.socnetwork.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +15,12 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
+import ru.skillbox.socnetwork.model.rsdto.message.OkMessage;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.PersonService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,27 +50,23 @@ public class AuthController {
         response.setData(new PersonDataResponse(person, token));
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, token)
-//            .header(HttpHeaders.SET_COOKIE, token)
                 .body(response);
     }
 
     /**
      * TODO build correct logout
      */
-//    @PostMapping("/logout")
-//    public ResponseEntity<GeneralListResponse<?>> logout(
-//            HttpServletRequest request, HttpServletResponse response) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        if (auth != null) {
-//            new SecurityContextLogoutHandler().logout(request, response, auth);
-//            return ResponseEntity.ok(new GeneralListResponse(
-//                    "string",
-//                    new Date().getTime(),
-//                    List.of(new ForDataResponse("ok"))));
-//        }
-//        return ResponseEntity.badRequest()
-//                .body(new GeneralListResponse(
-//                        "invalid_request", "string"));
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<CorrectShortResponse<OkMessage>> logout(
+            HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (auth != null) {
+            CorrectShortResponse<OkMessage> correctShortResponse = new CorrectShortResponse<>();
+            correctShortResponse.setData(new OkMessage());
+            new SecurityContextLogoutHandler().logout(request, response, null);
+            return ResponseEntity.ok().body(correctShortResponse);
+        }
+        throw new BadRequestException("bad logout");
+    }
 }

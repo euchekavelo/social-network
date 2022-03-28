@@ -1,7 +1,6 @@
 
 package ru.skillbox.socnetwork.security;
 
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Configuration
@@ -30,18 +30,18 @@ public class JwtCsrfFilter extends GenericFilterBean {
             ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (token != null && Jwts
-                .parser()
-                .setSigningKey(tokenProvider.getSecret())
-                .parseClaimsJws(token) != null) {
+        if (token != null) {
+            if (!tokenProvider.validateJwtToken(token)) {
+                HttpServletResponse servletResponse = (HttpServletResponse) response;
+//                servletResponse.setStatus(403);
+//                servletResponse.
+                servletResponse.sendRedirect("/api/v1/auth/logout");
+                return;
+            }
             UserDetails userDetails = userDetailsService
-                    .loadUserByUsername(Jwts
-                            .parser()
-                            .setSigningKey(tokenProvider.getSecret())
-                            .parseClaimsJws(token).getBody().getSubject());
+                    .loadUserByUsername(tokenProvider.getEmailFromToken(token));
             SecurityContextHolder
                     .getContext()
                     .setAuthentication(

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
+import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,16 @@ public class PersonRepository {
             return true;
         }
         return false;
+    }
+
+    public Person getPersonAfterLogin(LoginDto loginDto) {
+        Person person;
+        try {
+            person = getByEmail(loginDto.getEmail());
+        } catch (DataAccessException e) {
+            return null;
+        }
+        return person;
     }
 
     public List<Person> getAll() {

@@ -54,9 +54,6 @@ public class PersonService {
     }
 
     public Person getPersonAfterLogin(LoginDto loginDto) {
-        if (isEmptyEmail(loginDto.getEmail())) {
-            return null;
-        }
-        return getByEmail(loginDto.getEmail());
+        return personRepository.getPersonAfterLogin(loginDto);
     }
 }
