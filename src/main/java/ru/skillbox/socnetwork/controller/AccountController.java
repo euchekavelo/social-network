@@ -22,7 +22,7 @@ public class AccountController {
     private final PersonService personService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<Object> register(@RequestBody RegisterDto request) {
+    public ResponseEntity<CorrectShortResponse<OkMessage>> register(@RequestBody RegisterDto request) {
         Person person = personService.getPersonAfterRegistration(request);
         if (person == null) {
             throw new BadRequestException("Invalid email or password for registration");

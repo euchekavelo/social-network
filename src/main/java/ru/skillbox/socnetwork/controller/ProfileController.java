@@ -21,7 +21,7 @@ public class ProfileController {
     private final JwtTokenProvider tokenProvider;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getMyProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<CorrectLongResponse<PersonDataResponse>> getMyProfile(@RequestHeader("Authorization") String token) {
         /**
          * TODO check method of excrete email from token
          */
@@ -31,7 +31,7 @@ public class ProfileController {
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getProfileById(@PathVariable int id, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<CorrectLongResponse<PersonDataResponse>> getProfileById(@PathVariable int id, @RequestHeader("Authorization") String token) {
         PersonDataResponse personDataResponse = new PersonDataResponse(personService.getById(id));
         return ResponseEntity.ok(getResponse(token, personDataResponse));
     }

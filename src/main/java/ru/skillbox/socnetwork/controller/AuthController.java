@@ -25,7 +25,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<CorrectShortResponse<PersonDataResponse>> login(@RequestBody LoginDto loginDto) {
         Person person = personService.getPersonAfterLogin(loginDto);
         if (person == null) {
             throw new BadRequestException("email not exist");
