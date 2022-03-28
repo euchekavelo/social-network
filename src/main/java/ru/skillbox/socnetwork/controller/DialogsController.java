@@ -15,21 +15,21 @@ import java.util.List;
 @RequestMapping("/api/v1/dialogs")
 public class DialogsController {
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getDialog() {
-    CorrectLongResponse<LastMessageDataResponse> response = new CorrectLongResponse<LastMessageDataResponse>();
-    response.setData(new LastMessageDataResponse());
-    return ResponseEntity
-        .ok(response);
-  }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getDialog() {
+        CorrectLongResponse<LastMessageDataResponse> response = new CorrectLongResponse<LastMessageDataResponse>();
+        response.setData(new LastMessageDataResponse());
+        return ResponseEntity
+                .ok(response);
+    }
 
-  @GetMapping(path = "/unreaded",produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getUnread() {
-    CorrectLongResponse<LastMessageDataResponse> response = new CorrectLongResponse<LastMessageDataResponse>();
-    LastMessageDataResponse lastMessageDataResponse = new LastMessageDataResponse();
-    lastMessageDataResponse.setLastMessage(List.of(new Message()));
-    response.setData(lastMessageDataResponse);
-    return ResponseEntity
-        .ok(response);
-  }
+    @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getUnread() {
+        CorrectLongResponse<LastMessageDataResponse> response = new CorrectLongResponse<LastMessageDataResponse>();
+        LastMessageDataResponse lastMessageDataResponse = new LastMessageDataResponse();
+        lastMessageDataResponse.setLastMessage(List.of(new Message()));
+        response.setData(lastMessageDataResponse);
+        return ResponseEntity
+                .ok(response);
+    }
 }

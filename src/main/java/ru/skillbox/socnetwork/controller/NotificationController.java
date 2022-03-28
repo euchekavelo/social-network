@@ -11,8 +11,8 @@ import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 @RequestMapping("/api/v1/notifications")
 public class NotificationController {
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getNotification() {
-    return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
-  }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getNotification() {
+        return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
+    }
 }

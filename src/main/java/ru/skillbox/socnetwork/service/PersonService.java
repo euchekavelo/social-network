@@ -1,7 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -41,12 +41,13 @@ public class PersonService {
     }
 
     public Person getPersonAfterRegistration(RegisterDto registerDto) {
-        if (!registerDto.getFirstPassword().equals(registerDto.getSecondPassword()) || !isEmptyEmail(registerDto.getEmail())) {
+        if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
             return null;
         }
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
-//        person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
+        //TODO вынести new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()) в Person?
+        person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
         return saveFromRegistration(person);

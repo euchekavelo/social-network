@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LastMessageDataResponse {
-  private int id;
-  @JsonProperty("unread_count")
-  private int unreadCount = 0;
-  @JsonProperty("last_message")
-  private List<Message> lastMessage = new ArrayList<>();
+    private int id;
+    @JsonProperty("unread_count")
+    private int unreadCount = 0;
+    @JsonProperty("last_message")
+    private List<Message> lastMessage = new ArrayList<>();
 }

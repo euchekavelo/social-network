@@ -13,18 +13,18 @@ import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 @RequestMapping("/api/v1/post/")
 public class PostController {
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getAllPost() {
-    return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.POSTS_FEEDS_RESPONSE);
-  }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllPost() {
+        return ResponseEntity.status(HttpStatus.OK).body(TempResponseDto.POSTS_FEEDS_RESPONSE);
+    }
 
-  @GetMapping(path = "{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getPostById(@PathVariable int id) {
-    return ResponseEntity.ok(TempResponseDto.POSTS_FEEDS_RESPONSE);
-  }
+    @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getPostById(@PathVariable int id) {
+        return ResponseEntity.ok(TempResponseDto.POSTS_FEEDS_RESPONSE);
+    }
 
-  @GetMapping(path = "{id}/comments",produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getCommentsByPostId(@PathVariable int id) {
-    return ResponseEntity.ok(TempResponseDto.COMMENTS_TO_POST_RESPONSE);
-  }
+    @GetMapping(path = "{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getCommentsByPostId(@PathVariable int id) {
+        return ResponseEntity.ok(TempResponseDto.COMMENTS_TO_POST_RESPONSE);
+    }
 }

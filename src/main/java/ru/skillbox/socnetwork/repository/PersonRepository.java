@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
-import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
-import ru.skillbox.socnetwork.model.rsdto.message.OkMessage;
 
 import java.time.LocalDateTime;
 import java.util.List;

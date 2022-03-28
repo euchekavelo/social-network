@@ -11,8 +11,8 @@ import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 @RequestMapping("/api/v1/tags/")
 public class TagController {
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getMyProfile() {
-    return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
-  }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getMyProfile() {
+        return ResponseEntity.ok(TempResponseDto.TAG_RESPONSE);
+    }
 }
