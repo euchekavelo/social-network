@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.controller.exeptionhandler.BadRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
-import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
-import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
-import ru.skillbox.socnetwork.model.rsdto.message.OkMessage;
+import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.DataResponse;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,7 +32,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/login")
-    public ResponseEntity<CorrectShortResponse<PersonDataResponse>> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<GeneralResponse<DataResponse>> login(@RequestBody LoginDto loginDto) {
         Person person = personService.getPersonAfterLogin(loginDto);
         if (person == null) {
             throw new BadRequestException("email not exist");
@@ -45,28 +45,33 @@ public class AuthController {
             throw new BadRequestException("wrong password");
         }
         String token = tokenProvider.generateToken(person.getEmail());
-        CorrectShortResponse<PersonDataResponse> response = new CorrectShortResponse<>();
-        response.setTimestamp(System.currentTimeMillis());
-        response.setData(new PersonDataResponse(person, token));
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .body(response);
+                .body(new GeneralResponse<>(
+                        "string",
+                        System.currentTimeMillis(),
+                        List.of(new DataResponse(person, token))));
     }
 
     /**
      * TODO build correct logout
      */
     @PostMapping("/logout")
-    public ResponseEntity<CorrectShortResponse<OkMessage>> logout(
+    public ResponseEntity<GeneralResponse<DataResponse>> logout(
             HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         if (auth != null) {
-            CorrectShortResponse<OkMessage> correctShortResponse = new CorrectShortResponse<>();
-            correctShortResponse.setData(new OkMessage());
             new SecurityContextLogoutHandler().logout(request, response, null);
-            return ResponseEntity.ok().body(correctShortResponse);
+            return ResponseEntity.ok()
+                    .body(new GeneralResponse<>(
+                            "string",
+                            System.currentTimeMillis(),
+                            List.of(new DataResponse("ok"))));
         }
-        throw new BadRequestException("bad logout");
+        return ResponseEntity.badRequest().body(new GeneralResponse<>(
+                "invalid_request",
+                "string"));
+        //throw new BadRequestException("bad logout");
     }
 }

@@ -1,6 +1,7 @@
 
 package ru.skillbox.socnetwork.model.rsdto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +10,12 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PersonDataResponse {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class DataResponse {
     private int id;
     @JsonProperty("first_name")
     private String firstName;
@@ -35,8 +38,29 @@ public class PersonDataResponse {
     @JsonProperty("is_blocked")
     private boolean isBlocked;
     private String token;
+    private String message;
+    @JsonProperty("unread_count")
+    private int unreadCount;
+    @JsonProperty("last_message")
+    private LastMessageResponse lastMessageResponse;
 
-    public PersonDataResponse(Person person, String token) {
+    public DataResponse(int count) {
+        this.count = count;
+    }
+
+    private int count;
+
+    public DataResponse(int id, int unreadCount, LastMessageResponse lastMessageResponse) {
+        this.id = id;
+        this.unreadCount = unreadCount;
+        this.lastMessageResponse = lastMessageResponse;
+    }
+
+    public DataResponse(String message) {
+        this.message = message;
+    }
+
+    public DataResponse(Person person, String token) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
@@ -54,7 +78,7 @@ public class PersonDataResponse {
         this.token = token;
     }
 
-    public PersonDataResponse(Person person) {
+    public DataResponse(Person person) {
         this(person, "");
     }
 
