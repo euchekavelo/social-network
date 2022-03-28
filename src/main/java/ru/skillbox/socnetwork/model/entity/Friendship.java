@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class Friendship {
-  int id;
-  int statusId;
-  int srcPersonId;
-  int dstPersonId;
+    private int id;
+    private int statusId;
+    private int srcPersonId;
+    private int dstPersonId;
 }

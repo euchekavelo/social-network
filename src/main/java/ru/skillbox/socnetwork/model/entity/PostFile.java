@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class PostFile {
-  int id;
-  int postId;
-  String name;
-  String path;
+    private int id;
+    private int postId;
+    private String name;
+    private String path;
 }

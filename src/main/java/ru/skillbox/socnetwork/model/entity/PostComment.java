@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 
 @Data
 public class PostComment {
-  int id;
-  LocalDateTime time;
-  int postId;
-  int parentId;
-  int authorId;
-  String commentText;
-  boolean isBlocked = false;
+    private int id;
+    private LocalDateTime time;
+    private int postId;
+    private int parentId;
+    private int authorId;
+    private String commentText;
+    private boolean isBlocked = false;
 }

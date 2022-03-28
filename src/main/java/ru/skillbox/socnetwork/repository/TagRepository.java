@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 @Repository
 public class TagRepository {
-  private final JdbcTemplate jdbc;
+    private final JdbcTemplate jdbc;
 }
