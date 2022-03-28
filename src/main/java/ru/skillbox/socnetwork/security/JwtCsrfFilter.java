@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -24,6 +25,8 @@ public class JwtCsrfFilter extends GenericFilterBean {
     private final JwtTokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
 
+
+
     @Override
     public void doFilter(
             ServletRequest request,
@@ -35,9 +38,12 @@ public class JwtCsrfFilter extends GenericFilterBean {
         if (token != null) {
             if (!tokenProvider.validateJwtToken(token)) {
                 HttpServletResponse servletResponse = (HttpServletResponse) response;
+                new SecurityContextLogoutHandler().setClearAuthentication(true);
+                servletResponse.setHeader("Authorization", null);
+//                servletResponse.
 //                servletResponse.setStatus(403);
 //                servletResponse.
-                servletResponse.sendRedirect("/api/v1/auth/logout");
+//                servletResponse.sendRedirect("/api/v1/auth/logout");
                 return;
             }
             UserDetails userDetails = userDetailsService
