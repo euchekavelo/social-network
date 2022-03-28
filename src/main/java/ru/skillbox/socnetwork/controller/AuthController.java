@@ -22,9 +22,9 @@ public class AuthController {
     private final PersonService personService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto request) {
+    public ResponseEntity<Object> login(@RequestBody LoginDto request) {
         Person person = personService.getPersonAfterLogin(request);
-        if (person.getEmail() == null) {
+        if (person == null) {
             return errorResponse();
         }
         String token = "";
@@ -36,7 +36,7 @@ public class AuthController {
             .body(response);
     }
 
-    private ResponseEntity<?> errorResponse() {
+    private ResponseEntity<Object> errorResponse() {
         return ResponseEntity
                 .badRequest()
                 .body(new IncorrectShortResponse());

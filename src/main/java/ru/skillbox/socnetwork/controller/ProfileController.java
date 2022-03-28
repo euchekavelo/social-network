@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +11,17 @@ import ru.skillbox.socnetwork.service.PersonService;
 
 
 @Log
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users/")
 public class ProfileController {
 
-  PersonService personService;
+  private final PersonService personService;
 //  JwtUtils jwtUtils;
 
   @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getMyProfile(@RequestHeader("Authorization") String token) {
-    String email = "";
+    String email = "test@mail.ru";
     PersonDataResponse personDataResponse = new PersonDataResponse(personService.getByEmail(email));
     CorrectLongResponse<PersonDataResponse> response = getResponse(token, personDataResponse);
     return ResponseEntity.ok(response);

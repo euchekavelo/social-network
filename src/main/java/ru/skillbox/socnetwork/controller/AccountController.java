@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.controller.exeptionhandler.BadRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
@@ -21,20 +22,14 @@ public class AccountController {
     private final PersonService personService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto request) {
+    public ResponseEntity<Object> register(@RequestBody RegisterDto request) {
         Person person = personService.getPersonAfterRegistration(request);
-        if (person.getEmail() == null) {
-            return errorResponse();
+        if (person == null) {
+            throw new BadRequestException("Invalid email or password for registration");
         }
         CorrectShortResponse<OkMessage> response = new CorrectShortResponse<>();
         response.setTimestamp(person.getRegDate().toLocalDate().toEpochDay());
         response.setData(new OkMessage());
         return ResponseEntity.ok(response);
-    }
-
-    private ResponseEntity<?> errorResponse() {
-        return ResponseEntity
-                .badRequest()
-                .body(new IncorrectShortResponse());
     }
 }

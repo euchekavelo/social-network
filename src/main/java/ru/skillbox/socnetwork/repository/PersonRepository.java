@@ -24,7 +24,7 @@ public class PersonRepository {
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail = ";
+        String sql = "select * from person where e_mail = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
@@ -32,9 +32,9 @@ public class PersonRepository {
         try {
             getByEmail(email);
         } catch (DataAccessException e) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public List<Person> getAll() {

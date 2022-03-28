@@ -1,26 +1,20 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
-import ru.skillbox.socnetwork.model.rsdto.PersonDataResponse;
-import ru.skillbox.socnetwork.model.rsdto.message.OkMessage;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PersonService {
 
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -48,11 +42,11 @@ public class PersonService {
 
     public Person getPersonAfterRegistration(RegisterDto registerDto) {
         if (!registerDto.getFirstPassword().equals(registerDto.getSecondPassword()) || !isEmptyEmail(registerDto.getEmail())) {
-            return new Person();
+            return null;
         }
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
-        person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
+//        person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
         return saveFromRegistration(person);
@@ -60,7 +54,7 @@ public class PersonService {
 
     public Person getPersonAfterLogin(LoginDto loginDto) {
         if (isEmptyEmail(loginDto.getEmail())) {
-            return new Person();
+            return null;
         }
         return getByEmail(loginDto.getEmail());
     }
