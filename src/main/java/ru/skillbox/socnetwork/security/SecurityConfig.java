@@ -9,10 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -32,21 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/auth/**", "/api/v1/account/register").permitAll()
                 .antMatchers("/static/**", "/api/v1/platform/**").permitAll()
                 .antMatchers("/*", "/api/v1/auth/logout").permitAll()
-//                .antMatchers("/api/v1/notifications").permitAll()
                 .anyRequest()
                 .authenticated()
-                /**
-                 * unused config
-                 */
-//                .and()
-//                .logout()
-//                .logoutUrl("/api/v1/auth/logout")
-//                .logoutSuccessHandler(logoutSuccessHandler())
-//                .logoutSuccessUrl("/")
-//                .and()
-//                .exceptionHandling()
-//                .accessDeniedHandler(accessDeniedHandler())
-//                .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .addFilterBefore(jwtCsrfFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -60,19 +44,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Bean
-//    public LogoutSuccessHandler logoutSuccessHandler() {
-//        return new CustomLogoutSuccessHandler();
-//    }
-//
-//    @Bean
-//    public AccessDeniedHandler accessDeniedHandler() {
-//        return new CustomAccessDeniedHandler();
-//    }
-//
-//    @Bean
-//    public AuthenticationEntryPoint authenticationEntryPoint() {
-//        return new RestAuthenticationEntryPoint();
-//    }
 }
