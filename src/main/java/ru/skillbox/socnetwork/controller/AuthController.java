@@ -57,16 +57,11 @@ public class AuthController {
      * TODO build correct logout
      */
     @PostMapping("/logout")
-    public ResponseEntity<CorrectShortResponse<OkMessage>> logout(
-            HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        if (auth != null) {
-            CorrectShortResponse<OkMessage> correctShortResponse = new CorrectShortResponse<>();
-            correctShortResponse.setData(new OkMessage());
-            new SecurityContextLogoutHandler().logout(request, response, null);
-            return ResponseEntity.ok().body(correctShortResponse);
-        }
-        throw new BadRequestException("bad logout");
+    public ResponseEntity<CorrectShortResponse<OkMessage>> logout() {
+        CorrectShortResponse<OkMessage> correctShortResponse = new CorrectShortResponse<>();
+        correctShortResponse.setData(new OkMessage());
+        return ResponseEntity.ok()
+                .headers(HttpHeaders.EMPTY)
+                .body(correctShortResponse);
     }
 }

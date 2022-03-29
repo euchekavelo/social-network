@@ -2,13 +2,20 @@
 package ru.skillbox.socnetwork.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.filter.GenericFilterBean;
+import ru.skillbox.socnetwork.controller.AuthController;
+import ru.skillbox.socnetwork.model.rsdto.CorrectShortResponse;
+import ru.skillbox.socnetwork.model.rsdto.message.OkMessage;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,7 +23,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.ValidationException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,7 +34,6 @@ public class JwtCsrfFilter extends GenericFilterBean {
 
     private final JwtTokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
-
 
 
     @Override
@@ -37,13 +46,6 @@ public class JwtCsrfFilter extends GenericFilterBean {
         String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
         if (token != null) {
             if (!tokenProvider.validateJwtToken(token)) {
-                HttpServletResponse servletResponse = (HttpServletResponse) response;
-                new SecurityContextLogoutHandler().setClearAuthentication(true);
-                servletResponse.setHeader("Authorization", null);
-//                servletResponse.
-//                servletResponse.setStatus(403);
-//                servletResponse.
-//                servletResponse.sendRedirect("/api/v1/auth/logout");
                 return;
             }
             UserDetails userDetails = userDetailsService
