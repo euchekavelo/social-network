@@ -21,6 +21,13 @@ public class GeneralResponse<T> {
     private int perPage = 20;
     private List<T> data;
 
+    public GeneralResponse(String path, String error, String errorDescription, long timestamp) {
+        this.path = path;
+        this.error = error;
+        this.errorDescription = errorDescription;
+        this.timestamp = timestamp;
+    }
+
     public GeneralResponse(String error, long timestamp, int total, int offset, int perPage, List<T> data) {
         this.error = error;
         this.timestamp = timestamp;
