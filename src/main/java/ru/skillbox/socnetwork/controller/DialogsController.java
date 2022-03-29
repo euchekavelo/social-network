@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.entity.Message;
-import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.DataResponse;
-import ru.skillbox.socnetwork.model.rsdto.LastMessageResponse;
+import ru.skillbox.socnetwork.model.rsdto.*;
 
 import java.util.List;
 @RestController
@@ -17,14 +14,14 @@ import java.util.List;
 public class DialogsController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<DataResponse>> getDialog() {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> getDialog() {
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
                 0,
                 0,
                 20,
-                List.of(new DataResponse(
+                new DialogsResponse(
                         1,
                         0,
                         new LastMessageResponse(
@@ -33,15 +30,15 @@ public class DialogsController {
                                 1,
                                 1,
                                 "string",
-                                "SENT")))));
+                                "SENT"))));
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<DataResponse>> getUnread() {
+    public ResponseEntity<GeneralResponse<Count>> getUnread() {
         return ResponseEntity
                 .ok(new GeneralResponse<>(
                         "string",
                         System.currentTimeMillis(),
-                        List.of(new DataResponse(1000))));
+                        new Count(1000)));
     }
 }

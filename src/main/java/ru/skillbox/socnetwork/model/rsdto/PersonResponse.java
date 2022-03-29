@@ -10,12 +10,11 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DataResponse {
+public class PersonResponse {
     private int id;
     @JsonProperty("first_name")
     private String firstName;
@@ -38,29 +37,8 @@ public class DataResponse {
     @JsonProperty("is_blocked")
     private boolean isBlocked;
     private String token;
-    private String message;
-    @JsonProperty("unread_count")
-    private int unreadCount;
-    @JsonProperty("last_message")
-    private LastMessageResponse lastMessageResponse;
 
-    public DataResponse(int count) {
-        this.count = count;
-    }
-
-    private int count;
-
-    public DataResponse(int id, int unreadCount, LastMessageResponse lastMessageResponse) {
-        this.id = id;
-        this.unreadCount = unreadCount;
-        this.lastMessageResponse = lastMessageResponse;
-    }
-
-    public DataResponse(String message) {
-        this.message = message;
-    }
-
-    public DataResponse(Person person, String token) {
+    public PersonResponse(Person person, String token) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
@@ -77,8 +55,7 @@ public class DataResponse {
         this.isBlocked = person.isBlocked();
         this.token = token;
     }
-
-    public DataResponse(Person person) {
+    public PersonResponse(Person person) {
         this(person, "");
     }
 

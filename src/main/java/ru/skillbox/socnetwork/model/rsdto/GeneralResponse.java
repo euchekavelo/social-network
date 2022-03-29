@@ -19,7 +19,7 @@ public class GeneralResponse<T> {
     private int total = 0;
     private int offset = 0;
     private int perPage = 20;
-    private List<T> data;
+    private T data;
 
     public GeneralResponse(String path, String error, String errorDescription, long timestamp) {
         this.path = path;
@@ -28,7 +28,7 @@ public class GeneralResponse<T> {
         this.timestamp = timestamp;
     }
 
-    public GeneralResponse(String error, long timestamp, int total, int offset, int perPage, List<T> data) {
+    public GeneralResponse(String error, long timestamp, int total, int offset, int perPage, T data) {
         this.error = error;
         this.timestamp = timestamp;
         this.total = total;
@@ -42,7 +42,7 @@ public class GeneralResponse<T> {
         this.errorDescription = errorDescription;
     }
 
-    public GeneralResponse(String error, long timestamp, List<T> data) {
+    public GeneralResponse(String error, long timestamp, T data) {
         this.error = error;
         this.timestamp = timestamp;
         this.data = data;
