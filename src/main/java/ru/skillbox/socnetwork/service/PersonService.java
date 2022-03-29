@@ -19,4 +19,8 @@ public class PersonService {
   public Person getByEmail(String email) {
     return this.userRepository.getByEmail(email);
   }
+
+  public Person getById(int id){
+    return userRepository.getById(id);
+  }
 }
