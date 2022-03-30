@@ -1,17 +1,26 @@
 package ru.skillbox.socnetwork.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/*
+Временно добавлены аннотации @JsonProperty для правильного отображения сущности на фронте, через запросы
+напрямую через репозиторий
+*/
 @Data
 public class Person {
     private int id;
+    @JsonProperty("first_name")
     private String firstName;
+    @JsonProperty("last_name")
     private String lastName;
+    @JsonProperty("reg_date")
     private LocalDateTime regDate;
+    @JsonProperty("birth_date")
     private LocalDate birthDate;
     private String email;
     private String phone;
@@ -24,6 +33,7 @@ public class Person {
     private boolean isApproved;
     private TypePermission messagesPermission;
     private LocalDateTime lastOnlineTime;
+    @JsonProperty("is_blocked")
     private boolean isBlocked;
 
     public Person() {

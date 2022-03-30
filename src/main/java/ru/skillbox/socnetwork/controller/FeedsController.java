@@ -5,14 +5,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
+import ru.skillbox.socnetwork.service.FeedsService;
 
 @RestController
 @RequestMapping("/api/v1/feeds")
 public class FeedsController {
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getFeeds() {
-        return ResponseEntity.ok(TempResponseDto.POSTS_FEEDS_RESPONSE);
-    }
+  private final FeedsService feedsService;
+
+  public FeedsController(FeedsService feedsService){
+    this.feedsService = feedsService;
+  }
+
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> getFeeds() {
+    return ResponseEntity.ok(feedsService.getFeeds());
+  }
 }
