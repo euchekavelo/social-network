@@ -9,8 +9,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.FeedsService;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class ProfileController {
 
     private final PersonService personService;
     private final JwtTokenProvider tokenProvider;
+    private final FeedsService feedsService;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<PersonResponse>> getMyProfile() {
@@ -44,5 +47,10 @@ public class ProfileController {
                 "string",
                 System.currentTimeMillis(),
                 personResponse));
+    }
+
+    @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getWallByProfileId(@PathVariable int id) {
+        return ResponseEntity.ok(feedsService.getFeeds());
     }
 }
