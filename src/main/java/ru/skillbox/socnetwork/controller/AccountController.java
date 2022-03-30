@@ -27,7 +27,6 @@ public class AccountController {
             return ResponseEntity
                     .badRequest()
                     .body(new GeneralResponse<>("invalid_request", "string"));
-            //throw new BadRequestException("Invalid email or password for registration");
         }
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",

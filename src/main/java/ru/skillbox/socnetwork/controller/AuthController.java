@@ -41,11 +41,12 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<GeneralResponse<Message>> logout(
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response
+    ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, null);
+            auth.setAuthenticated(false);
             return ResponseEntity.ok()
                     .body(new GeneralResponse<>(
                             "string",
@@ -55,6 +56,5 @@ public class AuthController {
         return ResponseEntity.badRequest().body(new GeneralResponse<>(
                 "invalid_request",
                 "string"));
-        //throw new BadRequestException("bad logout");
     }
 }

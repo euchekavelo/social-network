@@ -55,12 +55,30 @@ public class PersonResponse {
         this.isBlocked = person.isBlocked();
         this.token = token;
     }
+
     public PersonResponse(Person person) {
-        this(person, "");
+        this.id = person.getId();
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.regDate = getLong(person.getRegDate());
+        this.birthDate = getLong(person.getBirthDate());
+        this.email = person.getEmail();
+        this.phone = person.getPhone();
+        this.photo = person.getPhoto();
+        this.about = person.getAbout();
+        this.city = person.getCity();
+        this.country = person.getCountry();
+        this.messagesPermission = person.getMessagesPermission().toString();
+        this.lastOnlineTime = getLong(person.getLastOnlineTime());
+        this.isBlocked = person.isBlocked();
     }
 
+//    public PersonResponse(Person person) {
+//        this(person, "");
+//    }
+
     private long getLong(LocalDateTime time) {
-        return time.toEpochSecond(ZoneOffset.of("+03:00"));
+        return time.toEpochSecond(ZoneOffset.of("+00:00"));
     }
 
     private long getLong(LocalDate date) {

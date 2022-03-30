@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
+import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
@@ -23,24 +26,29 @@ public class ProfileController {
     private final JwtTokenProvider tokenProvider;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<List<PersonResponse>>> getMyProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<GeneralResponse<PersonResponse>> getMyProfile(@RequestHeader("Authorization") String token) {
         /**
          * TODO check method of excrete email from token
          */
-        String email = tokenProvider.getEmailFromToken(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("auth: " + auth);
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        System.out.println("securityUser: " + securityUser);
+        String email = securityUser.getUsername();
+        System.out.println("email: " + email);
         PersonResponse personResponse = new PersonResponse(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                List.of(personResponse)));
+                personResponse));
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getProfileById(@PathVariable int id) {
+    public ResponseEntity<GeneralResponse<PersonResponse>> getProfileById(@PathVariable int id) {
         PersonResponse personResponse = new PersonResponse(personService.getById(id));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                List.of(personResponse)));
+                personResponse));
     }
 }

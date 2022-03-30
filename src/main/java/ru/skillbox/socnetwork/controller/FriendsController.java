@@ -36,7 +36,7 @@ public class FriendsController {
     public ResponseEntity<Object> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
-        List<PersonResponse> dataRespons = personService
+        List<PersonResponse> dataResponse = personService
                 .getRecommendedFriendsList()
                 .stream()
                 .map(PersonResponse::new)
@@ -44,9 +44,9 @@ public class FriendsController {
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                0,
+                dataResponse.size(),
                 offset,
                 perPage,
-                dataRespons));
+                dataResponse));
     }
 }
