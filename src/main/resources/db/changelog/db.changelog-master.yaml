@@ -26,9 +26,17 @@ databaseChangeLog:
   - changeSet:
       id: 4
       author: Kirill Suslov
-      comment: Added foreign keys for table 'friendship', 
+      comment: Added foreign keys for table 'friendship',
                and filled tables (friendship_status, friendship) with mock data.
       sqlFile:
         encoding: UTF-8
         path: migrations/004-added-foreign-keys-and-fill-some-tables.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 5
+      author: Alexandr Luzyanin
+      comment: change users password to crypto 11111111
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/005-change-users-password-to-crypto.sql
         relativeToChangelogFile: true

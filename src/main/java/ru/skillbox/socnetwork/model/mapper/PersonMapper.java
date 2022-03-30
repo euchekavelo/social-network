@@ -5,34 +5,52 @@ import ru.skillbox.socnetwork.model.entity.Person;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PersonMapper implements RowMapper<Person> {
 
-  @Override
-  public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
-    Person person = new Person();
-    person.setId(rs.getInt("id"));
-    person.setFirstName(rs.getString("first_name"));
-    person.setLastName(rs.getString("last_name"));
-    person.setRegDate(rs.getDate("reg_date").getTime());
-    person.setBirthDate(rs.getDate("birth_date").getTime());
-    person.setEmail(rs.getString("e_mail"));
-    person.setPhone(rs.getString("phone"));
-    person.setPassword(rs.getString("password"));
-    person.setPhoto(rs.getString("photo"));
-    person.setAbout(rs.getString("about"));
-    person.setCity(rs.getString("city"));
-    person.setCountry(rs.getString("country"));
-    person.setLastOnlineTime(rs.getLong("last_online_time"));
-    person.setConfirmationCode(rs.getString("confirmation_code"));
+    @Override
+    public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Person mapper = new Person();
+        mapper.setId(rs.getInt("id"));
+        mapper.setFirstName(rs.getString("first_name"));
+        mapper.setLastName(rs.getString("last_name"));
+        mapper.setRegDate(getDateTime(rs, "reg_date"));
+        mapper.setBirthDate(getDate(rs, "birth_date"));
+        mapper.setEmail(rs.getString("e_mail"));
+        mapper.setPhone(rs.getString("phone"));
+        mapper.setPassword(rs.getString("password"));
+        mapper.setPhoto(rs.getString("photo"));
+        mapper.setAbout(rs.getString("about"));
+        mapper.setCity(rs.getString("town"));
+        mapper.setLastOnlineTime(getDateTime(rs, "last_online_time"));
 
-    //TODO   добавить по надобности остальные:
-    //      confirmation_code varchar(20),
-    //      is_approved boolean,
-    //      messages_permission permission_type,
-    //      is_blocked boolean,
-    return person;
-  }
+        //TODO   добавить по надобности остальные:
+        //      confirmation_code varchar(20),
+        //      is_approved boolean,
+        //      messages_permission permission_type,
+        //      is_blocked boolean,
+        return mapper;
+    }
+
+    private LocalDateTime getDateTime(ResultSet rs, String value) throws SQLException {
+        Timestamp time = rs.getTimestamp(value);
+        if (time != null) {
+            return time.toLocalDateTime();
+        }
+        return LocalDateTime.now();
+    }
+
+    private LocalDate getDate(ResultSet rs, String value) throws SQLException {
+        Timestamp time = rs.getTimestamp(value);
+        if (time != null) {
+            return time.toLocalDateTime().toLocalDate();
+        }
+        return LocalDate.now();
+    }
+
 
 }
 
