@@ -1,6 +1,7 @@
 
 package ru.skillbox.socnetwork.model.rsdto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,8 @@ import java.time.ZoneOffset;
 
 @Data
 @AllArgsConstructor
-public class PersonDataResponse {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PersonResponse {
     private int id;
     @JsonProperty("first_name")
     private String firstName;
@@ -36,7 +38,7 @@ public class PersonDataResponse {
     private boolean isBlocked;
     private String token;
 
-    public PersonDataResponse(Person person, String token) {
+    public PersonResponse(Person person, String token) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
@@ -53,8 +55,7 @@ public class PersonDataResponse {
         this.isBlocked = person.isBlocked();
         this.token = token;
     }
-
-    public PersonDataResponse(Person person) {
+    public PersonResponse(Person person) {
         this(person, "");
     }
 
