@@ -11,10 +11,11 @@ public class PostMapper implements RowMapper<Post> {
         Post mapper = new Post();
         mapper.setId(rs.getInt("id"));
         mapper.setPostText(rs.getString("post_text"));
-        mapper.setAuthorId(rs.getInt("author_id"));
+        mapper.setAuthor(rs.getInt("author"));
         mapper.setTitle(rs.getString("title"));
         mapper.setTime(rs.getTimestamp("time").toLocalDateTime());
         mapper.setBlocked(rs.getBoolean("is_blocked"));
+        mapper.setLikes(rs.getInt("likes"));
         return mapper;
     }
 }

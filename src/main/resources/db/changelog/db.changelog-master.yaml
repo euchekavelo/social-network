@@ -40,3 +40,11 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/005-change-users-password-to-crypto.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 6
+      author: Dmitry Stolyarenko
+      comment: update post
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/006-update-post.sql
+        relativeToChangeLogFile: true
