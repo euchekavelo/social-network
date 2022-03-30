@@ -59,7 +59,7 @@ public class PostService {
         return postRepository.deleteById(postId);
     }
 
-    private List<CommentDto> getCommentDtoList(int postId) {
+    public List<CommentDto> getCommentDtoList(int postId) {
         List<PostComment> postComments = commentRepository.getByPostId(postId);
         if (postComments == null) {
             return new ArrayList<>();

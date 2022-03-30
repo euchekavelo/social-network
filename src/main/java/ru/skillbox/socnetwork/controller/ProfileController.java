@@ -52,8 +52,10 @@ public class ProfileController {
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getWallByProfileId(@PathVariable int id) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, 0, 20));
+    public ResponseEntity<Object> getWallByProfileId(@PathVariable int id,
+                                                     @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                                     @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage));
         return ResponseEntity.ok(response);
     }
 }
