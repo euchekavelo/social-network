@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Count {
-    private int count;
+    private Integer count;
 }

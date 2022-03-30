@@ -40,11 +40,8 @@ public class AuthController {
      * TODO build correct logout
      */
     @PostMapping("/logout")
-    public ResponseEntity<GeneralResponse<Message>> logout(
-            HttpServletRequest request, HttpServletResponse response
-    ) {
+    public ResponseEntity<GeneralResponse<Message>> logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         if (auth != null) {
             auth.setAuthenticated(false);
             return ResponseEntity.ok()

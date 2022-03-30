@@ -9,9 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class DialogsResponse {
-    private int id;
+    private Integer id;
     @JsonProperty("unread_count")
-    private int unreadCount;
+    private Integer unreadCount;
     @JsonProperty("last_message")
     private LastMessageResponse lastMessageResponse;
 }

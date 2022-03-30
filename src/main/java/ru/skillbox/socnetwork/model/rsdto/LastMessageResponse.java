@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LastMessageResponse {
-    private int id;
-    private long time;
+    private Integer id;
+    private Long time;
     @JsonProperty("author_id")
-    private int authorId;
+    private Integer authorId;
     @JsonProperty("recipient_id")
-    private int recipientId;
+    private Integer recipientId;
     @JsonProperty("message_text")
     private String messageText;
     @JsonProperty("read_status")

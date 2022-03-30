@@ -26,16 +26,10 @@ public class ProfileController {
     private final JwtTokenProvider tokenProvider;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PersonResponse>> getMyProfile(@RequestHeader("Authorization") String token) {
-        /**
-         * TODO check method of excrete email from token
-         */
+    public ResponseEntity<GeneralResponse<PersonResponse>> getMyProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("auth: " + auth);
         SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        System.out.println("securityUser: " + securityUser);
         String email = securityUser.getUsername();
-        System.out.println("email: " + email);
         PersonResponse personResponse = new PersonResponse(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",

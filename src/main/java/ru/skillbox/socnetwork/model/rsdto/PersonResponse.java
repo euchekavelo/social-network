@@ -15,15 +15,15 @@ import java.time.ZoneOffset;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PersonResponse {
-    private int id;
+    private Integer id;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")
     private String lastName;
     @JsonProperty("reg_date")
-    private long regDate;
+    private Long regDate;
     @JsonProperty("birth_date")
-    private long birthDate;
+    private Long birthDate;
     private String email;
     private String phone;
     private String photo;
@@ -33,28 +33,10 @@ public class PersonResponse {
     @JsonProperty("messages_permission")
     private String messagesPermission;
     @JsonProperty("last_online_time")
-    private long lastOnlineTime;
+    private Long lastOnlineTime;
     @JsonProperty("is_blocked")
-    private boolean isBlocked;
+    private Boolean isBlocked;
     private String token;
-
-    public PersonResponse(Person person, String token) {
-        this.id = person.getId();
-        this.firstName = person.getFirstName();
-        this.lastName = person.getLastName();
-        this.regDate = getLong(person.getRegDate());
-        this.birthDate = getLong(person.getBirthDate());
-        this.email = person.getEmail();
-        this.phone = person.getPhone();
-        this.photo = person.getPhoto();
-        this.about = person.getAbout();
-        this.city = person.getCity();
-        this.country = person.getCountry();
-        this.messagesPermission = person.getMessagesPermission().toString();
-        this.lastOnlineTime = getLong(person.getLastOnlineTime());
-        this.isBlocked = person.isBlocked();
-        this.token = token;
-    }
 
     public PersonResponse(Person person) {
         this.id = person.getId();
@@ -73,9 +55,12 @@ public class PersonResponse {
         this.isBlocked = person.isBlocked();
     }
 
-//    public PersonResponse(Person person) {
-//        this(person, "");
-//    }
+    public PersonResponse(Person person, String token) {
+        this(person);
+        this.token = token;
+    }
+
+
 
     private long getLong(LocalDateTime time) {
         return time.toEpochSecond(ZoneOffset.of("+00:00"));

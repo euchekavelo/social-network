@@ -9,16 +9,16 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneralResponse<T> {
-    private int id;
+    private Integer id;
     private String title;
     private String path;
     private String error;
     @JsonProperty("error_description")
     private String errorDescription;
-    private long timestamp;
-    private int total = 0;
-    private int offset = 0;
-    private int perPage = 20;
+    private Long timestamp;
+    private Integer total;
+    private Integer offset;
+    private Integer perPage;
     private T data;
 
     public GeneralResponse(String path, String error, String errorDescription, long timestamp) {
