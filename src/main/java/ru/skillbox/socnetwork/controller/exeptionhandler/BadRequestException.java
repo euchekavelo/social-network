@@ -11,7 +11,7 @@ public class BadRequestException extends RuntimeException {
     @JsonProperty("error_description")
     private String errorDescription;
 
-    public BadRequestException (String errorDescription) {
+    public BadRequestException(String errorDescription) {
         super(errorDescription);
         this.error = "invalid_request";
         this.errorDescription = errorDescription;

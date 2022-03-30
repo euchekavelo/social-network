@@ -11,14 +11,16 @@ import ru.skillbox.socnetwork.service.FeedsService;
 @RequestMapping("/api/v1/feeds")
 public class FeedsController {
 
-  private final FeedsService feedsService;
+    private final FeedsService feedsService;
 
-  public FeedsController(FeedsService feedsService){
-    this.feedsService = feedsService;
-  }
+    public FeedsController(FeedsService feedsService) {
+        this.feedsService = feedsService;
+    }
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getFeeds() {
-    return ResponseEntity.ok(feedsService.getFeeds());
-  }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getFeeds() {
+        return ResponseEntity.ok(feedsService.getFeeds());
+    }
+
+
 }

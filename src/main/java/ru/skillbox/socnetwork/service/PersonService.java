@@ -47,7 +47,7 @@ public class PersonService {
         if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
             return null;
         }
-        //TODO вынести new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()) в Person?
+        //TODO вынести создание персона из RegisterDto в Person?
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));

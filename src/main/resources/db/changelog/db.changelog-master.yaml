@@ -48,3 +48,11 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/006-update-post.sql
         relativeToChangeLogFile: true
+  - changeSet:
+      id: 7
+      author: Alexandr Luzyanin
+      comment: fill comments table
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/007-fill-comment-table.sql
+        relativeToChangelogFile: true

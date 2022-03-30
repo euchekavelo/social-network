@@ -16,16 +16,6 @@ public class RegisterDto {
     private String code;
 
 
-    /**
-     *      TODO chek method checkPassword
-     */
-    public boolean checkPassword (String inDBPassword) {
-        if (!passwordsEqual()){
-            return false;
-        }
-        return new BCryptPasswordEncoder().matches(this.firstPassword, inDBPassword);
-    }
-
     public boolean passwordsEqual() {
         return firstPassword.equals(secondPassword);
     }

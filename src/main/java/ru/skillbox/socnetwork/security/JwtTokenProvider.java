@@ -55,7 +55,7 @@ public class JwtTokenProvider {
             /**
              * TODO do something with logout after token expired
              */
-//            logger.error("JWT token is expired: {}", e.getMessage());
+            logger.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {

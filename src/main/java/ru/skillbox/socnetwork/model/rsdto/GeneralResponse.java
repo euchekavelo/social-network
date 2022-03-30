@@ -3,11 +3,13 @@ package ru.skillbox.socnetwork.model.rsdto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class GeneralResponse<T> {
     private Integer id;
     private String title;
@@ -46,5 +48,9 @@ public class GeneralResponse<T> {
         this.error = error;
         this.timestamp = timestamp;
         this.data = data;
+    }
+
+    public GeneralResponse(T data) {
+        this("string", System.currentTimeMillis(), 20, 0, 20, data);
     }
 }
