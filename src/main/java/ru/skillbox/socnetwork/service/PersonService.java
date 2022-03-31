@@ -39,10 +39,6 @@ public class PersonService {
         return personRepository.getById(id);
     }
 
-    public List<Person> getRecommendedFriendsList() {
-        return personRepository.getListRecommendedFriends();
-    }
-
     public Person getPersonAfterRegistration(RegisterDto registerDto) {
         if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
             return null;
