@@ -11,7 +11,7 @@ public class NotificationMapper implements RowMapper<Notification> {
         Notification mapper = new Notification();
         mapper.setId(rs.getInt("id"));
         mapper.setTypeId(rs.getInt("type_id"));
-        mapper.setSentTime(rs.getTimestamp("sent_time").toLocalDateTime());
+        mapper.setSentTime(rs.getTimestamp("sent_time").getTime());
         mapper.setPersonId(rs.getInt("person_id"));
         mapper.setNotificationTypeId(rs.getInt("entity_id"));
         mapper.setContact(rs.getString("contact"));

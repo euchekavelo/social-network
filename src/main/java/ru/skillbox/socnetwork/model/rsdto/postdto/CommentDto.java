@@ -28,7 +28,7 @@ public class CommentDto {
         this.parentId = comment.getParentId();
         this.postId = comment.getPostId();
         this.commentText = comment.getCommentText();
-        this.time = comment.getTime().toEpochSecond(ZoneOffset.of("+00:00"));
+        this.time = comment.getTime();
         this.authorId = comment.getAuthorId();
         this.isBlocked = comment.getIsBlocked();
     }

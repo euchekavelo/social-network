@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class Post {
     private int id;
-    private LocalDateTime time;
+    private long time;
     private int author;
     private String title;
     @JsonProperty("post_text")

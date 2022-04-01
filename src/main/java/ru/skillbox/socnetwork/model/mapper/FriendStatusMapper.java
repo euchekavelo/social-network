@@ -11,7 +11,7 @@ public class FriendStatusMapper implements RowMapper<FriendStatus> {
     public FriendStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
         FriendStatus mapper = new FriendStatus();
         mapper.setId(rs.getInt("id"));
-        mapper.setTime(rs.getTimestamp("time").toLocalDateTime());
+        mapper.setTime(rs.getTimestamp("time").getTime());
         mapper.setName(rs.getString("name"));
         mapper.setCode(TypeCode.valueOf(rs.getString("code")));
         return mapper;

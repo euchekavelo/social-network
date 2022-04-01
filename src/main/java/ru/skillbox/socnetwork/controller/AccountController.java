@@ -30,7 +30,7 @@ public class AccountController {
         }
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
-                person.getRegDate().toLocalDate().toEpochDay(),
+                person.getRegDate(),
                 new Message("ok")));
     }
 }

@@ -25,7 +25,7 @@ public class PostDto {
 
     public PostDto(Post post, PersonResponse personResponse, List<CommentDto> comments) {
         this.id = post.getId();
-        this.time = getLong(post.getTime());
+        this.time = post.getTime();
         this.author = personResponse;
         this.title = post.getTitle();
         this.postText = post.getPostText();

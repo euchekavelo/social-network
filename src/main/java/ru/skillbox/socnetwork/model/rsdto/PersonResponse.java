@@ -42,8 +42,8 @@ public class PersonResponse {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
-        this.regDate = getLong(person.getRegDate());
-        this.birthDate = getLong(person.getBirthDate());
+        this.regDate = person.getRegDate();
+        this.birthDate = person.getBirthDate();
         this.email = person.getEmail();
         this.phone = person.getPhone();
         this.photo = person.getPhoto();
@@ -51,22 +51,12 @@ public class PersonResponse {
         this.city = person.getCity();
         this.country = person.getCountry();
         this.messagesPermission = person.getMessagesPermission().toString();
-        this.lastOnlineTime = getLong(person.getLastOnlineTime());
+        this.lastOnlineTime = person.getLastOnlineTime();
         this.isBlocked = person.isBlocked();
     }
 
     public PersonResponse(Person person, String token) {
         this(person);
         this.token = token;
-    }
-
-
-
-    private long getLong(LocalDateTime time) {
-        return time.toEpochSecond(ZoneOffset.of("+00:00"));
-    }
-
-    private long getLong(LocalDate date) {
-        return date.toEpochDay();
     }
 }
