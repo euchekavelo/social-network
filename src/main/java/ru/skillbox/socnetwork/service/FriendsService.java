@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
@@ -22,10 +22,10 @@ public class FriendsService {
         return (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public List<PersonResponse> getListRecommendedFriends() {
+    public List<PersonDto> getListRecommendedFriends() {
         String email = getAuthorizedUser().getUsername();
         return personRepository.getListRecommendedFriends(email).stream()
-                .map(PersonResponse::new)
+                .map(PersonDto::new)
                 .collect(Collectors.toList());
     }
 

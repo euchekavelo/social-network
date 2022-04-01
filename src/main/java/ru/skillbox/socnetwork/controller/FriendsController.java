@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
+import ru.skillbox.socnetwork.service.FriendsService;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/friends")
 public class FriendsController {
 
-    private final PersonService personService;
+    private final FriendsService personService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getFriends() {
@@ -37,10 +38,7 @@ public class FriendsController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
         List<PersonDto> dataResponse = personService
-                .getRecommendedFriendsList()
-                .stream()
-                .map(PersonDto::new)
-                .collect(Collectors.toList());
+                .getListRecommendedFriends();
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
