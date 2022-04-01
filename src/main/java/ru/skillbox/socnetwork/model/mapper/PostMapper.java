@@ -13,7 +13,7 @@ public class PostMapper implements RowMapper<Post> {
         mapper.setPostText(rs.getString("post_text"));
         mapper.setAuthor(rs.getInt("author"));
         mapper.setTitle(rs.getString("title"));
-        mapper.setTime(rs.getTimestamp("time").toLocalDateTime());
+        mapper.setTime(rs.getTimestamp("time").getTime());
         mapper.setBlocked(rs.getBoolean("is_blocked"));
         mapper.setLikes(rs.getInt("likes"));
         return mapper;

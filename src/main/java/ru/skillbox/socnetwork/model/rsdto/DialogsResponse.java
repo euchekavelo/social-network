@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -15,7 +13,7 @@ public class DialogsResponse {
     @JsonProperty("unread_count")
     private Integer unreadCount;
     @JsonProperty("last_message")
-    private LastMessageResponse lastMessageResponse;
+    private LastMessageDto lastMessageDto;
 //    private Integer count;
 //    private String message;
     /**

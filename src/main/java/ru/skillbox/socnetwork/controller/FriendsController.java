@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.rsdto.GeneralListResponse;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
-import ru.skillbox.socnetwork.service.FriendsService;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/friends")
 public class FriendsController {
 
-    private final FriendsService friendsService;
+    private final PersonService personService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getFriends() {
@@ -37,11 +35,18 @@ public class FriendsController {
     @GetMapping("/recommendations")
     public ResponseEntity<Object> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
-            @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
-
-        GeneralListResponse<PersonResponse> generalListResponse =
-                new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage);
-
-        return ResponseEntity.ok(generalListResponse);
+            @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+        List<PersonDto> dataResponse = personService
+                .getRecommendedFriendsList()
+                .stream()
+                .map(PersonDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new GeneralResponse<>(
+                "string",
+                System.currentTimeMillis(),
+                dataResponse.size(),
+                offset,
+                perPage,
+                dataResponse));
     }
 }

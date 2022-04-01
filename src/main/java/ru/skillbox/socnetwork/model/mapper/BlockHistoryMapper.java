@@ -12,7 +12,7 @@ public class BlockHistoryMapper implements RowMapper<BlockHistory> {
     public BlockHistory mapRow(ResultSet rs, int rowNum) throws SQLException {
         BlockHistory mapper = new BlockHistory();
         mapper.setId(rs.getInt("id"));
-        mapper.setTime(rs.getTimestamp("time").toLocalDateTime());
+        mapper.setTime(rs.getTimestamp("time").getTime());
         mapper.setPersonId(rs.getInt("person_id"));
         mapper.setPostId(rs.getInt("post_id"));
         mapper.setCommentId(rs.getInt("comment_id"));

@@ -17,15 +17,15 @@ public class PersonMapper implements RowMapper<Person> {
         mapper.setId(rs.getInt("id"));
         mapper.setFirstName(rs.getString("first_name"));
         mapper.setLastName(rs.getString("last_name"));
-        mapper.setRegDate(getDateTime(rs, "reg_date"));
-        mapper.setBirthDate(getDate(rs, "birth_date"));
+        mapper.setRegDate(rs.getTimestamp("reg_date").getTime());
+        mapper.setBirthDate(rs.getTimestamp("birth_date").getTime());
         mapper.setEmail(rs.getString("e_mail"));
         mapper.setPhone(rs.getString("phone"));
         mapper.setPassword(rs.getString("password"));
         mapper.setPhoto(rs.getString("photo"));
         mapper.setAbout(rs.getString("about"));
         mapper.setCity(rs.getString("town"));
-        mapper.setLastOnlineTime(getDateTime(rs, "last_online_time"));
+        mapper.setLastOnlineTime(rs.getTimestamp("last_online_time").getTime());
 
         //TODO   добавить по надобности остальные:
         //      confirmation_code varchar(20),
@@ -34,24 +34,6 @@ public class PersonMapper implements RowMapper<Person> {
         //      is_blocked boolean,
         return mapper;
     }
-
-    private LocalDateTime getDateTime(ResultSet rs, String value) throws SQLException {
-        Timestamp time = rs.getTimestamp(value);
-        if (time != null) {
-            return time.toLocalDateTime();
-        }
-        return LocalDateTime.now();
-    }
-
-    private LocalDate getDate(ResultSet rs, String value) throws SQLException {
-        Timestamp time = rs.getTimestamp(value);
-        if (time != null) {
-            return time.toLocalDateTime().toLocalDate();
-        }
-        return LocalDate.now();
-    }
-
-
 }
 
 

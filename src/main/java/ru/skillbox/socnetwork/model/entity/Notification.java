@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Notification {
     private int id;
     private int typeId;
-    private LocalDateTime sentTime;
+    private long sentTime;
     private int personId;
     private int notificationTypeId;
     private String contact;

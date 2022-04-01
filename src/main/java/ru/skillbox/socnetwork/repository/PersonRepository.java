@@ -51,7 +51,7 @@ public class PersonRepository {
     }
 
     public Person saveFromRegistration(Person person) {
-        person.setRegDate(LocalDateTime.now());
+        person.setRegDate(System.currentTimeMillis());
         String sql = "insert into person (first_name, last_name, reg_date, e_mail, password) values (?, ?, ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),

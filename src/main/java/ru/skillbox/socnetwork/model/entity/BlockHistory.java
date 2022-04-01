@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class BlockHistory {
     private int id;
-    private LocalDateTime time;
+    private long time;
     private int personId;
     private int postId;
     private int commentId;

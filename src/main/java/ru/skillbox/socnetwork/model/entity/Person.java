@@ -19,9 +19,9 @@ public class Person {
     @JsonProperty("last_name")
     private String lastName;
     @JsonProperty("reg_date")
-    private LocalDateTime regDate;
+    private long regDate;
     @JsonProperty("birth_date")
-    private LocalDate birthDate;
+    private long birthDate;
     private String email;
     private String phone;
     private String password;
@@ -32,7 +32,7 @@ public class Person {
     private String confirmationCode;
     private boolean isApproved;
     private TypePermission messagesPermission;
-    private LocalDateTime lastOnlineTime;
+    private long lastOnlineTime;
     @JsonProperty("is_blocked")
     private boolean isBlocked;
 
