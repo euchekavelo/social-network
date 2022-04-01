@@ -10,7 +10,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.Message;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
 import ru.skillbox.socnetwork.service.PersonService;
 
 @RequiredArgsConstructor

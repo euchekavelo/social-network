@@ -7,14 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Person;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PersonResponse {
+public class PersonDto {
     private Integer id;
     @JsonProperty("first_name")
     private String firstName;
@@ -38,7 +34,7 @@ public class PersonResponse {
     private Boolean isBlocked;
     private String token;
 
-    public PersonResponse(Person person) {
+    public PersonDto(Person person) {
         this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
@@ -55,7 +51,7 @@ public class PersonResponse {
         this.isBlocked = person.isBlocked();
     }
 
-    public PersonResponse(Person person, String token) {
+    public PersonDto(Person person, String token) {
         this(person);
         this.token = token;
     }

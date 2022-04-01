@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.Message;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.PersonService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,7 +25,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/login")
-    public ResponseEntity<GeneralResponse<PersonResponse>> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) {
 
         return ResponseEntity.ok()
                 .body(new GeneralResponse<>("string", System.currentTimeMillis(),

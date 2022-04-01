@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rsdto.*;
-
-import java.util.List;
 @RestController
 @RequestMapping("/api/v1/dialogs")
 public class DialogsController {
@@ -24,7 +22,7 @@ public class DialogsController {
                 new DialogsResponse(
                         1,
                         0,
-                        new LastMessageResponse(
+                        new LastMessageDto(
                                 12,
                                 System.currentTimeMillis(),
                                 1,

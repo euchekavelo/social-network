@@ -7,13 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
-import ru.skillbox.socnetwork.service.FeedsService;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 
@@ -31,24 +29,24 @@ public class ProfileController {
     private final PostService postService;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PersonResponse>> getMyProfile() {
+    public ResponseEntity<GeneralResponse<PersonDto>> getMyProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
         String email = securityUser.getUsername();
-        PersonResponse personResponse = new PersonResponse(personService.getByEmail(email));
+        PersonDto personDto = new PersonDto(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                personResponse));
+                personDto));
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PersonResponse>> getProfileById(@PathVariable int id) {
-        PersonResponse personResponse = new PersonResponse(personService.getById(id));
+    public ResponseEntity<GeneralResponse<PersonDto>> getProfileById(@PathVariable int id) {
+        PersonDto personDto = new PersonDto(personService.getById(id));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                personResponse));
+                personDto));
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)

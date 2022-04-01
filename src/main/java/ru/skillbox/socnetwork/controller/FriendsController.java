@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
 import ru.skillbox.socnetwork.service.PersonService;
@@ -36,10 +36,10 @@ public class FriendsController {
     public ResponseEntity<Object> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
-        List<PersonResponse> dataResponse = personService
+        List<PersonDto> dataResponse = personService
                 .getRecommendedFriendsList()
                 .stream()
-                .map(PersonResponse::new)
+                .map(PersonDto::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",

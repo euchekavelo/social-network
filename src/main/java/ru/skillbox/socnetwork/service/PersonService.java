@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 
@@ -56,8 +56,8 @@ public class PersonService {
         return saveFromRegistration(person);
     }
 
-    public PersonResponse getPersonAfterLogin(LoginDto loginDto) {
-        return new PersonResponse(personRepository.getPersonAfterLogin(loginDto),
+    public PersonDto getPersonAfterLogin(LoginDto loginDto) {
+        return new PersonDto(personRepository.getPersonAfterLogin(loginDto),
                 tokenProvider.generateToken(loginDto.getEmail()));
     }
 }

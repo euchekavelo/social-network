@@ -3,7 +3,7 @@ package ru.skillbox.socnetwork.model.rsdto.postdto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Post;
-import ru.skillbox.socnetwork.model.rsdto.PersonResponse;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -13,7 +13,7 @@ import java.util.List;
 public class PostDto {
     Integer id;
     Long time;
-    PersonResponse author;
+    PersonDto author;
     String title;
     @JsonProperty("post_text")
     String postText;
@@ -23,10 +23,10 @@ public class PostDto {
     List<CommentDto> comments;
     String type;
 
-    public PostDto(Post post, PersonResponse personResponse, List<CommentDto> comments) {
+    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments) {
         this.id = post.getId();
         this.time = post.getTime();
-        this.author = personResponse;
+        this.author = personDto;
         this.title = post.getTitle();
         this.postText = post.getPostText();
         this.likes = post.getLikes();
