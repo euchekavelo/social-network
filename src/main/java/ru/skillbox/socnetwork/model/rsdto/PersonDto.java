@@ -48,7 +48,7 @@ public class PersonDto {
         this.country = person.getCountry();
         this.messagesPermission = person.getMessagesPermission().toString();
         this.lastOnlineTime = person.getLastOnlineTime();
-        this.isBlocked = person.isBlocked();
+        this.isBlocked = person.getIsBlocked();
     }
 
     public PersonDto(Person person, String token) {

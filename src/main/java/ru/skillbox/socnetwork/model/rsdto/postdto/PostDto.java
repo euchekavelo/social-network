@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.model.rsdto.postdto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Post;
@@ -10,10 +11,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDto {
     Integer id;
     Long time;
     PersonDto author;
+    Integer authorId;
     String title;
     @JsonProperty("post_text")
     String postText;
@@ -30,12 +33,8 @@ public class PostDto {
         this.title = post.getTitle();
         this.postText = post.getPostText();
         this.likes = post.getLikes();
-        this.isBlocked = post.isBlocked();
+        this.isBlocked = post.getIsBlocked();
         this.comments = comments;
         this.type = "POSTED";
-    }
-
-    private long getLong(LocalDateTime time) {
-        return time.toEpochSecond(ZoneOffset.of("+00:00"));
     }
 }

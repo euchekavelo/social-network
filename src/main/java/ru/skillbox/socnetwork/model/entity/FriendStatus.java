@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class FriendStatus {
-    private int id;
-    private long time;
+    private Integer id;
+    private Long time;
     private String name;
     private TypeCode code;
 }

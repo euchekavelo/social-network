@@ -22,7 +22,7 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtCsrfFilter jwtCsrfFilter;
-    private final List<String> hosts = List.of("http://localhost:8080/", "http://195.133.201.227:8080/");
+    private final List<String> hosts = List.of("http://localhost:8080/", "http://localhost:8086/", "http://195.133.201.227:8080/");
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -46,15 +46,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedHeaders(List.of(""));
-        configuration.setAllowedMethods(List.of(""));
-        configuration.setAllowedOrigins(hosts);
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedHeaders(List.of(""));
+//        configuration.setAllowedMethods(List.of(""));
+//        configuration.setAllowedOrigins(hosts);
+//        configuration.setAllowCredentials(true);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }

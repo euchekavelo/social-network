@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class BlockHistory {
-    private int id;
-    private long time;
-    private int personId;
-    private int postId;
-    private int commentId;
+    private Integer id;
+    private Long time;
+    private Integer personId;
+    private Integer postId;
+    private Integer commentId;
     private TypeAction action;
 }

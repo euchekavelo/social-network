@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
@@ -52,8 +53,18 @@ public class ProfileController {
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getWallByProfileId(@PathVariable int id,
                                                      @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                     @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+                                                     @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> addNewPost(@PathVariable int id,
+                                             @RequestParam(value = "publish_date") long publishDate,
+                                             @RequestBody NewPostDto newPostDto) {
+        newPostDto.setAuthorId(id);
+        newPostDto.setTime(publishDate);
+        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addNewPost(newPostDto));
         return ResponseEntity.ok(response);
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class PostComment {
     private Integer id;
-    private long time;
+    private Long time;
     private Integer postId;
     private Integer parentId;
     private Integer authorId;

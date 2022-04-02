@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 */
 @Data
 public class Person {
-    private int id;
+    private Integer id;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")
     private String lastName;
     @JsonProperty("reg_date")
-    private long regDate;
+    private Long regDate;
     @JsonProperty("birth_date")
-    private long birthDate;
+    private Long birthDate;
     private String email;
     private String phone;
     private String password;
@@ -30,11 +30,11 @@ public class Person {
     private String city;
     private String country;
     private String confirmationCode;
-    private boolean isApproved;
+    private Boolean isApproved;
     private TypePermission messagesPermission;
-    private long lastOnlineTime;
+    private Long lastOnlineTime;
     @JsonProperty("is_blocked")
-    private boolean isBlocked;
+    private Boolean isBlocked;
 
     public Person() {
         this.photo = "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg";

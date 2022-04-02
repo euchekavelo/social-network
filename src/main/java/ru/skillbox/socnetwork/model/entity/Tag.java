@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Tag {
-    private int id;
+    private Integer id;
     private String tag;
 }

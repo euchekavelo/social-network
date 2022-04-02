@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class PostLike {
-    private int id;
-    private long time;
-    private int personId;
-    private int postId;
+    private Integer id;
+    private Long time;
+    private Integer personId;
+    private Integer postId;
 }
