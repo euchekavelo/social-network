@@ -1,27 +1,19 @@
 package ru.skillbox.socnetwork.model.rqdto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import ru.skillbox.socnetwork.model.entity.Tag;
+
+import java.util.List;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@RequiredArgsConstructor
 public class NewPostDto {
     String title;
+    @JsonProperty("post_text")
     String postText;
     Integer authorId;
     Long time;
-
-    public NewPostDto(String title, String postText, int authorId) {
-        this.title = title;
-        this.postText = postText;
-        this.authorId = authorId;
-        this.time = System.currentTimeMillis();
-    }
-
-    public NewPostDto(String title, String postText, long publishDate, int authorId) {
-        this.title = title;
-        this.postText = postText;
-        this.authorId = authorId;
-        this.time = publishDate;
-    }
+    List<Tag> tags;
 }

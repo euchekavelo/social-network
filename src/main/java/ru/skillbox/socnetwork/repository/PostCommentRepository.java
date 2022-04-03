@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.mapper.PostCommentMapper;
+import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 
 import java.util.List;
 @RequiredArgsConstructor
@@ -13,8 +14,27 @@ public class PostCommentRepository {
     private final JdbcTemplate jdbc;
 
     public List<PostComment> getByPostId(int postId) {
-        String sql = "SELECT * FROM post_comment WHERE id = ?";
+        String sql = "SELECT * FROM post_comment WHERE post_id = ?";
         return jdbc.query(sql, new PostCommentMapper(), postId);
     }
-}
 
+    public void addComment(CommentDto comment) {
+        if(comment.getParentId() == null) {
+            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (now(), ?, ?, ?, ?)";
+            jdbc.update(sql, comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked());
+        } else {
+            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values (now(), ?, ?, ?, ?, ?)";
+            jdbc.update(sql, comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
+        }
+    }
+
+    public void editComment(CommentDto comment) {
+        String sql = "UPDATE post_comment set comment_text = ?, time = now() WHERE id = ?";
+        jdbc.update(sql, comment.getCommentText(), comment.getId());
+    }
+
+    public void deleteCommentById(int commentId) {
+        String sql = "DELETE FROM post_comment WHERE id = ?";
+        jdbc.update(sql, commentId);
+    }
+}

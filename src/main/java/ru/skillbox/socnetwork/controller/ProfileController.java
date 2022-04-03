@@ -60,11 +60,15 @@ public class ProfileController {
 
     @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addNewPost(@PathVariable int id,
-                                             @RequestParam(value = "publish_date") long publishDate,
+                                             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
                                              @RequestBody NewPostDto newPostDto) {
         newPostDto.setAuthorId(id);
-        newPostDto.setTime(publishDate);
-        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addNewPost(newPostDto));
+        if (publishDate == -1) {
+            newPostDto.setTime(System.currentTimeMillis());
+        } else {
+            newPostDto.setTime(publishDate);
+        }
+        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto));
         return ResponseEntity.ok(response);
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class SecurityUser implements UserDetails {
 
+    private final Integer id;
     private final String username;
     private final String password;
     private final List<GrantedAuthority> authorities;

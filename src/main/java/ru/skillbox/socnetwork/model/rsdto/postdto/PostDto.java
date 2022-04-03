@@ -3,6 +3,7 @@ package ru.skillbox.socnetwork.model.rsdto.postdto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
@@ -11,6 +12,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDto {
     Integer id;
@@ -35,6 +37,14 @@ public class PostDto {
         this.likes = post.getLikes();
         this.isBlocked = post.getIsBlocked();
         this.comments = comments;
-        this.type = "POSTED";
+        if (this.time < System.currentTimeMillis()) {
+            this.type = "POSTED";
+        } else {
+            this.type = "QUEUED";
+        }
+    }
+
+    public PostDto(int id) {
+        this.id = id;
     }
 }

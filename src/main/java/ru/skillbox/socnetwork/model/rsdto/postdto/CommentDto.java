@@ -3,11 +3,13 @@ package ru.skillbox.socnetwork.model.rsdto.postdto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 
 import java.time.ZoneOffset;
 
 @Data
+@RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentDto {
     Integer id;

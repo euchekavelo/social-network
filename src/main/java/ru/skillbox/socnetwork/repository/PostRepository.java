@@ -8,6 +8,7 @@ import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,8 +20,8 @@ public class PostRepository {
         return jdbc.query("select * from post", new PostMapper());
     }
 
-    public List<Post> getAllWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post LIMIT ? OFFSET ?";
+    public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
+        String sql = "SELECT * FROM post WHERE time < now() ORDER BY time DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), limit, offset);
     }
 
@@ -39,15 +40,24 @@ public class PostRepository {
         return jdbc.update(sql, id);
     }
 
-    public Post addPost(NewPostDto newPostDto) {
-        String sql = "insert into post (time, author_id, title, post_text) values\n" +
-                "(?, ?, ?, ?)";
-        jdbc.queryForObject(sql, new PostMapper(), newPostDto.getTime(), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText());
-        return getLastPersonPost(newPostDto.getAuthorId());
-    }
-
     public Post getLastPersonPost(int personId) {
         String sql = "select * from post where author = ? order by id desc limit 1";
         return jdbc.queryForObject(sql, new PostMapper(), personId);
+    }
+
+    public Post addPost(NewPostDto newPostDto) {
+        String sql = "insert into post (time, author, title, post_text) values (?, ?, ?, ?)";
+        jdbc.update(sql, new Timestamp(newPostDto.getTime()), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText());
+        return getLastPersonPost(newPostDto.getAuthorId());
+    }
+
+    public void editPost(int id, NewPostDto newPostDto) {
+        String sql = "update post set title = ?, post_text = ? where id = ?";
+        jdbc.update(sql, newPostDto.getTitle(), newPostDto.getPostText(), id);
+    }
+
+    public void updatePostLikeCount(Integer likes, Integer postId) {
+        String sql = "update post set likes = ? where id = ?";
+        jdbc.update(sql, likes, postId);
     }
 }

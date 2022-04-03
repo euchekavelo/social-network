@@ -31,6 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public SecurityUser setUserDetails(Person person) {
         List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("USER");
         return SecurityUser.builder()
+                .id(person.getId())
                 .username(person.getEmail())
                 .password(person.getPassword())
                 .authorities(authorities)

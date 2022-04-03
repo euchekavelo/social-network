@@ -24,7 +24,7 @@ public class PostService {
     private final PersonService personService;
 
     public List<PostDto> getALl(int offset, int perPage) {
-        return getPostDtoListOfOnePerson(postRepository.getAllWithOffset(offset, perPage));
+        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage));
     }
 
     public List<PostDto> getWall(int personId, int offset, int perPage) {
@@ -40,24 +40,8 @@ public class PostService {
         return new PostDto(post, personDto, commentDtoList);
     }
 
-    /**
-     * Пока возвращает только пост, не меняет
-     * @param postId
-     * @return
-     */
-    public PostDto updatePostByPostId(int postId) {
-        Post post = postRepository.getById(postId);
-        PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
-        List<CommentDto> commentDtoList = commentRepository
-                .getByPostId(postId)
-                .stream()
-                .map(CommentDto::new)
-                .collect(Collectors.toList());
-        return new PostDto(post, personDto, commentDtoList);
-    }
-
-    public int deletePostById(int postId) {
-        return postRepository.deleteById(postId);
+    public void deletePostById(int postId) {
+        postRepository.deleteById(postId);
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
@@ -76,7 +60,7 @@ public class PostService {
         return postDtoList;
     }
 
-    private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts) {
+    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
         List<PostDto> postDtoList = new ArrayList<>();
         for(Post post : posts) {
             postDtoList.add(new PostDto(post,
@@ -86,8 +70,34 @@ public class PostService {
         return postDtoList;
     }
 
-    public PostDto addNewPost(NewPostDto newPostDto) {
+    public PostDto addPost(NewPostDto newPostDto) {
         Post post = postRepository.addPost(newPostDto);
         return new PostDto(post, new PersonDto(personService.getById(newPostDto.getAuthorId())), new ArrayList<>());
+    }
+
+    public PostDto editPost(int id, NewPostDto newPostDto) {
+        postRepository.editPost(id, newPostDto);
+        return getById(id);
+    }
+
+    public void updatePostLikeCount(Integer likes, Integer postId) {
+        postRepository.updatePostLikeCount(likes, postId);
+    }
+
+    public CommentDto addCommentToPost(CommentDto comment) {
+        commentRepository.addComment(comment);
+        return comment;
+    }
+
+    public CommentDto editCommentToPost(CommentDto comment) {
+        commentRepository.editComment(comment);
+        return comment;
+    }
+
+    public CommentDto deleteCommentToPost(int commentId) {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(commentId);
+        commentRepository.deleteCommentById(commentId);
+        return commentDto;
     }
 }

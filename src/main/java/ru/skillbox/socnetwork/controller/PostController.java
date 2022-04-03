@@ -3,10 +3,14 @@ package ru.skillbox.socnetwork.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
+import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PostService;
 
 import java.util.List;
@@ -31,9 +35,54 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id) {
+        postService.deletePostById(id);
+        GeneralResponse<PostDto> response = new GeneralResponse<>(new PostDto(id));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<PostDto>> editPostById(@PathVariable int id, @RequestBody NewPostDto newPostDto) {
+        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.editPost(id, newPostDto));
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(path = "{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getCommentsByPostId(@PathVariable int id) {
+    public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(@PathVariable int id) {
         GeneralResponse<List<CommentDto>> response = new GeneralResponse<>(postService.getCommentDtoList(id));
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(path = "{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
+                                                                         @RequestBody CommentDto comment) {
+        comment.setAuthorId(getSecurityUser().getId());
+        comment.setTime(System.currentTimeMillis());
+        comment.setPostId(id);
+        comment.setIsBlocked(false);
+        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.addCommentToPost(comment));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable int id,
+                                                                         @PathVariable int commentId,
+                                                                         @RequestBody CommentDto comment) {
+        comment.setId(commentId);
+        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.editCommentToPost(comment));
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping(path = "{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
+                                                                         @PathVariable int commentId) {
+        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
+        return ResponseEntity.ok(response);
+    }
+
+    private SecurityUser getSecurityUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (SecurityUser) auth.getPrincipal();
     }
 }
