@@ -52,13 +52,13 @@ public class PersonRepository {
 
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
-        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password) values (?, ?, ?, ?, ?)";
+        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, now(), ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegDate(),
                 person.getEmail(),
-                person.getPassword());
+                person.getPassword(),
+                person.getPhoto());
         return person;
     }
 
