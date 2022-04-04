@@ -56,3 +56,11 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/007-fill-comment-table.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 8
+      author: Roman Vladimirov
+      comment: create table dialog and add column dialog_id message
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/008-add-dialog.sql
+        relativeToChangelogFile: true

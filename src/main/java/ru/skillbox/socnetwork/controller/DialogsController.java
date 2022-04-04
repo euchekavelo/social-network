@@ -1,34 +1,36 @@
 package ru.skillbox.socnetwork.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.DialogsService;
+
+import java.util.List;
+
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/dialogs")
 public class DialogsController {
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<DialogsResponse>> getDialog() {
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                0,
-                0,
-                20,
-                new DialogsResponse(
-                        1,
-                        0,
-                        new LastMessageDto(
-                                12,
-                                System.currentTimeMillis(),
-                                1,
-                                1,
-                                "string",
-                                "SENT"))));
+    private final DialogsService dialogsService;
+
+    @GetMapping
+    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog(
+            @RequestParam(required = false) String query,
+            @RequestParam(defaultValue = "0", required = false) Integer offset,
+            @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return dialogsService.getDialogs(email);
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
