@@ -8,7 +8,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -50,15 +49,21 @@ public class PersonRepository {
         return jdbc.query("select * from person", new PersonMapper());
     }
 
+    /**
+     * @param person for registration. Put all parameters to DB
+     * @return person with default photo and with current time
+     * @author Alexander Luzyanin
+     */
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
+        person.setPhoto(person.getDefaultPhoto());
         String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, now(), ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
                 person.getEmail(),
                 person.getPassword(),
-                person.getPhoto());
+                person.getDefaultPhoto());
         return person;
     }
 

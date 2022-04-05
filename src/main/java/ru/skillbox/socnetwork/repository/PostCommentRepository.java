@@ -13,12 +13,12 @@ import java.util.List;
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
 
-    public List<PostComment> getByPostId(int postId) {
+    public List<PostComment> getCommentsByPostId(int postId) {
         String sql = "SELECT * FROM post_comment WHERE post_id = ?";
         return jdbc.query(sql, new PostCommentMapper(), postId);
     }
 
-    public void addComment(CommentDto comment) {
+    public void add(CommentDto comment) {
         if(comment.getParentId() == null) {
             String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (now(), ?, ?, ?, ?)";
             jdbc.update(sql, comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked());
@@ -28,13 +28,19 @@ public class PostCommentRepository {
         }
     }
 
-    public void editComment(CommentDto comment) {
+    public void edit(CommentDto comment) {
         String sql = "UPDATE post_comment set comment_text = ?, time = now() WHERE id = ?";
         jdbc.update(sql, comment.getCommentText(), comment.getId());
     }
 
-    public void deleteCommentById(int commentId) {
+    public void deleteById(int commentId) {
         String sql = "DELETE FROM post_comment WHERE id = ?";
         jdbc.update(sql, commentId);
     }
+
+    public PostComment getById(int id) {
+        String sql = "SELECT * FROM post_comment WHERE id = ?";
+        return jdbc.queryForObject(sql, new PostCommentMapper(), id);
+    }
+
 }

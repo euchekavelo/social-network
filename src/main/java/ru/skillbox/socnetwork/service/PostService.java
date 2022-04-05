@@ -45,7 +45,7 @@ public class PostService {
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getByPostId(postId);
+        List<PostComment> postComments = commentRepository.getCommentsByPostId(postId);
         if (postComments == null) {
             return new ArrayList<>();
         }
@@ -85,19 +85,19 @@ public class PostService {
     }
 
     public CommentDto addCommentToPost(CommentDto comment) {
-        commentRepository.addComment(comment);
+        commentRepository.add(comment);
         return comment;
     }
 
     public CommentDto editCommentToPost(CommentDto comment) {
-        commentRepository.editComment(comment);
+        commentRepository.edit(comment);
         return comment;
     }
 
     public CommentDto deleteCommentToPost(int commentId) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(commentId);
-        commentRepository.deleteCommentById(commentId);
+        commentRepository.deleteById(commentId);
         return commentDto;
     }
 }
