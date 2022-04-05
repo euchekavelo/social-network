@@ -35,9 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("**/api/v1/auth/**", "**/api/v1/account/register").permitAll()
+                .antMatchers("/api/v1/auth/**", "/api/v1/account/register").permitAll()
                 .antMatchers("/static/**", "/api/v1/platform/**").permitAll()
-                .antMatchers("/*", "**/api/v1/auth/logout").permitAll()
+                .antMatchers("/*", "/api/v1/auth/logout").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -52,27 +52,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedHeaders(List.of("", "OPTIONS", "DELETE", "POST", "GET", "PATCH", "PUT"));
-        configuration.setAllowedOrigins(hosts);
-            configuration.setAllowedHeaders(List.of("", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
-                    "Access-Control-Request-Headers"));
-//        configuration.setAllowedMethods(List.of("**"));
-        configuration.setAllowedMethods(List.of("", "OPTIONS", "DELETE", "POST", "GET", "PATCH", "PUT"));
-        configuration.setExposedHeaders(List.of("", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-        configuration.setAllowCredentials(true);
+        configuration.applyPermitDefaultValues();
+            configuration.setAllowedOrigins(hosts);
+            configuration.setAllowedMethods(List.of("OPTIONS", "DELETE", "POST", "GET", "PATCH", "PUT"));
+            configuration.setExposedHeaders(List.of("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
+                    "Access-Control-Request-Headers", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+            configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedHeaders(List.of(""));
-//        configuration.setAllowedMethods(List.of(""));
-//        configuration.setAllowedOrigins(hosts);
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }
