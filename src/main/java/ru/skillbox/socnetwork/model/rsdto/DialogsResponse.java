@@ -14,6 +14,10 @@ public class DialogsResponse {
     private Integer unreadCount;
     @JsonProperty("last_message")
     private LastMessageDto lastMessageDto;
+
+    public DialogsResponse() {
+
+    }
 //    private Integer count;
 //    private String message;
     /**

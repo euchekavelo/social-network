@@ -28,9 +28,9 @@ public class DialogsController {
             @RequestParam(defaultValue = "0", required = false) Integer offset,
             @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) {
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return dialogsService.getDialogs(email);
+        return dialogsService.getDialogs(securityUser.getId());
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
