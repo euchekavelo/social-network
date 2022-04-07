@@ -20,17 +20,17 @@ public class PostCommentRepository {
 
     public void add(CommentDto comment) {
         if(comment.getParentId() == null) {
-            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (now(), ?, ?, ?, ?)";
-            jdbc.update(sql, comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked());
+            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (?, ?, ?, ?, ?)";
+            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked());
         } else {
-            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values (now(), ?, ?, ?, ?, ?)";
-            jdbc.update(sql, comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
+            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values (?, ?, ?, ?, ?, ?)";
+            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
         }
     }
 
     public void edit(CommentDto comment) {
-        String sql = "UPDATE post_comment set comment_text = ?, time = now() WHERE id = ?";
-        jdbc.update(sql, comment.getCommentText(), comment.getId());
+        String sql = "UPDATE post_comment set comment_text = ?, time = ? WHERE id = ?";
+        jdbc.update(sql, comment.getCommentText(), System.currentTimeMillis(), comment.getId());
     }
 
     public void deleteById(int commentId) {

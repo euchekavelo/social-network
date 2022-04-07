@@ -57,10 +57,11 @@ public class PersonRepository {
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
         person.setPhoto(person.getDefaultPhoto());
-        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, now(), ?, ?, ?)";
+        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, ?, ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
+                System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
                 person.getDefaultPhoto());

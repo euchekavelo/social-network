@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.controller.exeptionhandler;
+package ru.skillbox.socnetwork.controller.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

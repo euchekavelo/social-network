@@ -11,19 +11,12 @@ public class PostCommentMapper implements RowMapper<PostComment> {
     public PostComment mapRow(ResultSet rs, int rowNum) throws SQLException {
         PostComment mapper = new PostComment();
         mapper.setId(rs.getInt("id"));
-        mapper.setTime(getLong(rs.getTimestamp("time")));
+        mapper.setTime(rs.getLong("time"));
         mapper.setAuthorId(rs.getInt("author_id"));
         mapper.setPostId(rs.getInt("post_id"));
         mapper.setParentId(rs.getInt("parent_id"));
         mapper.setCommentText(rs.getString("comment_text"));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
         return mapper;
-    }
-
-    private Long getLong(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return timestamp.getTime();
     }
 }

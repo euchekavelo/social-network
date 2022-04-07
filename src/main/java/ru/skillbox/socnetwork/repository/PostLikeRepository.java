@@ -28,8 +28,8 @@ public class PostLikeRepository {
     }
 
     public void addLike(Integer personId, Integer itemId) {
-        String sql = "INSERT INTO post_like (time, person_id, post_id) values (now(), ?, ?)";
-        jdbc.update(sql, personId, itemId);
+        String sql = "INSERT INTO post_like (time, person_id, post_id) values (?, ?, ?)";
+        jdbc.update(sql, System.currentTimeMillis(), personId, itemId);
     }
 
     public boolean getIsLiked(Integer personId, Integer itemId) {

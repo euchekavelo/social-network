@@ -21,8 +21,8 @@ public class PostRepository {
     }
 
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE time < now() ORDER BY time DESC LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(), limit, offset);
+        String sql = "SELECT * FROM post WHERE time < ? ORDER BY time DESC LIMIT ? OFFSET ?";
+        return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
     public List<Post> getByAuthorIdWithOffset(int authorId,int offset, int limit) {
@@ -47,7 +47,7 @@ public class PostRepository {
 
     public Post addPost(NewPostDto newPostDto) {
         String sql = "insert into post (time, author, title, post_text) values (?, ?, ?, ?)";
-        jdbc.update(sql, new Timestamp(newPostDto.getTime()), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText());
+        jdbc.update(sql, newPostDto.getTime(), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText());
         return getLastPersonPost(newPostDto.getAuthorId());
     }
 

@@ -19,27 +19,20 @@ public class PersonMapper implements RowMapper<Person> {
         mapper.setId(rs.getInt("id"));
         mapper.setFirstName(rs.getString("first_name"));
         mapper.setLastName(rs.getString("last_name"));
-        mapper.setRegDate(getLong(rs.getTimestamp("reg_date")));
-        mapper.setBirthDate(getLong(rs.getTimestamp("birth_date")));
+        mapper.setRegDate(rs.getLong("reg_date"));
+        mapper.setBirthDate(rs.getLong("birth_date"));
         mapper.setEmail(rs.getString("e_mail"));
         mapper.setPhone(rs.getString("phone"));
         mapper.setPassword(rs.getString("password"));
         mapper.setPhoto(rs.getString("photo"));
         mapper.setAbout(rs.getString("about"));
         mapper.setCity(rs.getString("town"));
-        mapper.setLastOnlineTime(getLong(rs.getTimestamp("last_online_time")));
+        mapper.setLastOnlineTime(rs.getLong("last_online_time"));
         mapper.setConfirmationCode(rs.getString("confirmation_code"));
         mapper.setIsApproved(rs.getBoolean("is_approved"));
         mapper.setMessagesPermission(getPermission(rs.getObject("messages_permission")));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
         return mapper;
-    }
-
-    private Long getLong(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return timestamp.getTime();
     }
 
     private TypePermission getPermission(Object object) {

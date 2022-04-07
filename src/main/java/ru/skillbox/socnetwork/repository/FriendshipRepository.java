@@ -24,7 +24,7 @@ public class FriendshipRepository {
     public void createFriendRequestByPersonIds(Integer srcPersonId, Integer dstPersonId) {
         jdbc.update("" +
                 "INSERT INTO friendship (src_person_id, dst_person_id, time, code) " +
-                "VALUES (?, ?, to_timestamp(?), CAST(? AS code_type))",
+                "VALUES (?, ?, ?, CAST(? AS code_type))",
                 srcPersonId, dstPersonId, System.currentTimeMillis(), TypeCode.REQUEST.toString());
     }
 
@@ -32,15 +32,13 @@ public class FriendshipRepository {
         return jdbc.query("" +
                 "SELECT *\n" +
                 "FROM friendship f\n" +
-                "WHERE f.code = CAST(? AS code_type) AND f.src_person_id = ? AND f.dst_person_id = ?", new FriendshipMapper(),
-                typeCode, srcPersonId, dstPersonId)
-                .stream()
-                .findAny();
+                "WHERE f.code = CAST(? AS code_type) AND f.src_person_id = ? AND f.dst_person_id = ?",
+                        new FriendshipMapper(), typeCode, srcPersonId, dstPersonId).stream().findAny();
     }
 
     public void updateFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
         jdbc.update("" +
-                "UPDATE friendship SET time = to_timestamp(?), code = CAST(? AS code_type) " +
+                "UPDATE friendship SET time = ?, code = CAST(? AS code_type) " +
                 "WHERE src_person_id = ? and dst_person_id = ?",
                 System.currentTimeMillis(), typeCode, srcPersonId, dstPersonId);
     }

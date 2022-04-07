@@ -13,7 +13,7 @@ public class FriendshipMapper implements RowMapper<Friendship> {
         mapper.setId(rs.getInt("id"));
         mapper.setSrcPersonId(rs.getInt("src_person_id"));
         mapper.setDstPersonId(rs.getInt("dst_person_id"));
-        mapper.setTime(rs.getTime("time").getTime());
+        mapper.setTime(rs.getLong("time"));
         mapper.setCode(TypeCode.valueOf(rs.getString("code")));
         return mapper;
     }

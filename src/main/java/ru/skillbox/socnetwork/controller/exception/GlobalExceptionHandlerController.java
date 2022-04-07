@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.controller.exeptionhandler;
+package ru.skillbox.socnetwork.controller.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
