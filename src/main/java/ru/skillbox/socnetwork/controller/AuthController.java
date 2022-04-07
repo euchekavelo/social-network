@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.Message;
+import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.PersonService;
@@ -36,7 +36,7 @@ public class AuthController {
      * TODO build correct logout
      */
     @PostMapping("/logout")
-    public ResponseEntity<GeneralResponse<Message>> logout() {
+    public ResponseEntity<GeneralResponse<MessageResponseDto>> logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             auth.setAuthenticated(false);
@@ -44,7 +44,7 @@ public class AuthController {
                     .body(new GeneralResponse<>(
                             "string",
                             System.currentTimeMillis(),
-                            new Message("ok")));
+                            new MessageResponseDto("ok")));
         }
         return ResponseEntity.badRequest().body(new GeneralResponse<>(
                 "invalid_request",

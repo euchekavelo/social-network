@@ -56,3 +56,19 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/007-fill-comment-table.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 09
+      author: Kirill Suslov
+      comment: structure of some tables changed
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/009-structure-of-some-tables-changed.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 11
+      author: Kirill Suslov
+      comment: clear table friendship
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/011-clear-table-friendship.sql
+        relativeToChangelogFile: true
