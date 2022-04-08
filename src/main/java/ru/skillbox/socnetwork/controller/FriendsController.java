@@ -1,50 +1,68 @@
 package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.socnetwork.model.rsdto.PersonDto;
+import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.model.rsdto.GeneralListResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
+import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.service.FriendsService;
-import ru.skillbox.socnetwork.service.PersonService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/friends")
 public class FriendsController {
 
-    private final FriendsService personService;
+    private final FriendsService friendsService;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getFriends() {
-        return ResponseEntity.ok(TempResponseDto.FRIENDS_RESPONSE);
+    @GetMapping("/request")
+    public ResponseEntity<GeneralListResponse<PersonDto>> getListFriendRequests(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+        GeneralListResponse<PersonDto> generalListResponse =
+                new GeneralListResponse<>(friendsService.getListIncomingFriendRequests(), offset, itemPerPage);
+
+        return ResponseEntity.ok(generalListResponse);
     }
 
-    @GetMapping(path = "/request", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAddFriendRequest() {
-        return ResponseEntity.ok(TempResponseDto.FRIENDS_RESPONSE);
+    @PostMapping("/{id}")
+    public ResponseEntity<GeneralResponse<MessageResponseDto>> addFriend(@PathVariable Integer id)
+            throws InvalidRequestException {
+        GeneralResponse<MessageResponseDto> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponse<MessageResponseDto>> deleteFriend(@PathVariable Integer id) {
+        GeneralResponse<MessageResponseDto> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<GeneralListResponse<PersonDto>> getUserFriends(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+        GeneralListResponse<PersonDto> generalListResponse =
+                new GeneralListResponse<>(friendsService.getUserFriends(), offset, itemPerPage);
+
+        return ResponseEntity.ok(generalListResponse);
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<Object> getListRecommendedFriends(
+    public ResponseEntity<GeneralListResponse<PersonDto>> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
-            @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
-        List<PersonDto> dataResponse = personService
-                .getListRecommendedFriends();
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                dataResponse.size(),
-                offset,
-                perPage,
-                dataResponse));
+            @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+        GeneralListResponse<PersonDto> generalListResponse =
+                new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage);
+
+        return ResponseEntity.ok(generalListResponse);
     }
 }

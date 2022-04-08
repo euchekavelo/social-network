@@ -14,16 +14,9 @@ public class PostMapper implements RowMapper<Post> {
         mapper.setPostText(rs.getString("post_text"));
         mapper.setAuthor(rs.getInt("author"));
         mapper.setTitle(rs.getString("title"));
-        mapper.setTime(getLong(rs.getTimestamp("time")));
+        mapper.setTime(rs.getLong("time"));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
         mapper.setLikes(rs.getInt("likes"));
         return mapper;
-    }
-
-    private Long getLong(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return timestamp.getTime();
     }
 }

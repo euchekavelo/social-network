@@ -72,3 +72,27 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/009-fill-message-and-dialog.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 10
+      author: Kirill Suslov
+      comment: structure of some tables changed
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/009-structure-of-some-tables-changed.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 11
+      author: Kirill Suslov
+      comment: clear table friendship
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/011-clear-table-friendship.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 12
+      author: Kirill Suslov
+      comment: changed temporary data types to bigint
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/012-changed-temporary-data-types-to-bigint.sql
+        relativeToChangelogFile: true

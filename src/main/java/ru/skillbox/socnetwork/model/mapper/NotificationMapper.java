@@ -12,17 +12,10 @@ public class NotificationMapper implements RowMapper<Notification> {
         Notification mapper = new Notification();
         mapper.setId(rs.getInt("id"));
         mapper.setTypeId(rs.getInt("type_id"));
-        mapper.setSentTime(getLong(rs.getTimestamp("sent_time")));
+        mapper.setSentTime(rs.getLong("sent_time"));
         mapper.setPersonId(rs.getInt("person_id"));
         mapper.setNotificationTypeId(rs.getInt("entity_id"));
         mapper.setContact(rs.getString("contact"));
         return mapper;
-    }
-
-    private Long getLong(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return timestamp.getTime();
     }
 }

@@ -22,11 +22,14 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtCsrfFilter jwtCsrfFilter;
-    private final List<String> hosts = List.of("http://localhost:8080/", "http://localhost:8086/", "http://195.133.201.227:8080/");
+    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://195.133.201.227:8080");
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .configurationSource(corsConfigurationSource())
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -46,13 +49,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+        @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedHeaders(List.of(""));
-        configuration.setAllowedMethods(List.of(""));
-        configuration.setAllowedOrigins(hosts);
-        configuration.setAllowCredentials(true);
+        configuration.applyPermitDefaultValues();
+            configuration.setAllowedOrigins(hosts);
+            configuration.setAllowedMethods(List.of("OPTIONS", "DELETE", "POST", "GET", "PATCH", "PUT"));
+            configuration.setExposedHeaders(List.of("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
+                    "Access-Control-Request-Headers", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+            configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
