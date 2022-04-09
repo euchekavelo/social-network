@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LastMessageDto {
+public class MessageDto {
     private Integer id;
     private Long time;
     @JsonProperty("author_id")

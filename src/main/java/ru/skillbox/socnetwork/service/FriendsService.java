@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
-import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
@@ -45,15 +45,15 @@ public class FriendsService {
     }
 
     @Transactional
-    public MessageResponseDto deleteFriendById(Integer friendId) {
+    public DialogsResponse deleteFriendById(Integer friendId) {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         friendshipRepository.removeFriendlyStatusByPersonIds(authorizedUserId, friendId);
         friendshipRepository.removeFriendlyStatusByPersonIds(friendId, authorizedUserId);
-        return new MessageResponseDto("ok");
+        return new DialogsResponse("ok");
     }
 
-    public MessageResponseDto addFriendById(Integer focusPersonId) throws InvalidRequestException {
+    public DialogsResponse addFriendById(Integer focusPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
@@ -84,7 +84,7 @@ public class FriendsService {
                     "as it has already been submitted earlier.");
         }
 
-        return new MessageResponseDto("ok");
+        return new DialogsResponse("ok");
     }
 
     public List<PersonDto> getListIncomingFriendRequests() {

@@ -25,25 +25,14 @@ public class MessageRepository {
                 "MAX(id) AS id FROM message WHERE read_status = 'READ' AND recipient_id = ? GROUP BY dialog_id";
         return jdbc.query(sql, new DialogMapper(), id, id);
     }
-
-    public List<Message> getByEmail(String email, String query, Integer offset, Integer itemPerPage) {
-        String sql = "SELECT * FROM message " +
-                "LEFT JOIN person ON message.author_id = person.id " +
-                "WHERE person.e_mail LIKE ?" +
-                "OR WHERE message.message_text LIKE ?" +
-                "ORDER BY message.recipient_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        return jdbc.query(sql, new MessageMapper(), email, query, offset, itemPerPage);
-    }
-
-    public List<Message> getDialogsLastMessageByEmail(String email, String query, Integer offset, Integer itemPerPage) {
-        String sql = "SELECT * FROM message " +
-                "LEFT JOIN person ON message.author_id = person.id " +
-                "WHERE person.e_mail LIKE ?" +
-                "OR WHERE message.message_text LIKE ?" +
-                "GROUP BY message.recipient_id" +
-                "HAVING BY MAX(message.time)" +
-                "ORDER BY message.time DESC" +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        return jdbc.query(sql, new MessageMapper(),email, query, offset, itemPerPage);
+    public List<DialogsResponse> getMessageList(Integer id) {
+        String sql = "SELECT dialog_id, MAX(time) AS time, COUNT(*) AS unread_count, MAX(message_text) AS message_text, " +
+                "MAX(read_status) AS read_status, MAX(author_id) AS author_id, MAX(recipient_id) AS recipient_id, " +
+                "MAX(id) AS id FROM message WHERE read_status = 'SENT' AND recipient_id = ? GROUP BY dialog_id " +
+                "UNION " +
+                "SELECT dialog_id, MAX(time) AS time, 0 AS unread_count, MAX(message_text) AS message_text, " +
+                "MAX(read_status) AS read_status, MAX(author_id) AS author_id, MAX(recipient_id) AS recipient_id, " +
+                "MAX(id) AS id FROM message WHERE read_status = 'READ' AND recipient_id = ? GROUP BY dialog_id";
+        return jdbc.query(sql, new DialogMapper(), id, id);
     }
 }

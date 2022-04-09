@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
-import ru.skillbox.socnetwork.model.rsdto.GeneralListResponse;
-import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
-import ru.skillbox.socnetwork.model.rsdto.PersonDto;
+import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.service.FriendsService;
 
 @RestController
@@ -29,17 +26,17 @@ public class FriendsController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> addFriend(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsResponse>> addFriend(@PathVariable Integer id)
             throws InvalidRequestException {
-        GeneralResponse<MessageResponseDto> generalResponse =
+        GeneralResponse<DialogsResponse> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> deleteFriend(@PathVariable Integer id) {
-        GeneralResponse<MessageResponseDto> generalResponse =
+    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriend(@PathVariable Integer id) {
+        GeneralResponse<DialogsResponse> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
 
         return ResponseEntity.ok(generalResponse);

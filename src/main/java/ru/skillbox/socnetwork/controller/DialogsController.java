@@ -34,11 +34,11 @@ public class DialogsController {
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<Count>> getUnread() {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
         return ResponseEntity
                 .ok(new GeneralResponse<>(
                         "string",
                         System.currentTimeMillis(),
-                        new Count(1000)));
+                        new DialogsResponse(1000)));
     }
 }

@@ -2,7 +2,7 @@ package ru.skillbox.socnetwork.model.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
-import ru.skillbox.socnetwork.model.rsdto.LastMessageDto;
+import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +15,8 @@ public class DialogMapper implements RowMapper<DialogsResponse> {
 
         dialogsResponseMapper.setId(rs.getInt("dialog_id"));
         dialogsResponseMapper.setUnreadCount(rs.getInt("unread_count"));
-        dialogsResponseMapper.setLastMessageDto(
-                new LastMessageDto(rs.getInt("id"), getLong(rs.getTimestamp("time")),
+        dialogsResponseMapper.setMessageDto(
+                new MessageDto(rs.getInt("id"), rs.getLong("time"),
                         rs.getInt("author_id"), rs.getInt("recipient_id"),
                         rs.getString("message_text"), rs.getString("read_status")));
         return dialogsResponseMapper;
