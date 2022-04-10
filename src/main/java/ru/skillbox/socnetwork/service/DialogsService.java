@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
@@ -42,6 +43,20 @@ public class DialogsService {
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
                     messageList.size(), 0, 20, messageList));
+        }
+
+        return ResponseEntity.status(401).body(
+                new GeneralResponse<>("invalid_request", "string"));
+    }
+    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnreadMessageCount(Integer id) {
+
+
+        if (id == null) {
+            return ResponseEntity.badRequest().body(
+                    new GeneralResponse<>("invalid_request", "string"));
+        }
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount()));
         }
 
         return ResponseEntity.status(401).body(

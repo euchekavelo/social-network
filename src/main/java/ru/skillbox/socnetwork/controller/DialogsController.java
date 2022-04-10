@@ -37,10 +37,8 @@ public class DialogsController {
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
-        return ResponseEntity
-                .ok(new GeneralResponse<>(
-                        "string",
-                        System.currentTimeMillis(),
-                        new DialogsResponse(1000)));
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return dialogsService.getUnreadMessageCount(securityUser.getId());
     }
 }

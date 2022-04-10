@@ -3,6 +3,8 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
+import ru.skillbox.socnetwork.model.mapper.CountMapper;
 import ru.skillbox.socnetwork.model.mapper.DialogMapper;
 import ru.skillbox.socnetwork.model.mapper.MessageMapper;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
@@ -28,5 +30,10 @@ public class MessageRepository {
     public List<MessageDto> getMessageList(Integer id) {
         String sql = "select id, time, author_id, recipient_id, message_text, read_status FROM message WHERE dialog_id = ?";
         return jdbc.query(sql, new MessageMapper(), id);
+    }
+    public DialogsResponse getUnreadCount() {
+        String sql = "SELECT COUNT(*) AS unread_count FROM message WHERE read_status = 'SENT'";
+
+        return jdbc.queryForObject(sql, new CountMapper());
     }
 }
