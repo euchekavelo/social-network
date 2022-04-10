@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.DialogsService;
@@ -23,14 +20,19 @@ public class DialogsController {
     private final DialogsService dialogsService;
 
     @GetMapping
-    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog(
-            @RequestParam(required = false) String query,
-            @RequestParam(defaultValue = "0", required = false) Integer offset,
-            @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) {
+    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
 
         SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return dialogsService.getDialogs(securityUser.getId());
+    }
+
+    @GetMapping("/{id}/messages")
+    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable Integer id) {
+
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return dialogsService.getMessageById(id);
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)

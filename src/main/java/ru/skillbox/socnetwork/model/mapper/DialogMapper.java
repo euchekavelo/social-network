@@ -21,11 +21,4 @@ public class DialogMapper implements RowMapper<DialogsResponse> {
                         rs.getString("message_text"), rs.getString("read_status")));
         return dialogsResponseMapper;
     }
-
-    private Long getLong(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return timestamp.getTime();
-    }
 }
