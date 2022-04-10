@@ -56,7 +56,6 @@ public class PersonRepository {
      */
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
-        person.setPhoto(person.getDefaultPhoto());
         String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, ?, ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),
@@ -64,7 +63,7 @@ public class PersonRepository {
                 System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
-                person.getDefaultPhoto());
+                person.getPhoto());
         return person;
     }
 
@@ -129,5 +128,20 @@ public class PersonRepository {
                 "FROM person p\n" +
                 "WHERE p.id IN (SELECT * FROM persons_request_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
+    }
+
+    public Person updatePerson(Person person){
+        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+//        String sql = "update person set (first_name, last_name, phone, about, city, country) = (?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+        jdbc.update(sql,
+            person.getFirstName(),
+            person.getLastName(),
+            person.getBirthDate(),
+            person.getPhone(),
+            person.getAbout(),
+            person.getCity(),
+            person.getCountry(),
+            person.getEmail());
+        return person;
     }
 }
