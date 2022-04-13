@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.skillbox.socnetwork.model.entity.Person;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +24,8 @@ public class UpdatePersonDto {
     private String country;
     @JsonProperty("messages_permission")
     private String messagesPermission;
+
+    public UpdatePersonDto(Person person){
+        this.photo = person.getPhoto();
+    }
 }
