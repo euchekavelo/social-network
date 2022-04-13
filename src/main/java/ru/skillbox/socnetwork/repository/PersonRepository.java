@@ -144,4 +144,11 @@ public class PersonRepository {
             person.getEmail());
         return person;
     }
+
+    public void updatePhoto(Person person){
+        String sql = "update person set photo = ? where person.e_mail = ?";
+        jdbc.update(sql,
+                person.getPhoto(),
+                person.getEmail());
+    }
 }

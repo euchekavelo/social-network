@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core:4.8.0'
 	implementation 'org.postgresql:postgresql:42.3.3'
 	implementation 'com.dropbox.core:dropbox-core-sdk:5.2.0'
+	implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -1,17 +1,17 @@
 package ru.skillbox.socnetwork.model.rsdto.filedto;
 
+import com.dropbox.core.v2.files.FileMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Person;
 
-import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Data
 @AllArgsConstructor
 public class FileUploadDTO {
-  private Integer id;
+  private String id;
   private Integer ownerID;
   private String fileName;
   private String relativeFilePath;
@@ -21,21 +21,21 @@ public class FileUploadDTO {
   private FileType fileType;
   private Long createdAt;
 
-  public FileUploadDTO(Person person, File file){
-    id = 1;
+  public FileUploadDTO(Person person, FileMetadata fileMetadata){
+    id = fileMetadata.getId().substring(3);
     ownerID = person.getId();
-    this.fileName = file.getName();
-    this.relativeFilePath = file.getPath();
-    this.rawFileURL = file.getPath();
-    fileFormat = getFileFormat(file.getPath());
-    this.bytes = file.getTotalSpace();
+    this.fileName = fileMetadata.getName();
+    this.relativeFilePath = fileMetadata.getPathDisplay();
+    this.rawFileURL = fileMetadata.getPathDisplay();
+    fileFormat = getFileFormat(fileMetadata.getName());
+    this.bytes = fileMetadata.getSize();
     fileType = FileType.IMAGE;
-    createdAt = file.lastModified();
+    createdAt = fileMetadata.getServerModified().getTime();
   }
 
   private String getFileFormat(String name){
-    Pattern pattern = Pattern.compile(".*\\.([A-z]*)\\?.*");
+    Pattern pattern = Pattern.compile(".*\\.([A-z]*)$");
     Matcher matcher = pattern.matcher(name);
-    return matcher.group(0);
+    return (matcher.find()) ?  matcher.group(1) : "";
   }
 }

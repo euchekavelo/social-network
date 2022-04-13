@@ -1,20 +1,20 @@
 package ru.skillbox.socnetwork.service;
 
 import com.dropbox.core.DbxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.controller.exception.BadRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
-import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
@@ -23,7 +23,7 @@ public class PersonService {
 
     private final PersonRepository personRepository;
     private final JwtTokenProvider tokenProvider;
-    private final PhotoStorageService photoStorageService;
+    private final StorageService storageService;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -56,7 +56,7 @@ public class PersonService {
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
         try {
-            person.setPhoto(photoStorageService.getDefaultProfileImage());
+            person.setPhoto(storageService.getDefaultProfileImage());
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -115,5 +115,10 @@ public class PersonService {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         return personRepository.updatePerson(updatablePerson);
+    }
+
+    public void updatePhoto(String photo, Person person){
+        person.setPhoto(photo);
+        personRepository.updatePhoto(person);
     }
 }
