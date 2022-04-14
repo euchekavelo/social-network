@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
+import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
+import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
 import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
@@ -92,6 +94,12 @@ public class FriendsService {
         return personRepository.getListIncomingFriendRequests(email).stream()
                 .map(PersonDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<FriendshipPersonDto> getInformationAboutFriendships(UserIdsDto userIdsDto) {
+        String email = getAuthorizedUser().getUsername();
+        List<Integer> userIds = userIdsDto.getUserIds();
+        return friendshipRepository.getInformationAboutFriendships(email, userIds);
     }
 
 }

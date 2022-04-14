@@ -36,9 +36,7 @@ public class PersonMapper implements RowMapper<Person> {
     }
 
     private TypePermission getPermission(Object object) {
-        if(object == null) {
-        return TypePermission.ALL;}
-        return (TypePermission) object;
+        return object == null ? TypePermission.ALL : (TypePermission) object;
     }
 }
 

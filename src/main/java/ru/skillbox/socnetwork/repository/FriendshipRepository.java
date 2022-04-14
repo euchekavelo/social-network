@@ -2,11 +2,16 @@ package ru.skillbox.socnetwork.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.mapper.FriendshipMapper;
+import ru.skillbox.socnetwork.model.mapper.FriendshipPersonMapper;
+import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,12 +33,13 @@ public class FriendshipRepository {
                 srcPersonId, dstPersonId, System.currentTimeMillis(), TypeCode.REQUEST.toString());
     }
 
-    public Optional<Friendship> getFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
+    public Optional<Friendship> getFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId,
+                                                                    String typeCode) {
         return jdbc.query("" +
                 "SELECT *\n" +
                 "FROM friendship f\n" +
                 "WHERE f.code = CAST(? AS code_type) AND f.src_person_id = ? AND f.dst_person_id = ?",
-                        new FriendshipMapper(), typeCode, srcPersonId, dstPersonId).stream().findAny();
+                new FriendshipMapper(), typeCode, srcPersonId, dstPersonId).stream().findAny();
     }
 
     public void updateFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
@@ -41,6 +47,28 @@ public class FriendshipRepository {
                 "UPDATE friendship SET time = ?, code = CAST(? AS code_type) " +
                 "WHERE src_person_id = ? and dst_person_id = ?",
                 System.currentTimeMillis(), typeCode, srcPersonId, dstPersonId);
+    }
+
+    public List<FriendshipPersonDto> getInformationAboutFriendships(String email, List<Integer> userIds) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("email", email);
+        parameters.addValue("userIds", userIds);
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+
+        return template.query("" +
+                        "WITH authorized_person_id AS (\n" +
+                        "\tSELECT p.id \n" +
+                        "\tFROM person p\n" +
+                        "\tWHERE p.e_mail = :email\n" +
+                        ")\n" +
+                        "SELECT f.dst_person_id AS user_id, f.code AS status\n" +
+                        "FROM friendship f\n" +
+                        "WHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.dst_person_id IN (:userIds)\n" +
+                        "UNION\n" +
+                        "SELECT f.src_person_id AS user_id, f.code AS status\n" +
+                        "FROM friendship f\n" +
+                        "WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.src_person_id IN (:userIds)",
+                            parameters, new FriendshipPersonMapper());
     }
 
 }
