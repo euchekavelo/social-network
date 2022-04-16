@@ -38,7 +38,8 @@ public class FriendsController {
     }
 
     @DeleteMapping("/friends/{id}")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> deleteFriend(@PathVariable Integer id) {
+    public ResponseEntity<GeneralResponse<MessageResponseDto>> deleteFriend(@PathVariable Integer id)
+            throws InvalidRequestException {
         GeneralResponse<MessageResponseDto> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
 

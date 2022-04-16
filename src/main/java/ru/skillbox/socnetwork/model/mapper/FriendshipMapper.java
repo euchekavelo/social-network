@@ -7,6 +7,7 @@ import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 public class FriendshipMapper implements RowMapper<Friendship> {
+
     @Override
     public Friendship mapRow(ResultSet rs, int rowNum) throws SQLException {
         Friendship mapper = new Friendship();

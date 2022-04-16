@@ -15,5 +15,4 @@ public class FriendshipPersonMapper implements RowMapper<FriendshipPersonDto> {
         mapper.setStatus(rs.getString("status"));
         return mapper;
     }
-
 }

@@ -20,8 +20,8 @@ public class FriendshipRepository {
 
     private final JdbcTemplate jdbc;
 
-    public void removeFriendlyStatusByPersonIds(Integer srcPersonId, Integer dstPersonId) {
-        jdbc.update("" +
+    public int removeFriendlyStatusByPersonIds(Integer srcPersonId, Integer dstPersonId) {
+        return jdbc.update("" +
                 "DELETE FROM friendship f\n" +
                 "WHERE f.code = 'FRIEND' and f.src_person_id = ? and f. dst_person_id = ?", srcPersonId, dstPersonId);
     }
@@ -70,5 +70,4 @@ public class FriendshipRepository {
                         "WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.src_person_id IN (:userIds)",
                             parameters, new FriendshipPersonMapper());
     }
-
 }

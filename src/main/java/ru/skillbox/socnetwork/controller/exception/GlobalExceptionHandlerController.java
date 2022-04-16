@@ -14,8 +14,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
+    public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadableException() {
+        return ResponseEntity.badRequest().body(new ErrorResponseDto("Incorrectly formed incoming request body."));
     }
-
 }

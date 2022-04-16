@@ -46,12 +46,16 @@ public class FriendsService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public MessageResponseDto deleteFriendById(Integer friendId) {
+    public MessageResponseDto deleteFriendById(Integer friendId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
-        friendshipRepository.removeFriendlyStatusByPersonIds(authorizedUserId, friendId);
-        friendshipRepository.removeFriendlyStatusByPersonIds(friendId, authorizedUserId);
+        int countFrom = friendshipRepository.removeFriendlyStatusByPersonIds(authorizedUserId, friendId);
+        int countTo = friendshipRepository.removeFriendlyStatusByPersonIds(friendId, authorizedUserId);
+        if (countFrom == 0 && countTo == 0) {
+            throw new InvalidRequestException("Deletion is not possible. " +
+                    "No friendly relationship found between the specified user.");
+        }
+
         return new MessageResponseDto("ok");
     }
 
@@ -101,5 +105,4 @@ public class FriendsService {
         List<Integer> userIds = userIdsDto.getUserIds();
         return friendshipRepository.getInformationAboutFriendships(email, userIds);
     }
-
 }
