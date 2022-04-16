@@ -109,7 +109,7 @@ public class PersonRepository {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM person p\n" +
-                "WHERE p.id <> (SELECT * FROM authorized_person_id) AND p.id IN (SELECT * FROM friends_ids)\n" +
+                "WHERE p.id IN (SELECT * FROM friends_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
     }
 
