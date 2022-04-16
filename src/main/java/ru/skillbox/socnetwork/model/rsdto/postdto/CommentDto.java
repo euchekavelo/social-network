@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.PostComment;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
 import java.time.ZoneOffset;
 
@@ -19,19 +20,22 @@ public class CommentDto {
     Integer postId;
     @JsonProperty("comment_text")
     String commentText;
+    @JsonProperty("my_like")
+    Boolean isLiked;
     Long time;
-    @JsonProperty("author_id")
-    Integer authorId;
+    @JsonProperty("author")
+    PersonDto author;
     @JsonProperty("is_blocked")
     Boolean isBlocked;
 
-    public CommentDto(PostComment comment) {
+    public CommentDto(PostComment comment, PersonDto personDto) {
         this.id = comment.getId();
         this.parentId = comment.getParentId();
         this.postId = comment.getPostId();
         this.commentText = comment.getCommentText();
         this.time = comment.getTime();
-        this.authorId = comment.getAuthorId();
+        this.author = personDto;
         this.isBlocked = comment.getIsBlocked();
+        this.isLiked = false;
     }
 }

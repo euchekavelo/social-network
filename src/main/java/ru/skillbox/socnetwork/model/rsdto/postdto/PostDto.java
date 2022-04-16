@@ -27,6 +27,8 @@ public class PostDto {
     Boolean isBlocked;
     List<CommentDto> comments;
     String type;
+    @JsonProperty("my_like")
+    Boolean isLiked;
 
     public PostDto(Post post, PersonDto personDto, List<CommentDto> comments) {
         this.id = post.getId();
@@ -37,6 +39,7 @@ public class PostDto {
         this.likes = post.getLikes();
         this.isBlocked = post.getIsBlocked();
         this.comments = comments;
+        this.isLiked = false;
         if (this.time < System.currentTimeMillis()) {
             this.type = "POSTED";
         } else {
