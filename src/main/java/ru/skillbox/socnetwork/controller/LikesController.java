@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestException;
+import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
 import ru.skillbox.socnetwork.model.rqdto.PutLikeDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.postdto.LikedDto;
@@ -34,7 +34,7 @@ public class LikesController {
         } else if (type.equals(COMMENT)) {
             return ResponseEntity.ok(new GeneralResponse<>());
         }
-        throw new BadRequestException("wrong like type");
+        return new BadRequestResponseEntity("wrong like type");
     }
 
     @PutMapping(path = "/likes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +47,7 @@ public class LikesController {
         } else if (type.equals(COMMENT)) {
             return ResponseEntity.ok(new GeneralResponse<>());
         }
-        throw new BadRequestException("wrong like type");
+        return new BadRequestResponseEntity("wrong like type");
     }
 
     @GetMapping(path = "/liked", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,7 +60,7 @@ public class LikesController {
         } else if (type.equals(COMMENT)) {
             return ResponseEntity.ok(new GeneralResponse<>());
         }
-        throw new BadRequestException("wrong like type");
+        return new BadRequestResponseEntity("wrong like type");
     }
 
     private SecurityUser getSecurityUser() {
@@ -79,6 +79,6 @@ public class LikesController {
         } else if (type.equals(COMMENT)) {
             return ResponseEntity.ok(new GeneralResponse<>());
         }
-        throw new BadRequestException("wrong like type");
+        return new BadRequestResponseEntity("wrong like type");
     }
 }

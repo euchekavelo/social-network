@@ -2,12 +2,14 @@ package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestException;
+import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
+import ru.skillbox.socnetwork.controller.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -34,7 +36,7 @@ public class PostController {
         try {
             response.setData(postService.getById(id));
         } catch (EmptyResultDataAccessException e) {
-            throw new BadRequestException("entity not found");
+            return new BadRequestResponseEntity("entity not found");
         }
         return ResponseEntity.ok(response);
     }
