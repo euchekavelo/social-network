@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
 import ru.skillbox.socnetwork.service.PersonService;
 
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class AccountController {
     private final PersonService personService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> register(@RequestBody RegisterDto request) {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) {
         Person person = personService.getPersonAfterRegistration(request);
         if (person == null) {
             return ResponseEntity
@@ -30,6 +30,6 @@ public class AccountController {
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 person.getRegDate(),
-                new MessageResponseDto("ok")));
+                new DialogsResponse("ok")));
     }
 }

@@ -13,10 +13,19 @@ public class DialogsResponse {
     @JsonProperty("unread_count")
     private Integer unreadCount;
     @JsonProperty("last_message")
-    private LastMessageDto lastMessageDto;
-//    private Integer count;
-//    private String message;
-    /**
-     * TODO Может удалить классы с одним полем и здесь добавить 2 поля?
-     */
+    private MessageDto messageDto;
+    private Integer count;
+    private String message;
+
+    public DialogsResponse(String message) {
+        this.message = message;
+    }
+
+    public DialogsResponse(Integer count) {
+        this.count = count;
+    }
+
+    public DialogsResponse() {
+
+    }
 }

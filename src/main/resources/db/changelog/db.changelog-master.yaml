@@ -57,7 +57,23 @@ databaseChangeLog:
         path: migrations/007-fill-comment-table.sql
         relativeToChangelogFile: true
   - changeSet:
-      id: 09
+      id: 8
+      author: Roman Vladimirov
+      comment: create table dialog and add column dialog_id message
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/008-add-dialog.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 9
+      author: Roman Vladimirov
+      comment: fill dialog and fill message
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/009-fill-message-and-dialog.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 10
       author: Kirill Suslov
       comment: structure of some tables changed
       sqlFile:
