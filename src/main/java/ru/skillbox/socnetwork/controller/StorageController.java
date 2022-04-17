@@ -43,7 +43,6 @@ public class StorageController {
     try {
       InputStream stream = new BufferedInputStream(file.getInputStream());
       String fileName = generateName(file.getOriginalFilename());
-      System.out.println(fileName);
       fileMetadata = storageService.uploadFile(stream, fileName);
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
@@ -55,9 +54,9 @@ public class StorageController {
     }
     FileUploadDTO fileUploadDTO = new FileUploadDTO(person, fileMetadata);
     return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            fileUploadDTO
+        "string",
+        System.currentTimeMillis(),
+        fileUploadDTO
     ));
   }
 

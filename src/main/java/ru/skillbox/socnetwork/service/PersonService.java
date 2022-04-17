@@ -121,4 +121,9 @@ public class PersonService {
         person.setPhoto(photo);
         personRepository.updatePhoto(person);
     }
+
+    public void updatePassword(String password, Person person){
+        person.setPassword(new BCryptPasswordEncoder().encode(password));
+        personRepository.updatePassword(person);
+    }
 }
