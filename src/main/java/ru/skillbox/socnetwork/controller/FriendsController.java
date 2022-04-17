@@ -29,18 +29,18 @@ public class FriendsController {
     }
 
     @PostMapping("/friends/{id}")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> addFriend(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsResponse>> addFriend(@PathVariable Integer id)
             throws InvalidRequestException {
-        GeneralResponse<MessageResponseDto> generalResponse =
+        GeneralResponse<DialogsResponse> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
     }
 
     @DeleteMapping("/friends/{id}")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> deleteFriend(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriend(@PathVariable Integer id)
             throws InvalidRequestException {
-        GeneralResponse<MessageResponseDto> generalResponse =
+        GeneralResponse<DialogsResponse> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
