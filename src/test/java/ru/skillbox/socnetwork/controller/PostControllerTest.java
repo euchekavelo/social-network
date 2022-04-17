@@ -24,7 +24,7 @@ public class PostControllerTest {
     void unauthorizedAccessDeniedTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/2"))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
 
