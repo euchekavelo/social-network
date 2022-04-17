@@ -27,7 +27,7 @@ databaseChangeLog:
       id: 4
       author: Kirill Suslov
       comment: Added foreign keys for table 'friendship',
-               and filled tables (friendship_status, friendship) with mock data.
+        and filled tables (friendship_status, friendship) with mock data.
       sqlFile:
         encoding: UTF-8
         path: migrations/004-added-foreign-keys-and-fill-some-tables.sql
@@ -95,4 +95,12 @@ databaseChangeLog:
       sqlFile:
         encoding: UTF-8
         path: migrations/012-changed-temporary-data-types-to-bigint.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 13
+      author: Dmitry Stolyarenko
+      comment: createed new table token
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/013-create-token-table.sql
         relativeToChangelogFile: true

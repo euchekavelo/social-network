@@ -151,4 +151,11 @@ public class PersonRepository {
                 person.getPhoto(),
                 person.getEmail());
     }
+
+    public void updatePassword(Person person){
+        String sql = "update person set password = ? where person.e_mail = ?";
+        jdbc.update(sql,
+            person.getPassword(),
+            person.getEmail());
+    }
 }
