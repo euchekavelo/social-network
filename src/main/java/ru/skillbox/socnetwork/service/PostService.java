@@ -54,7 +54,7 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
         List<PostDto> postDtoList = new ArrayList<>();
-        for(Post post : posts) {
+        for (Post post : posts) {
             postDtoList.add(new PostDto(post, personDto, getCommentDtoList(post.getId())));
         }
         return postDtoList;
@@ -62,7 +62,7 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
         List<PostDto> postDtoList = new ArrayList<>();
-        for(Post post : posts) {
+        for (Post post : posts) {
             postDtoList.add(new PostDto(post,
                     new PersonDto(personService.getById(post.getAuthor())),
                     getCommentDtoList(post.getId())));
@@ -99,5 +99,11 @@ public class PostService {
         commentDto.setId(commentId);
         commentRepository.deleteById(commentId);
         return commentDto;
+    }
+
+    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
+        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
+        return getPostDtoListOfAllPersons(posts);
+
     }
 }

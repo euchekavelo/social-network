@@ -4,11 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Post;
-import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,7 +14,7 @@ import java.util.List;
 public class PostRepository {
     private final JdbcTemplate jdbc;
 
-    public List<Post> getAll(){
+    public List<Post> getAll() {
         return jdbc.query("select * from post", new PostMapper());
     }
 
@@ -25,9 +23,9 @@ public class PostRepository {
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
-    public List<Post> getByAuthorIdWithOffset(int authorId,int offset, int limit) {
+    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
         String sql = "SELECT * FROM post WHERE author = ? LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(),authorId, limit, offset);
+        return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
     }
 
     public Post getById(int id) {
@@ -59,5 +57,11 @@ public class PostRepository {
     public void updatePostLikeCount(Integer likes, Integer postId) {
         String sql = "update post set likes = ? where id = ?";
         jdbc.update(sql, likes, postId);
+    }
+
+    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
+        text = "%" + text + "%";
+        String sql = "select * from post where post_text like ? and time > ? and time < ? and is_blocked = 'f'";
+        return jdbc.query(sql, new PostMapper(), text, dateFrom, dateTo);
     }
 }

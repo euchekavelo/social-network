@@ -17,46 +17,48 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/post/")
+@RequestMapping("/api/v1/post")
 public class PostController {
 
     private final PostService postService;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<List<PostDto>>> getAllPost(@RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                                     @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getALl(offset, perPage));
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)  //check path
+//    public ResponseEntity<GeneralResponse<List<PostDto>>> getAllPost(@RequestParam(value = "offset", defaultValue = "0") int offset,
+//                                                                     @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+//        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getALl(offset, perPage));
+//        System.out.println("1st step");
+//        return ResponseEntity.ok(response);
+//    }
 
-    @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable int id) {
         GeneralResponse<PostDto> response = new GeneralResponse<>(postService.getById(id));
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id) {
         postService.deletePostById(id);
         GeneralResponse<PostDto> response = new GeneralResponse<>(new PostDto(id));
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> editPostById(@PathVariable int id, @RequestBody NewPostDto newPostDto) {
+    @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<PostDto>> editPostById(@PathVariable int id,
+                                                                 @RequestBody NewPostDto newPostDto) {
         GeneralResponse<PostDto> response = new GeneralResponse<>(postService.editPost(id, newPostDto));
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(@PathVariable int id) {
         GeneralResponse<List<CommentDto>> response = new GeneralResponse<>(postService.getCommentDtoList(id));
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(path = "{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
-                                                                         @RequestBody CommentDto comment) {
+                                                                        @RequestBody CommentDto comment) {
         comment.setAuthorId(getSecurityUser().getId());
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
@@ -65,7 +67,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = "{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable int id,
                                                                          @PathVariable int commentId,
                                                                          @RequestBody CommentDto comment) {
@@ -74,9 +76,9 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(path = "{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
-                                                                         @PathVariable int commentId) {
+                                                                           @PathVariable int commentId) {
         GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
         return ResponseEntity.ok(response);
     }
@@ -84,5 +86,17 @@ public class PostController {
     private SecurityUser getSecurityUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (SecurityUser) auth.getPrincipal();
+    }
+
+    @GetMapping()
+    public ResponseEntity<GeneralResponse<List<PostDto>>> searchPostByText(
+            @RequestParam(value = "text") String text,
+            @RequestParam(value = "date_from", defaultValue = "0", required = false) long dateFrom,
+            @RequestParam(value = "date_to", defaultValue = "0", required = false) long dateTo,
+            @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
+            @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
+        GeneralResponse<List<PostDto>> response = new GeneralResponse<>
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo));
+        return ResponseEntity.ok(response);
     }
 }
