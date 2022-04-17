@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
@@ -9,6 +10,7 @@ import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
+import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 
 import java.util.ArrayList;
@@ -22,8 +24,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
+    private final PostLikeRepository likeRepository;
 
-    public List<PostDto> getALl(int offset, int perPage) {
+    public List<PostDto> getAll(int offset, int perPage) {
         return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage));
     }
 
@@ -33,7 +36,7 @@ public class PostService {
         return getPostDtoListOfOnePerson(posts, personDto);
     }
 
-    public PostDto getById(int postId) {
+    public PostDto getById(int postId) throws EmptyResultDataAccessException {
         Post post = postRepository.getById(postId);
         PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
         List<CommentDto> commentDtoList = getCommentDtoList(postId);
@@ -49,25 +52,29 @@ public class PostService {
         if (postComments == null) {
             return new ArrayList<>();
         }
-        return postComments.stream().map(CommentDto::new).collect(Collectors.toList());
+        return postComments.stream()
+                .map(comment -> new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId()))))
+                .collect(Collectors.toList());
     }
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
-        List<PostDto> postDtoList = new ArrayList<>();
-        for(Post post : posts) {
-            postDtoList.add(new PostDto(post, personDto, getCommentDtoList(post.getId())));
-        }
-        return postDtoList;
+        return posts.stream().map(post -> {
+            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()));
+            postDto.setIsLiked(likeRepository.getIsLiked(post.getAuthor(), post.getId()));
+            return postDto;
+            }
+            ).collect(Collectors.toList());
     }
 
     private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
-        List<PostDto> postDtoList = new ArrayList<>();
-        for(Post post : posts) {
-            postDtoList.add(new PostDto(post,
-                    new PersonDto(personService.getById(post.getAuthor())),
-                    getCommentDtoList(post.getId())));
-        }
-        return postDtoList;
+        return posts.stream().map(post -> {
+                    PostDto postDto = new PostDto(post,
+                            new PersonDto(personService.getById(post.getAuthor())),
+                            getCommentDtoList(post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(post.getAuthor(), post.getId()));
+                    return postDto;
+                }
+        ).collect(Collectors.toList());
     }
 
     public PostDto addPost(NewPostDto newPostDto) {
