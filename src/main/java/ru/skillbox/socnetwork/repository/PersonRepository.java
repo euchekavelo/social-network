@@ -78,7 +78,7 @@ public class PersonRepository {
                 "friends_ids AS (\n" +
                 "\tSELECT f.dst_person_id AS id\n" +
                 "\tFROM friendship f\n" +
-                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code = 'FRIEND'\n" +
+                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST')\n" +
                 "\tUNION\n" +
                 "\tSELECT f.src_person_id AS id\n" +
                 "\tFROM friendship f\n" +
