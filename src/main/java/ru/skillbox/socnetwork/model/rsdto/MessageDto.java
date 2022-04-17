@@ -17,7 +17,8 @@ public class MessageDto {
     private String messageText;
     @JsonProperty("read_status")
     private String readStatus;
-
+    @JsonProperty("isSentByMe")
+    private boolean isSentByMe;
     public MessageDto() {
 
     }

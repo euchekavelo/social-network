@@ -18,7 +18,7 @@ public class DialogMapper implements RowMapper<DialogsResponse> {
         dialogsResponseMapper.setMessageDto(
                 new MessageDto(rs.getInt("id"), rs.getLong("time"),
                         rs.getInt("author_id"), rs.getInt("recipient_id"),
-                        rs.getString("message_text"), rs.getString("read_status")));
+                        rs.getString("message_text"), rs.getString("read_status"), false));
         return dialogsResponseMapper;
     }
 }

@@ -22,7 +22,7 @@ public class PersonRepository {
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail = ?";
+        String sql = "select * from person where e_mail like ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
