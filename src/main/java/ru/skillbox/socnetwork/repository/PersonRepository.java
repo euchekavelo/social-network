@@ -130,4 +130,24 @@ public class PersonRepository {
                 "WHERE p.id IN (SELECT * FROM persons_request_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
     }
+
+    /**
+     * TODO build correct country and city
+     * TODO fix birth_date after it will be fixed in frontend
+     *
+     */
+    public List<Person> getPersonsFromSearch(String firstName, String lastName,
+                                             long ageFrom, long ageTo,
+                                             int countryId, int cityId,
+                                             int perPage) {
+
+        ageFrom = 1649367846506L;
+        ageTo = 1649367846506L;
+        firstName = "%" + firstName + "%";
+        lastName = "%" + lastName + "%";
+        String sql = "select * from person where first_name like ? and last_name like ? " +
+                "and birth_date >= ? and birth_date <= ? " +
+                "limit ?";
+        return jdbc.query(sql, new PersonMapper(), firstName, lastName, ageFrom, ageTo, perPage);// ageFrom, ageTo,
+    }
 }

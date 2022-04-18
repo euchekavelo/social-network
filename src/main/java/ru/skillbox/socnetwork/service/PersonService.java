@@ -11,6 +11,7 @@ import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,8 +60,22 @@ public class PersonService {
         if (person == null) {
             throw new BadRequestException("user not found");
         } else {
-        return new PersonDto(person,
-                tokenProvider.generateToken(loginDto.getEmail()));
+            return new PersonDto(person,
+                    tokenProvider.generateToken(loginDto.getEmail()));
         }
+    }
+
+    public List<PersonDto> getPersonsBySearchParameters(String firstName, String lastName,
+                                                        long ageFrom, long ageTo,
+                                                        int countryId, int cityId,
+                                                        int perPage) {
+        List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
+                countryId, cityId, perPage);
+
+        List<PersonDto> personsDto = new ArrayList<>();
+        for (Person person : persons) {
+            personsDto.add(new PersonDto(person));
+        }
+        return personsDto;
     }
 }
