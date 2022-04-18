@@ -28,17 +28,17 @@ public class AccountController {
     private final MailService mailService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<GeneralResponse<MessageResponseDto>> register(@RequestBody RegisterDto request) {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) {
         Person person = personService.getPersonAfterRegistration(request);
         if (person == null) {
             return ResponseEntity
-                .badRequest()
-                .body(new GeneralResponse<>("invalid_request", "string"));
+                    .badRequest()
+                    .body(new GeneralResponse<>("invalid_request", "string"));
         }
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            person.getRegDate(),
-            new MessageResponseDto("ok")));
+                "string",
+                person.getRegDate(),
+                new DialogsResponse("ok")));
     }
 
     @PutMapping(value = "/password/recovery")

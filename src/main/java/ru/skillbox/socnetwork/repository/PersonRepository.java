@@ -22,7 +22,7 @@ public class PersonRepository {
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail = ?";
+        String sql = "select * from person where e_mail like ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
@@ -77,7 +77,7 @@ public class PersonRepository {
                 "friends_ids AS (\n" +
                 "\tSELECT f.dst_person_id AS id\n" +
                 "\tFROM friendship f\n" +
-                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code = 'FRIEND'\n" +
+                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST')\n" +
                 "\tUNION\n" +
                 "\tSELECT f.src_person_id AS id\n" +
                 "\tFROM friendship f\n" +
@@ -108,7 +108,7 @@ public class PersonRepository {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM person p\n" +
-                "WHERE p.id <> (SELECT * FROM authorized_person_id) AND p.id IN (SELECT * FROM friends_ids)\n" +
+                "WHERE p.id IN (SELECT * FROM friends_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
     }
 

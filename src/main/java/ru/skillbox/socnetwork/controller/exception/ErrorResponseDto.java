@@ -14,5 +14,4 @@ public class ErrorResponseDto {
         error = "invalid_request";
         errorDescription = message;
     }
-
 }

@@ -4,7 +4,6 @@ import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.controller.exception.BadRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
@@ -66,7 +65,7 @@ public class PersonService {
     public PersonDto getPersonAfterLogin(LoginDto loginDto) {
         Person person = personRepository.getPersonAfterLogin(loginDto);
         if (person == null) {
-            throw new BadRequestException("user not found");
+            return null;
         } else {
         return new PersonDto(person,
                 tokenProvider.generateToken(loginDto.getEmail()));
