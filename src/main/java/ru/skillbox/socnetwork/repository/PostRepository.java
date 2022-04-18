@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Post;
@@ -19,16 +20,16 @@ public class PostRepository {
     }
 
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE time < ? ORDER BY time DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM post WHERE time < ? ORDER BY id DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
-    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE author = ? LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
+    public List<Post> getByAuthorIdWithOffset(int authorId,int offset, int limit) {
+        String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
+        return jdbc.query(sql, new PostMapper(),authorId, limit, offset);
     }
 
-    public Post getById(int id) {
+    public Post getById(int id) throws EmptyResultDataAccessException {
         String sql = "SELECT * FROM post WHERE id = ?";
         return jdbc.queryForObject(sql, new PostMapper(), id);
     }
@@ -38,7 +39,7 @@ public class PostRepository {
         return jdbc.update(sql, id);
     }
 
-    public Post getLastPersonPost(int personId) {
+    public Post getLastPersonPost(int personId) throws EmptyResultDataAccessException {
         String sql = "select * from post where author = ? order by id desc limit 1";
         return jdbc.queryForObject(sql, new PostMapper(), personId);
     }

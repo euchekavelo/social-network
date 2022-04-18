@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.PostComment;
@@ -21,10 +22,10 @@ public class PostCommentRepository {
     public void add(CommentDto comment) {
         if(comment.getParentId() == null) {
             String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (?, ?, ?, ?, ?)";
-            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked());
+            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthor().getId(), comment.getCommentText(), comment.getIsBlocked());
         } else {
             String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values (?, ?, ?, ?, ?, ?)";
-            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthorId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
+            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthor().getId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
         }
     }
 
@@ -38,7 +39,7 @@ public class PostCommentRepository {
         jdbc.update(sql, commentId);
     }
 
-    public PostComment getById(int id) {
+    public PostComment getById(int id) throws EmptyResultDataAccessException {
         String sql = "SELECT * FROM post_comment WHERE id = ?";
         return jdbc.queryForObject(sql, new PostCommentMapper(), id);
     }

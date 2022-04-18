@@ -22,7 +22,7 @@ public class PersonRepository {
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail = ?";
+        String sql = "select * from person where e_mail like ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
@@ -56,7 +56,6 @@ public class PersonRepository {
      */
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
-        person.setPhoto(person.getDefaultPhoto());
         String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, ?, ?, ?, ?)";
         jdbc.update(sql,
                 person.getFirstName(),
@@ -64,7 +63,7 @@ public class PersonRepository {
                 System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
-                person.getDefaultPhoto());
+                person.getPhoto());
         return person;
     }
 
@@ -78,7 +77,7 @@ public class PersonRepository {
                 "friends_ids AS (\n" +
                 "\tSELECT f.dst_person_id AS id\n" +
                 "\tFROM friendship f\n" +
-                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code = 'FRIEND'\n" +
+                "\tWHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST')\n" +
                 "\tUNION\n" +
                 "\tSELECT f.src_person_id AS id\n" +
                 "\tFROM friendship f\n" +
@@ -109,7 +108,7 @@ public class PersonRepository {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM person p\n" +
-                "WHERE p.id <> (SELECT * FROM authorized_person_id) AND p.id IN (SELECT * FROM friends_ids)\n" +
+                "WHERE p.id IN (SELECT * FROM friends_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
     }
 
@@ -129,6 +128,41 @@ public class PersonRepository {
                 "FROM person p\n" +
                 "WHERE p.id IN (SELECT * FROM persons_request_ids)\n" +
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
+    }
+
+    public Person updatePerson(Person person){
+        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+        jdbc.update(sql,
+            person.getFirstName(),
+            person.getLastName(),
+            person.getBirthDate(),
+            person.getPhone(),
+            person.getAbout(),
+            person.getCity(),
+            person.getCountry(),
+            person.getEmail());
+        return person;
+    }
+
+    public void updatePhoto(Person person){
+        String sql = "update person set photo = ? where person.e_mail = ?";
+        jdbc.update(sql,
+                person.getPhoto(),
+                person.getEmail());
+    }
+
+    public void updatePassword(Person person){
+        String sql = "update person set password = ? where person.e_mail = ?";
+        jdbc.update(sql,
+            person.getPassword(),
+            person.getEmail());
+    }
+
+    public void updateEmail(Person person, String email){
+        String sql = "update person set e_mail = ? where person.e_mail = ?";
+        jdbc.update(sql,
+                email,
+                person.getEmail());
     }
 
     /**

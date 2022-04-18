@@ -7,11 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
@@ -26,7 +27,6 @@ import java.util.List;
 public class ProfileController {
 
     private final PersonService personService;
-    private final JwtTokenProvider tokenProvider;
     private final PostService postService;
 
     @GetMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,6 +39,18 @@ public class ProfileController {
                 "string",
                 System.currentTimeMillis(),
                 personDto));
+    }
+
+    @PutMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<Person>> updateProfile(@RequestBody UpdatePersonDto updatePersonDto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        String email = securityUser.getUsername();
+        Person person = personService.updatePerson(updatePersonDto, personService.getByEmail(email));
+        return ResponseEntity.ok(new GeneralResponse<>(
+            "string",
+            System.currentTimeMillis(),
+            person));
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)

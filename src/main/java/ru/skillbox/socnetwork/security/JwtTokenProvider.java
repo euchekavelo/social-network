@@ -5,13 +5,13 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-@Repository
+@Component
 public class JwtTokenProvider {
 
     @Getter
@@ -36,9 +36,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    /**
-     * TODO check method of getting email from token
-     */
     public String getEmailFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
@@ -52,9 +49,6 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            /**
-             * TODO do something with logout after token expired
-             */
             logger.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());

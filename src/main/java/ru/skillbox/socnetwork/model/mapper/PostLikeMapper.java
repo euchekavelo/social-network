@@ -13,7 +13,7 @@ public class PostLikeMapper implements RowMapper<PostLike> {
         mapper.setId(rs.getInt("id"));
         mapper.setTime(rs.getLong("time"));
         mapper.setPostId(rs.getInt("post_id"));
-        mapper.setPersonId(rs.getInt("post_id"));
+        mapper.setPersonId(rs.getInt("person_id"));
         return mapper;
     }
 }

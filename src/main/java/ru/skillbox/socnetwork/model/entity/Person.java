@@ -37,13 +37,9 @@ public class Person {
     private Boolean isBlocked;
 
     public Person() {
-        this.photo = "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg";
         this.messagesPermission = TypePermission.ALL;
         this.isApproved = true;
         this.isBlocked = false;
     }
 
-    public String getDefaultPhoto() {
-        return "https://st2.depositphotos.com/1001599/7010/v/600/depositphotos_70104863-stock-illustration-man-holding-book-under-his.jpg";
-    }
 }
