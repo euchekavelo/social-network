@@ -125,4 +125,8 @@ public class PersonService {
         person.setPassword(new BCryptPasswordEncoder().encode(password));
         personRepository.updatePassword(person);
     }
+
+    public void updateEmail(String email, Person person){
+        personRepository.updateEmail(person, email);
+    }
 }

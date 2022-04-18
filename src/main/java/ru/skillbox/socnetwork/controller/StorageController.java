@@ -54,18 +54,18 @@ public class StorageController {
     }
     FileUploadDTO fileUploadDTO = new FileUploadDTO(person, fileMetadata);
     return ResponseEntity.ok(new GeneralResponse<>(
-        "string",
-        System.currentTimeMillis(),
-        fileUploadDTO
+            "string",
+            System.currentTimeMillis(),
+            fileUploadDTO
     ));
   }
 
   @PostMapping(path = "/{token}")
-  public void updateToken(@PathVariable String token){
+  public void updateToken(@PathVariable String token) {
     storageService.updateToken(token);
   }
 
-  private void deleteFile(String path){
+  private void deleteFile(String path) {
     try {
       storageService.deleteFile(path);
     } catch (DbxException e) {
@@ -73,11 +73,11 @@ public class StorageController {
     }
   }
 
-  private String generateName(String name){
+  private String generateName(String name) {
     RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(65, 90).build();
     Pattern pattern = Pattern.compile(".*(\\.[A-z]*)$");
     Matcher matcher = pattern.matcher(name);
-    String format = (matcher.find()) ?  matcher.group(1) : "";
+    String format = (matcher.find()) ? matcher.group(1) : "";
     return generator.generate(10) + format;
   }
 }

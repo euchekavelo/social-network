@@ -132,7 +132,6 @@ public class PersonRepository {
 
     public Person updatePerson(Person person){
         String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
-//        String sql = "update person set (first_name, last_name, phone, about, city, country) = (?, ?, ?, ?, ?, ?) where person.e_mail = ?";
         jdbc.update(sql,
             person.getFirstName(),
             person.getLastName(),
@@ -157,5 +156,12 @@ public class PersonRepository {
         jdbc.update(sql,
             person.getPassword(),
             person.getEmail());
+    }
+
+    public void updateEmail(Person person, String email){
+        String sql = "update person set e_mail = ? where person.e_mail = ?";
+        jdbc.update(sql,
+                email,
+                person.getEmail());
     }
 }

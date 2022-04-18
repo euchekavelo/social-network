@@ -10,19 +10,19 @@ import ru.skillbox.socnetwork.model.entity.TempToken;
 public class TempTokenRepository {
   private final JdbcTemplate jdbc;
 
-  public void addToken(TempToken token){
+  public void addToken(TempToken token) {
     String sql = "insert into temptoken (token, email) values (?, ?)";
     jdbc.update(sql, token.getToken(), token.getEmail());
   }
 
-  public TempToken getToken(String token){
+  public TempToken getToken(String token) {
     String sql = "select * from temptoken where token = ?";
     return jdbc.queryForObject(sql, TempToken.class, token);
   }
 
-  public void deleteToken(String token){
+  public void deleteToken(String token) {
     String sql = "delete from temptoken where token = ?";
-    Object[] args = new Object[] {token};
+    Object[] args = new Object[]{token};
     jdbc.update(sql, token);
   }
 }
