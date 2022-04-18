@@ -2,14 +2,12 @@ package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
-import ru.skillbox.socnetwork.controller.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -100,7 +98,7 @@ public class PostController {
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, getSecurityUser().getId()));
         return ResponseEntity.ok(response);
     }
 }

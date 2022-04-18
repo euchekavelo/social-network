@@ -64,7 +64,9 @@ public class LikeService {
         LikesDto likesDto = new LikesDto();
         postLikeRepository.deleteLike(id, itemId);
         List<PostLike> postLikeList = postLikeRepository.getPostLikes(itemId);
+        System.out.println(postLikeList.size() + "like count");
         likesDto.setLikes(postLikeList.size());
+        postService.updatePostLikeCount(likesDto.getLikes(), itemId);
         return likesDto;
     }
 }

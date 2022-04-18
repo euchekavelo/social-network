@@ -24,9 +24,9 @@ public class PostRepository {
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
-    public List<Post> getByAuthorIdWithOffset(int authorId,int offset, int limit) {
+    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
         String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(),authorId, limit, offset);
+        return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
     }
 
     public Post getById(int id) throws EmptyResultDataAccessException {
