@@ -10,7 +10,7 @@ import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
 import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
-import ru.skillbox.socnetwork.model.rsdto.MessageResponseDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
@@ -46,7 +46,7 @@ public class FriendsService {
                 .collect(Collectors.toList());
     }
 
-    public MessageResponseDto deleteFriendById(Integer friendId) throws InvalidRequestException {
+    public DialogsResponse deleteFriendById(Integer friendId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         int countFrom = friendshipRepository.removeFriendlyStatusByPersonIds(authorizedUserId, friendId);
@@ -56,10 +56,10 @@ public class FriendsService {
                     "No friendly relationship found between the specified user.");
         }
 
-        return new MessageResponseDto("ok");
+        return new DialogsResponse("ok");
     }
 
-    public MessageResponseDto addFriendById(Integer focusPersonId) throws InvalidRequestException {
+    public DialogsResponse addFriendById(Integer focusPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
@@ -90,7 +90,7 @@ public class FriendsService {
                     "as it has already been submitted earlier.");
         }
 
-        return new MessageResponseDto("ok");
+        return new DialogsResponse("ok");
     }
 
     public List<PersonDto> getListIncomingFriendRequests() {

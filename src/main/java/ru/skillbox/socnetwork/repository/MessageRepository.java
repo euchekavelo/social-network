@@ -31,9 +31,9 @@ public class MessageRepository {
         String sql = "select id, time, author_id, recipient_id, message_text, read_status FROM message WHERE dialog_id = ?";
         return jdbc.query(sql, new MessageMapper(), id);
     }
-    public DialogsResponse getUnreadCount() {
-        String sql = "SELECT COUNT(*) AS unread_count FROM message WHERE read_status = 'SENT'";
+    public DialogsResponse getUnreadCount(Integer id) {
+        String sql = "SELECT COUNT(*) AS unread_count FROM message WHERE read_status = 'SENT' AND recipient_id = ?";
 
-        return jdbc.queryForObject(sql, new CountMapper());
+        return jdbc.queryForObject(sql, new CountMapper(), id);
     }
 }

@@ -25,7 +25,7 @@ public class DialogsService {
             return ResponseEntity.badRequest().body(
                     new GeneralResponse<>("invalid_request", "string"));
         }
-        if(SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
                     dialogList.size(), 0, 20, dialogList));
         }
@@ -56,7 +56,7 @@ public class DialogsService {
                     new GeneralResponse<>("invalid_request", "string"));
         }
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount()));
+            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount(id)));
         }
 
         return ResponseEntity.status(401).body(
