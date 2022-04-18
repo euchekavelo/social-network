@@ -130,35 +130,35 @@ public class PersonRepository {
                 "ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
     }
 
-    public Person updatePerson(Person person){
+    public Person updatePerson(Person person) {
         String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
         jdbc.update(sql,
-            person.getFirstName(),
-            person.getLastName(),
-            person.getBirthDate(),
-            person.getPhone(),
-            person.getAbout(),
-            person.getCity(),
-            person.getCountry(),
-            person.getEmail());
+                person.getFirstName(),
+                person.getLastName(),
+                person.getBirthDate(),
+                person.getPhone(),
+                person.getAbout(),
+                person.getCity(),
+                person.getCountry(),
+                person.getEmail());
         return person;
     }
 
-    public void updatePhoto(Person person){
+    public void updatePhoto(Person person) {
         String sql = "update person set photo = ? where person.e_mail = ?";
         jdbc.update(sql,
                 person.getPhoto(),
                 person.getEmail());
     }
 
-    public void updatePassword(Person person){
+    public void updatePassword(Person person) {
         String sql = "update person set password = ? where person.e_mail = ?";
         jdbc.update(sql,
-            person.getPassword(),
-            person.getEmail());
+                person.getPassword(),
+                person.getEmail());
     }
 
-    public void updateEmail(Person person, String email){
+    public void updateEmail(Person person, String email) {
         String sql = "update person set e_mail = ? where person.e_mail = ?";
         jdbc.update(sql,
                 email,
@@ -167,21 +167,22 @@ public class PersonRepository {
 
     /**
      * TODO build correct country and city
-     * TODO fix birth_date after it will be fixed in frontend
-     *
      */
     public List<Person> getPersonsFromSearch(String firstName, String lastName,
                                              long ageFrom, long ageTo,
                                              int countryId, int cityId,
                                              int perPage) {
+        long milliSecInYear = 31718612432L;
+        long currentTime = System.currentTimeMillis();
+        long dateTo = currentTime - ageFrom * milliSecInYear;
+        long dateFrom = currentTime - ageTo * milliSecInYear;
 
-        ageFrom = 1649367846506L;
-        ageTo = 1649367846506L;
+
         firstName = "%" + firstName + "%";
         lastName = "%" + lastName + "%";
         String sql = "select * from person where first_name like ? and last_name like ? " +
                 "and birth_date >= ? and birth_date <= ? " +
                 "limit ?";
-        return jdbc.query(sql, new PersonMapper(), firstName, lastName, ageFrom, ageTo, perPage);// ageFrom, ageTo,
+        return jdbc.query(sql, new PersonMapper(), firstName, lastName, dateFrom, dateTo, perPage);
     }
 }
