@@ -21,7 +21,7 @@ public class FileUploadDTO {
   private FileType fileType;
   private Long createdAt;
 
-  public FileUploadDTO(Person person, FileMetadata fileMetadata){
+  public FileUploadDTO(Person person, FileMetadata fileMetadata) {
     id = fileMetadata.getId().substring(3);
     ownerID = person.getId();
     this.fileName = fileMetadata.getName();
@@ -33,9 +33,9 @@ public class FileUploadDTO {
     createdAt = fileMetadata.getServerModified().getTime();
   }
 
-  private String getFileFormat(String name){
+  private String getFileFormat(String name) {
     Pattern pattern = Pattern.compile(".*\\.([A-z]*)$");
     Matcher matcher = pattern.matcher(name);
-    return (matcher.find()) ?  matcher.group(1) : "";
+    return (matcher.find()) ? matcher.group(1) : "";
   }
 }

@@ -20,15 +20,15 @@ public class StorageService {
 
   public String getDefaultProfileImage() throws DbxException {
     return client.sharing().listSharedLinksBuilder().withPath("/default.jpg").start()
-            .getLinks().get(0).getUrl().replace("dl=0","raw=1");
+            .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
   }
 
-  public FileMetadata uploadFile(InputStream stream, String path){
+  public FileMetadata uploadFile(InputStream stream, String path) {
     FileMetadata fileMetadata = null;
     try {
       fileMetadata = client.files().uploadBuilder("/" + path)
               .withMode(WriteMode.ADD).uploadAndFinish(stream);
-      if(client.sharing().listSharedLinksBuilder().withPath("/" + path).start()
+      if (client.sharing().listSharedLinksBuilder().withPath("/" + path).start()
               .getLinks().isEmpty()) {
         client.sharing().createSharedLinkWithSettings(fileMetadata.getPathDisplay());
       }
@@ -39,24 +39,24 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if(!path.equals("/default.jpg")) {
+    if (!path.equals("/default.jpg")) {
       client.files().deleteV2(path);
     }
   }
 
-  public void updateToken(String newToken){
+  public void updateToken(String newToken) {
     token = newToken;
     client = new DbxClientV2(config, token);
   }
 
-  public String getRelativePath(String path){
+  public String getRelativePath(String path) {
     Pattern pattern = Pattern.compile(".*(/\\w*\\.[A-z]*)\\?raw=1");
     Matcher matcher = pattern.matcher(path);
-    return (matcher.find()) ?  matcher.group(1) : "";
+    return (matcher.find()) ? matcher.group(1) : "";
   }
 
   public String getAbsolutePath(String path) throws DbxException {
     return client.sharing().listSharedLinksBuilder().withPath(path).start()
-            .getLinks().get(0).getUrl().replace("dl=0","raw=1");
+            .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
   }
 }
