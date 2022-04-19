@@ -38,6 +38,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<GeneralResponse<DialogsResponse>> logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.isAuthenticated());
         if (auth != null) {
             auth.setAuthenticated(false);
             return ResponseEntity.ok()
@@ -46,8 +47,10 @@ public class AuthController {
                             System.currentTimeMillis(),
                             new DialogsResponse("ok")));
         }
-        return ResponseEntity.badRequest().body(new GeneralResponse<>(
-                "invalid_request",
-                "string"));
+        return ResponseEntity.ok()
+                .body(new GeneralResponse<>(
+                        "string",
+                        System.currentTimeMillis(),
+                        new DialogsResponse("ok")));
     }
 }
