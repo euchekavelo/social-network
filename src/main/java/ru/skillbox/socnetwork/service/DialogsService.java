@@ -21,10 +21,6 @@ public class DialogsService {
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialogs(Integer id) {
         List<DialogsResponse> dialogList = messageRepository.getDialogList(id);
 
-        if (id == null) {
-            return ResponseEntity.badRequest().body(
-                    new GeneralResponse<>("invalid_request", "string"));
-        }
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
                     dialogList.size(), 0, 20, dialogList));
@@ -36,10 +32,6 @@ public class DialogsService {
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getMessageById(Integer id) {
         List<MessageDto> messageList = messageRepository.getMessageList(id);
 
-        if (id == null) {
-            return ResponseEntity.badRequest().body(
-                    new GeneralResponse<>("invalid_request", "string"));
-        }
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
                     messageList.size(), 0, 20, messageList));
@@ -50,11 +42,6 @@ public class DialogsService {
     }
     public ResponseEntity<GeneralResponse<DialogsResponse>> getUnreadMessageCount(Integer id) {
 
-
-        if (id == null) {
-            return ResponseEntity.badRequest().body(
-                    new GeneralResponse<>("invalid_request", "string"));
-        }
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount(id)));
         }
