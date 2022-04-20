@@ -1,13 +1,17 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.CommentLike;
 import ru.skillbox.socnetwork.model.entity.PostLike;
 import ru.skillbox.socnetwork.model.rsdto.postdto.LikedDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.LikesDto;
 import ru.skillbox.socnetwork.repository.CommentLikeRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
+import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,35 +21,50 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LikeService {
 
+    private final String POST = "Post";
+    private final String COMMENT = "Comment";
+
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final PostService postService;
 
-    public LikesDto getPostLikes(Integer itemId) {
+    public LikesDto getLikes(Integer itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
-        List<PostLike> postLikeList = postLikeRepository.getPostLikes(itemId);
-        likesDto.setLikes(postLikeList.size());
-        likesDto.setUsers(postLikeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
-        return likesDto;
-    }
-
-    public LikesDto getCommentLikes(Integer itemId) {
-        LikesDto likesDto = new LikesDto();
-        List<CommentLike> LikeList = commentLikeRepository.getLikes(itemId);
-        likesDto.setLikes(LikeList.size());
-        likesDto.setUsers(LikeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
-        return likesDto;
-    }
-
-    public LikesDto putAndGetAllPostLikes(Integer personId, Integer itemId) {
-        Optional<PostLike> optionalLikeDto = Optional.ofNullable(postLikeRepository.getPersonLike(personId, itemId));
-        if (optionalLikeDto.isEmpty()){
-            postLikeRepository.addLike(personId, itemId);
-            LikesDto likesDto = getPostLikes(itemId);
-            postService.updatePostLikeCount(likesDto.getLikes(), itemId);
+        if (type.equals(POST)) {
+            List<PostLike> postLikeList = postLikeRepository.getPostLikes(itemId);
+            likesDto.setLikes(postLikeList.size());
+            likesDto.setUsers(postLikeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
+            return likesDto;
+        } else if (type.equals(COMMENT)) {
+            List<CommentLike> LikeList = commentLikeRepository.getLikes(itemId);
+            likesDto.setLikes(LikeList.size());
+            likesDto.setUsers(LikeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
             return likesDto;
         }
-        return getPostLikes(itemId);
+        throw new InvalidRequestException("Bad like type. Required 'Post' or 'Comment' types");
+    }
+
+    public LikesDto putAndGetAllPostLikes(Integer itemId, String type) throws InvalidRequestException  {
+        if (type.equals(POST)) {
+            Optional<PostLike> optionalLikeDto = Optional.ofNullable(postLikeRepository.getPersonLike(getPersonId(), itemId));
+            if (optionalLikeDto.isEmpty()) {
+                postLikeRepository.addLike(getPersonId(), itemId);
+                LikesDto likesDto = getLikes(itemId, POST);
+                postService.updatePostLikeCount(likesDto.getLikes(), itemId);
+                return likesDto;
+            }
+            return getLikes(itemId, POST);
+        } else if (type.equals(COMMENT)) {
+            Optional<CommentLike> optionalLikeDto = Optional.ofNullable(commentLikeRepository.getPersonLike(getPersonId(), itemId));
+            if (optionalLikeDto.isEmpty()) {
+                commentLikeRepository.addLike(getPersonId(), itemId);
+                LikesDto likesDto = getLikes(itemId, COMMENT);
+                postService.updateCommentLikeCount(likesDto.getLikes(), itemId);
+            }
+            return getLikes(itemId, COMMENT);
+        }
+        throw new InvalidRequestException("Bad like type. Required 'Post' or 'Comment' types");
+
     }
 
     public LikedDto getPostLiked(Integer personId, Integer itemId) {
@@ -68,5 +87,14 @@ public class LikeService {
         likesDto.setLikes(postLikeList.size());
         postService.updatePostLikeCount(likesDto.getLikes(), itemId);
         return likesDto;
+    }
+
+    private SecurityUser getSecurityUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (SecurityUser) auth.getPrincipal();
+    }
+
+    private int getPersonId() {
+        return getSecurityUser().getId();
     }
 }

@@ -44,4 +44,8 @@ public class PostCommentRepository {
         return jdbc.queryForObject(sql, new PostCommentMapper(), id);
     }
 
+    public void updateLikeCount(Integer likes, Integer postId) {
+        String sql = "update post_comment set likes = ? where id = ?";
+        jdbc.update(sql, likes, postId);
+    }
 }
