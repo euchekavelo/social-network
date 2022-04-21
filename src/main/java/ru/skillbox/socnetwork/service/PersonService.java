@@ -72,62 +72,63 @@ public class PersonService {
                     tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public Person updatePerson(UpdatePersonDto changedPerson, Person updatablePerson){
-        if(changedPerson.getFirstName() != null &&
-            !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
+
+    public Person updatePerson(UpdatePersonDto changedPerson, Person updatablePerson) {
+        if (changedPerson.getFirstName() != null &&
+                !changedPerson.getFirstName().equals(updatablePerson.getFirstName())) {
             updatablePerson.setFirstName(changedPerson.getFirstName());
         }
-        if(changedPerson.getLastName() != null &&
-            !changedPerson.getLastName().equals(updatablePerson.getLastName())){
+        if (changedPerson.getLastName() != null &&
+                !changedPerson.getLastName().equals(updatablePerson.getLastName())) {
             updatablePerson.setLastName(changedPerson.getLastName());
         }
         String date = "";
-        if(changedPerson.getBirthDate() != null){
+        if (changedPerson.getBirthDate() != null) {
             date = changedPerson.getBirthDate().substring(0, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             long dateTime = 0;
             try {
                 dateTime = format.parse(date).getTime();
-                if(dateTime != updatablePerson.getBirthDate()){
+                if (dateTime != updatablePerson.getBirthDate()) {
                     updatablePerson.setBirthDate(dateTime);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        if(!changedPerson.getPhone().isEmpty()){
+        if (!changedPerson.getPhone().isEmpty()) {
             String phone = (changedPerson.getPhone().charAt(0) == '7') ? changedPerson.getPhone() :
-                "7" + changedPerson.getPhone();
-            if(!phone.equals(updatablePerson.getPhone())) {
+                    "7" + changedPerson.getPhone();
+            if (!phone.equals(updatablePerson.getPhone())) {
                 updatablePerson.setPhone(phone);
             }
         }
-        if(changedPerson.getAbout() != null &&
-            !changedPerson.getAbout().equals(updatablePerson.getAbout())){
+        if (changedPerson.getAbout() != null &&
+                !changedPerson.getAbout().equals(updatablePerson.getAbout())) {
             updatablePerson.setAbout(changedPerson.getAbout());
         }
-        if(changedPerson.getCity() != null &&
-            !changedPerson.getCity().equals(updatablePerson.getCity())){
+        if (changedPerson.getCity() != null &&
+                !changedPerson.getCity().equals(updatablePerson.getCity())) {
             updatablePerson.setCity(changedPerson.getCity());
         }
-        if(changedPerson.getCountry() != null &&
-            !changedPerson.getCountry().equals(updatablePerson.getCountry())){
+        if (changedPerson.getCountry() != null &&
+                !changedPerson.getCountry().equals(updatablePerson.getCountry())) {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         return personRepository.updatePerson(updatablePerson);
     }
 
-    public void updatePhoto(String photo, Person person){
+    public void updatePhoto(String photo, Person person) {
         person.setPhoto(photo);
         personRepository.updatePhoto(person);
     }
 
-    public void updatePassword(String password, Person person){
+    public void updatePassword(String password, Person person) {
         person.setPassword(new BCryptPasswordEncoder().encode(password));
         personRepository.updatePassword(person);
     }
 
-    public void updateEmail(String email, Person person){
+    public void updateEmail(String email, Person person) {
         personRepository.updateEmail(person, email);
     }
 
@@ -135,6 +136,7 @@ public class PersonService {
                                                         long ageFrom, long ageTo,
                                                         int countryId, int cityId,
                                                         int perPage) {
+
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
                 countryId, cityId, perPage);
 

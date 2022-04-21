@@ -3,6 +3,8 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
@@ -172,17 +174,21 @@ public class PersonRepository {
                                              long ageFrom, long ageTo,
                                              int countryId, int cityId,
                                              int perPage) {
+
         long milliSecInYear = 31718612432L;
         long currentTime = System.currentTimeMillis();
-        long dateTo = currentTime - ageFrom * milliSecInYear;
-        long dateFrom = currentTime - ageTo * milliSecInYear;
 
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("firstName", "%" + firstName + "%");
+        parameters.addValue("lastName", "%" + lastName + "%");
+        parameters.addValue("dateTo", currentTime - ageFrom * milliSecInYear);
+        parameters.addValue("dateFrom", currentTime - ageTo * milliSecInYear);
 
-        firstName = "%" + firstName + "%";
-        lastName = "%" + lastName + "%";
-        String sql = "select * from person where first_name like ? and last_name like ? " +
-                "and birth_date >= ? and birth_date <= ? " +
-                "limit ?";
-        return jdbc.query(sql, new PersonMapper(), firstName, lastName, dateFrom, dateTo, perPage);
+        String sql = "select * from person" +
+                " where first_name like :firstName and last_name like :lastName " +
+                "and birth_date >= :dateFrom and birth_date <= :dateTo ";
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+        return template.query(sql, parameters, new PersonMapper());
     }
 }

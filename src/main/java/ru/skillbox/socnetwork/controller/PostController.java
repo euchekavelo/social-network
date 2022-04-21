@@ -62,7 +62,7 @@ public class PostController {
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
-                                                                         @RequestBody CommentDto comment) {
+                                                                        @RequestBody CommentDto comment) {
         comment.setAuthor(new PersonDto(personService.getById(getSecurityUser().getId())));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
@@ -82,7 +82,7 @@ public class PostController {
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
-                                                                         @PathVariable int commentId) {
+                                                                           @PathVariable int commentId) {
         GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
         return ResponseEntity.ok(response);
     }
@@ -98,9 +98,10 @@ public class PostController {
             @RequestParam(value = "date_from", defaultValue = "0", required = false) long dateFrom,
             @RequestParam(value = "date_to", defaultValue = "0", required = false) long dateTo,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
+            @RequestParam(value = "author", defaultValue = "", required = false) String author,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage));
         return ResponseEntity.ok(response);
     }
 }

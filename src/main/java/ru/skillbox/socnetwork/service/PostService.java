@@ -3,15 +3,16 @@ package ru.skillbox.socnetwork.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +60,11 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
         return posts.stream().map(post -> {
-            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()));
-            postDto.setIsLiked(likeRepository.getIsLiked(post.getAuthor(), post.getId()));
-            return postDto;
-            }
-            ).collect(Collectors.toList());
+                    PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(post.getAuthor(), post.getId()));
+                    return postDto;
+                }
+        ).collect(Collectors.toList());
     }
 
     private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
@@ -108,9 +109,15 @@ public class PostService {
         return commentDto;
     }
 
-    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
-        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
-        return getPostDtoListOfAllPersons(posts);
+    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author, int perPage) {
 
+        String[] authorNameSurname = author.split("\\s", 2);
+        String authorName = authorNameSurname[0];
+        String authorSurname = authorNameSurname.length >= 2 ? authorNameSurname[1] : "";
+
+        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
+                authorName, authorSurname, perPage);
+        return getPostDtoListOfAllPersons(posts);
     }
+
 }

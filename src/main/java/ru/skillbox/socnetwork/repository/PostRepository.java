@@ -3,6 +3,8 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
@@ -24,9 +26,9 @@ public class PostRepository {
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
-    public List<Post> getByAuthorIdWithOffset(int authorId,int offset, int limit) {
+    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
         String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(),authorId, limit, offset);
+        return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
     }
 
     public Post getById(int id) throws EmptyResultDataAccessException {
@@ -60,9 +62,33 @@ public class PostRepository {
         jdbc.update(sql, likes, postId);
     }
 
-    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
-        text = "%" + text + "%";
-        String sql = "select * from post where post_text like ? and time > ? and time < ? and is_blocked = 'f'";
-        return jdbc.query(sql, new PostMapper(), text, dateFrom, dateTo);
+    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
+                                                   String authorSurname, int perPage) {
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("name", "%" + authorName + "%");
+        parameters.addValue("surname", "%" + authorSurname + "%");
+        parameters.addValue("text", "%" + text + "%");
+        parameters.addValue("dateFrom", dateFrom);
+        parameters.addValue("dateTo", dateTo);
+        String sql = "select " +
+                "post.id, " +
+                "time, " +
+                "author, " +
+                "title, " +
+                "post_text, " +
+                "post.is_blocked, " +
+                "likes " +
+                "from post " +
+                " join person on post.author = person.id" +
+                " where ((first_name like :name and last_name like :surname)" +
+                " or (first_name like :surname and last_name like :name))" +
+                " and (post_text like :text or title like :text)" +
+                " and time > :dateFrom" +
+                " and time < :dateTo" +
+                " and post.is_blocked = 'f'";
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+        return template.query(sql, parameters, new PostMapper());
     }
 }
