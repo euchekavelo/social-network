@@ -2,7 +2,6 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
@@ -12,6 +11,7 @@ import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.TagDTO;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
@@ -30,10 +30,10 @@ public class PostService {
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
+    private final TagService tagService;
 
     public List<PostDto> getAll(int offset, int perPage) {
-        int personId = getSecurityUser().getId();
-        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), personId);
+        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), getPersonId());
     }
 
     public List<PostDto> getWall(int personId, int offset, int perPage) {
@@ -47,15 +47,19 @@ public class PostService {
             Post post = postRepository.getById(postId);
             PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
             List<CommentDto> commentDtoList = getCommentDtoList(postId);
-            return new PostDto(post, personDto, commentDtoList);
+            List<TagDTO> tags = tagService.getTags("");
+            return new PostDto(post, personDto, commentDtoList, tags);
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidRequestException("Incorrect post data, can't ");
         }
 
     }
 
-    public void deletePostById(int postId) {
-        postRepository.deleteById(postId);
+    public void deletePostById(int postId) throws InvalidRequestException {
+        if (postRepository.deleteById(postId) == 0) {
+            throw new InvalidRequestException("No post id found to delete");
+        }
+
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
@@ -70,7 +74,7 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
         return posts.stream().map(post -> {
-            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()));
+            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()), tagService.getTags(""));
             postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
             return postDto;
             }
@@ -81,7 +85,8 @@ public class PostService {
         return posts.stream().map(post -> {
                     PostDto postDto = new PostDto(post,
                             new PersonDto(personService.getById(post.getAuthor())),
-                            getCommentDtoList(post.getId()));
+                            getCommentDtoList(post.getId()),
+                            tagService.getTags(""));
                     postDto.setIsLiked(likeRepository.getIsLiked(personId, post.getId()));
                     return postDto;
                 }
@@ -90,11 +95,14 @@ public class PostService {
 
     public PostDto addPost(NewPostDto newPostDto) {
         Post post = postRepository.addPost(newPostDto);
-        return new PostDto(post, new PersonDto(personService.getById(newPostDto.getAuthorId())), new ArrayList<>());
+        return new PostDto(post, new PersonDto(
+                personService.getById(newPostDto.getAuthorId())),
+                new ArrayList<>(),
+                tagService.getTags(""));
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
-        if (!Objects.equals(getSecurityUser().getId(), newPostDto.getAuthorId())) {
+        if (getPersonId() == newPostDto.getAuthorId()) {
             throw new InvalidRequestException("You cannot edit a post, you are not the author.");
         }
         postRepository.editPost(postId, newPostDto);
@@ -109,9 +117,8 @@ public class PostService {
         commentRepository.updateLikeCount(likes, postId);
     }
 
-
     public CommentDto addCommentToPost(CommentDto comment, int id) {
-        comment.setAuthor(new PersonDto(personService.getById(getSecurityUser().getId())));
+        comment.setAuthor(new PersonDto(personService.getById(getPersonId())));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
         comment.setIsBlocked(false);
@@ -132,13 +139,13 @@ public class PostService {
     }
 
     public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
-        int currentPersonId = getSecurityUser().getId();
+        int currentPersonId = getPersonId();
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
         return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 
-    private SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
+    private Integer getPersonId() {
+        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return auth.getId();
     }
 }

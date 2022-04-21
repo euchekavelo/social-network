@@ -1,20 +1,14 @@
 package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 
@@ -30,18 +24,18 @@ public class PostController {
 
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable int id) throws InvalidRequestException {
-        GeneralResponse<PostDto> response = new GeneralResponse<PostDto>();
-            response.setData(postService.getById(id));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable int id)
+            throws InvalidRequestException {
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getById(id)));
     }
 
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id) {
+    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id)
+            throws InvalidRequestException {
 
         postService.deletePostById(id);
-        GeneralResponse<PostDto> response = new GeneralResponse<>(new PostDto(id));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new GeneralResponse<>(new PostDto(id)));
     }
 
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,32 +47,31 @@ public class PostController {
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(@PathVariable int id) {
-        GeneralResponse<List<CommentDto>> response = new GeneralResponse<>(postService.getCommentDtoList(id));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getCommentDtoList(id)));
     }
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
                                                                          @RequestBody CommentDto comment) {
 
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.addCommentToPost(comment, id));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new GeneralResponse<>(postService.addCommentToPost(comment, id)));
     }
 
     @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable int id,
                                                                          @PathVariable int commentId,
                                                                          @RequestBody CommentDto comment) {
+
         comment.setId(commentId);
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.editCommentToPost(comment));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
                                                                          @PathVariable int commentId) {
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
     }
 
 
@@ -89,8 +82,8 @@ public class PostController {
             @RequestParam(value = "date_to", defaultValue = "0", required = false) long dateTo,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity
+                .ok(new GeneralResponse<>(postService.choosePostsWhichContainsText(text, dateFrom, dateTo)));
     }
 }

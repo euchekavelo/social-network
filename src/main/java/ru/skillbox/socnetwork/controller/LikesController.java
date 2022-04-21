@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.rqdto.PutLikeDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -31,18 +30,11 @@ public class LikesController {
     }
 
     @PutMapping(path = "/likes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<LikesDto>> putAndGetAllLikes(@RequestBody PutLikeDto putLikeDto) {
+    public ResponseEntity<GeneralResponse<LikesDto>> putAndGetAllLikes(
+            @RequestBody PutLikeDto putLikeDto) throws InvalidRequestException {
 
-        String type = putLikeDto.getType();
-        if (type.equals(POST)) {
-            LikesDto likesDto = likeService
-                    .putAndGetAllPostLikes(getSecurityUser().getId(), putLikeDto.getItemId());
-            GeneralResponse<LikesDto> response = new GeneralResponse<>(likesDto);
-            return ResponseEntity.ok(response);
-        } else if (type.equals(COMMENT)) {
-            return ResponseEntity.ok(new GeneralResponse<>());
-        }
-        return new BadRequestResponseEntity("wrong like type");
+            return ResponseEntity.ok(new GeneralResponse<>(likeService
+                    .putAndGetAllLikes(putLikeDto.getItemId(), putLikeDto.getType())));
     }
 
     @GetMapping(path = "/liked", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,27 +43,15 @@ public class LikesController {
             @RequestParam(value = "item_id") int itemId,
             @RequestParam(value = "type") String type) throws InvalidRequestException {
 
-        if (type.equals(POST)) {
-            GeneralResponse<LikedDto> response = new GeneralResponse<>(likeService.getPostLiked(itemId, type));
-            return ResponseEntity.ok(response);
-        } else if (type.equals(COMMENT)) {
-            return ResponseEntity.ok(new GeneralResponse<>());
-        }
-        return new BadRequestResponseEntity("wrong like type");
+            return ResponseEntity.ok(new GeneralResponse<>(likeService.getLiked(itemId, type)));
     }
 
 
     @DeleteMapping(path = "/likes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<LikesDto>> deleteLikeAndGetAllLikes(@RequestParam(value = "item_id") int itemId,
-                                                                              @RequestParam(value = "type") String type) {
+    public ResponseEntity<GeneralResponse<LikesDto>> deleteLikeAndGetAllLikes(
+            @RequestParam(value = "item_id") int itemId,
+            @RequestParam(value = "type") String type) throws InvalidRequestException {
 
-        if (type.equals(POST)) {
-            LikesDto likesDto = likeService.deletePostLike(getSecurityUser().getId(), itemId);
-            GeneralResponse<LikesDto> response = new GeneralResponse<>(likesDto);
-            return ResponseEntity.ok(response);
-        } else if (type.equals(COMMENT)) {
-            return ResponseEntity.ok(new GeneralResponse<>());
-        }
-        return new BadRequestResponseEntity("wrong like type");
+            return ResponseEntity.ok(new GeneralResponse<>(likeService.deletePostLike(itemId, type)));
     }
 }
