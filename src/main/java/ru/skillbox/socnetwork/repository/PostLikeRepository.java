@@ -8,6 +8,7 @@ import ru.skillbox.socnetwork.model.entity.PostLike;
 import ru.skillbox.socnetwork.model.mapper.PostLikeMapper;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class PostLikeRepository {

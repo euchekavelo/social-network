@@ -36,6 +36,6 @@ public class CommentDto {
         this.time = comment.getTime();
         this.author = personDto;
         this.isBlocked = comment.getIsBlocked();
-        this.isLiked = false;
+        this.isLiked = comment.getIsLiked();
     }
 }

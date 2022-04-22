@@ -75,12 +75,8 @@ public class ProfileController {
                                              @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
                                              @RequestBody NewPostDto newPostDto) {
         newPostDto.setAuthorId(id);
-        if (publishDate == -1) {
-            newPostDto.setTime(System.currentTimeMillis());
-        } else {
-            newPostDto.setTime(publishDate);
-        }
-        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto));
+
+        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));
         return ResponseEntity.ok(response);
     }
 }

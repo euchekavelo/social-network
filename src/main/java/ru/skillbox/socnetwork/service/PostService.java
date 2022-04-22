@@ -11,7 +11,6 @@ import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.TagDTO;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
@@ -19,7 +18,6 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +45,7 @@ public class PostService {
             Post post = postRepository.getById(postId);
             PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
             List<CommentDto> commentDtoList = getCommentDtoList(postId);
-            List<TagDTO> tags = tagService.getTags("");
+            List<String> tags = tagService.getPostTags(postId);
             return new PostDto(post, personDto, commentDtoList, tags);
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidRequestException("Incorrect post data, can't ");
@@ -74,37 +72,51 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
         return posts.stream().map(post -> {
-            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()), tagService.getTags(""));
-            postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
-            return postDto;
-            }
-            ).collect(Collectors.toList());
+                    PostDto postDto = new PostDto(
+                            post,
+                            personDto,
+                            getCommentDtoList(post.getId()),
+                            tagService.getPostTags(post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
+                    return postDto;
+                }
+        ).collect(Collectors.toList());
     }
 
     private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, int personId) {
         return posts.stream().map(post -> {
-                    PostDto postDto = new PostDto(post,
+                    PostDto postDto = new PostDto(
+                            post,
                             new PersonDto(personService.getById(post.getAuthor())),
                             getCommentDtoList(post.getId()),
-                            tagService.getTags(""));
+                            tagService.getPostTags(post.getId()));
                     postDto.setIsLiked(likeRepository.getIsLiked(personId, post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());
     }
 
-    public PostDto addPost(NewPostDto newPostDto) {
+    public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+        if (publishDate == -1) {
+            newPostDto.setTime(System.currentTimeMillis());
+        } else {
+            newPostDto.setTime(publishDate);
+        }
         Post post = postRepository.addPost(newPostDto);
+        tagService.addTagsFromNewPost(post.getId(), newPostDto);
+
         return new PostDto(post, new PersonDto(
                 personService.getById(newPostDto.getAuthorId())),
                 new ArrayList<>(),
-                tagService.getTags(""));
+                tagService.getPostTags(post.getId()));
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
         if (getPersonId() == newPostDto.getAuthorId()) {
             throw new InvalidRequestException("You cannot edit a post, you are not the author.");
         }
+        tagService.deletePostTags(postId);
+        tagService.addTagsFromNewPost(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
         return getById(postId);
     }

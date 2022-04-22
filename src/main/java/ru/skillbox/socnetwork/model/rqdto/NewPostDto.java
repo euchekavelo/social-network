@@ -15,5 +15,5 @@ public class NewPostDto {
     String postText;
     Integer authorId;
     Long time;
-    List<Tag> tags;
+    List<String> tags;
 }

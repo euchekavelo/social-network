@@ -9,24 +9,23 @@ import ru.skillbox.socnetwork.model.mapper.PostCommentMapper;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
 
     public List<PostComment> getCommentsByPostId(int postId) {
-        String sql = "SELECT * FROM post_comment WHERE post_id = ?";
+        String sql = "select pc.*, (cl.time > 0) as is_liked " +
+                "from post_comment pc " +
+                "left join comment_like cl on cl.comment_id = pc.id " +
+                "where pc.post_id = ?";
         return jdbc.query(sql, new PostCommentMapper(), postId);
     }
 
     public void add(CommentDto comment) {
-        if(comment.getParentId() == null) {
-            String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked) values (?, ?, ?, ?, ?)";
-            jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthor().getId(), comment.getCommentText(), comment.getIsBlocked());
-        } else {
             String sql = "INSERT INTO post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values (?, ?, ?, ?, ?, ?)";
             jdbc.update(sql, System.currentTimeMillis(), comment.getPostId(), comment.getAuthor().getId(), comment.getCommentText(), comment.getIsBlocked(), comment.getParentId());
-        }
     }
 
     public void edit(CommentDto comment) {

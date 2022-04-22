@@ -104,3 +104,19 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/013-create-token-table.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 14
+      author: Alexandr Luzyanin
+      comment: add table comment_like, alter tables - post_comment, tag
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/014-create-comment-like-table.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 15
+      author: Alexandr Luzyanin
+      comment: alter table comment_like
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/015-alter-comment-like-table.sql
+        relativeToChangelogFile: true

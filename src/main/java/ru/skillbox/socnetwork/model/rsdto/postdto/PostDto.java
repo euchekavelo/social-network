@@ -25,13 +25,13 @@ public class PostDto {
     Integer likes;
     @JsonProperty("is_blocked")
     Boolean isBlocked;
-    List<TagDTO> tags;
+    List<String> tags;
     List<CommentDto> comments;
     String type;
     @JsonProperty("my_like")
     Boolean isLiked;
 
-    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments, List<TagDTO> tags) {
+    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments, List<String> tags) {
         this.id = post.getId();
         this.time = post.getTime();
         this.author = personDto;
