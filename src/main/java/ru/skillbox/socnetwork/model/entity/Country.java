@@ -7,6 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class Country {
 
-    private Integer id;
     private String name;
 }

@@ -10,8 +10,7 @@ public class CountryMapper implements RowMapper<Country> {
     @Override
     public Country mapRow(ResultSet rs, int rowNum) throws SQLException {
         Country mapper = new Country();
-        mapper.setId(rs.getInt("id"));
-        mapper.setName(rs.getString("name"));
+        mapper.setName(rs.getString("country"));
         return mapper;
     }
 }

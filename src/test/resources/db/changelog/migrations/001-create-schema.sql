@@ -1,20 +1,5 @@
 create type permission_type as enum ('ALL', 'FRIENDS');
 
-create table country (
-    id serial,
-    name varchar(100),
-    primary key(id),
-    constraint name_unique UNIQUE (name)
-);
-
-create table city (
-    id serial,
-    country_id int4,
-    name varchar(100),
-    primary key(id),
-    CONSTRAINT fk_country FOREIGN KEY (country_id) REFERENCES country (id)
-);
-
 create table person (
     id serial,
     first_name varchar(50),
@@ -26,8 +11,8 @@ create table person (
     password varchar(512),
     photo varchar(255),
     about text,
-    city_id int4,
-    country_id int4,
+    city varchar(100),
+    country varchar(100),
     confirmation_code varchar(20),
     is_approved boolean,
     messages_permission permission_type,

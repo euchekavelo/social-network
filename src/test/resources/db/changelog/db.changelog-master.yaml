@@ -15,11 +15,3 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/002-fill-tables.sql
         relativeToChangelogFile: true
-  - changeSet:
-      id: 3
-      author: Alexandr Luzyanin
-      comment: fill coutry and city tables
-      sqlFile:
-        encoding: UTF-8
-        path: migrations/003-fill-country-city-tables.sql
-        relativeToChangelogFile: true

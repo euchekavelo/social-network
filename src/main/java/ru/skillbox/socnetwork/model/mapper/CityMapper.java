@@ -10,9 +10,7 @@ public class CityMapper implements RowMapper<City> {
     @Override
     public City mapRow(ResultSet rs, int rowNum) throws SQLException {
         City mapper = new City();
-        mapper.setId(rs.getInt("id"));
-        mapper.setCountryId(rs.getInt("country_id"));
-        mapper.setName(rs.getString("name"));
+        mapper.setName(rs.getString("city"));
         return mapper;
     }
 }

@@ -1,1 +1,0 @@
-ALTER table comment_like ALTER COLUMN time TYPE bigint USING 0
