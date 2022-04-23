@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Alexandr Luzyanin
+      comment: init base tables
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/001-create-schema.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 2
+      author: Alexandr Luzyanin
+      comment: fill tables
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/002-fill-tables.sql
+        relativeToChangelogFile: true
+  - changeSet:
+      id: 3
+      author: Alexandr Luzyanin
+      comment: fill coutry and city tables
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/003-fill-country-city-tables.sql
+        relativeToChangelogFile: true
