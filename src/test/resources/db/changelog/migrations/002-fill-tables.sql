@@ -44,27 +44,3 @@ insert into post_comment (time, post_id, author_id, comment_text, is_blocked) va
     ('1649367846508', 2, 4, 'ivan title example 2', false),
     ('1649367846508', 3, 2, 'petr title example 2', false),
     ('1649367846508', 3, 1, 'tihon title example 2', false);
-
-insert into friendship_status (id, time, name, code) values
-    (1, '1649367846508', '1', 'FRIEND'),
-    (2, '1649367846508', '2', 'FRIEND'),
-    (3, '1649367846508', '3', 'FRIEND'),
-    (4, '1649367846508', '4', 'BLOCKED'),
-    (5, '1649367846508', '5', 'FRIEND'),
-    (6, '1649367846508', '6', 'BLOCKED'),
-    (7, '1649367846508', '7', 'FRIEND'),
-    (8, '1649367846508', '8', 'FRIEND'),
-    (9, '1649367846508', '9', 'FRIEND'),
-    (10, '1649367846508', '10', 'BLOCKED');
-
-insert into friendship (id, status_id, src_person_id, dst_person_id) values
-    (1, 1, 2, 4),
-    (2, 2, 3, 2),
-    (3, 3, 5, 1),
-    (4, 4, 2, 5),
-    (5, 5, 2, 3),
-    (6, 6, 5, 4),
-    (7, 7, 4, 6),
-    (8, 8, 5, 6),
-    (9, 9, 6, 4),
-    (10, 10, 2, 3);

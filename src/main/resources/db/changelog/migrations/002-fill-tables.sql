@@ -32,15 +32,3 @@ INSERT INTO message (time, author_id, recipient_id, message_text, read_status, d
 
 INSERT INTO dialog (id) values
     (1), (2), (3), (4), (5);
-
-insert into post_comment (time, post_id, author_id, comment_text, is_blocked) values
-    ('1649367846508', 1, 5, 'test title example', false),
-    ('1649367846508', 2, 6, 'ivan title example', false),
-    ('1649367846508', 3, 1, 'petr title example', false),
-    ('1649367846508', 4, 5, 'tihon title example', false),
-    ('1649367846508', 5, 2, 'ilya title example', false),
-    ('1649367846508', 6, 3, 'onufriy title example', false),
-    ('1649367846508', 6, 5, 'test title example 2', false),
-    ('1649367846508', 2, 4, 'ivan title example 2', false),
-    ('1649367846508', 3, 2, 'petr title example 2', false),
-    ('1649367846508', 3, 1, 'tihon title example 2', false);
