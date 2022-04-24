@@ -61,7 +61,7 @@ public class PostService {
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getCommentsByPostId(postId);
+        List<PostComment> postComments = commentRepository.getCommentsByPostId(getPersonId(), postId);
         if (postComments == null) {
             return new ArrayList<>();
         }

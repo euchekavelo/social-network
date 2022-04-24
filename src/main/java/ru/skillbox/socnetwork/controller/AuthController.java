@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -23,7 +24,7 @@ public class AuthController {
     private final PersonService personService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonAfterLogin(loginDto)));
     }

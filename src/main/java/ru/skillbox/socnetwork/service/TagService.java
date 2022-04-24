@@ -3,14 +3,11 @@ package ru.skillbox.socnetwork.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.model.entity.Post2Tag;
 import ru.skillbox.socnetwork.model.entity.Tag;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.TagDTO;
 import ru.skillbox.socnetwork.repository.Post2TagRepository;
 import ru.skillbox.socnetwork.repository.TagRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

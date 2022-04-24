@@ -4,6 +4,7 @@ import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
@@ -63,14 +64,11 @@ public class PersonService {
         return saveFromRegistration(person);
     }
 
-    public PersonDto getPersonAfterLogin(LoginDto loginDto) {
+    public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
         Person person = personRepository.getPersonAfterLogin(loginDto);
-        if (person == null) {
-            return null;
-        } else {
             return new PersonDto(person,
                     tokenProvider.generateToken(loginDto.getEmail()));
-        }
+
     }
     public Person updatePerson(UpdatePersonDto changedPerson, Person updatablePerson){
         if(changedPerson.getFirstName() != null &&

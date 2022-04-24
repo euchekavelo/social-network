@@ -15,4 +15,5 @@ public class PostComment {
     private String commentText;
     private Boolean isBlocked = false;
     private Boolean isLiked;
+    private Integer likes;
 }

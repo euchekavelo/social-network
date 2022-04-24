@@ -1,10 +1,10 @@
 insert into person (id, first_name, last_name, reg_date, birth_date, e_mail, phone, password) values
     (1, 'Тест', 'Тест', '1649367846500', '1649367846000', 'test@mail.ru', '+7(111)1111111', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
-    (2, 'Иван', 'Иванов', '1649367846500', '1649367846000', 'ivanov@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
-    (3, 'Петр', 'Петров', '1649367846500', '1649367846000', 'petrov@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
-    (4, 'Тихон', 'Тихонов', '1649367846500', '1649367846000', 'tihonov@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
-    (5, 'Илья', 'Ильин', '1649367846500', '1649367846000', 'ilin@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
-    (6, 'Онуфрий', 'Онуфриев', '1649367846500', '1649367846000', 'onufriy@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS');
+    (2, 'Иван', 'Иванов', '1649367846500', '1649367846000', 'i@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
+    (3, 'Петр', 'Петров', '1649367846500', '1649367846000', 'p@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
+    (4, 'Тихон', 'Тихонов', '1649367846500', '1649367846000', 't@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
+    (5, 'Илья', 'Ильин', '1649367846500', '1649367846000', 'l@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS'),
+    (6, 'Онуфрий', 'Онуфриев', '1649367846500', '1649367846000', 'o@mail.ru', '+7(999)9999999', '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS');
 
 insert into post (time, author, title, post_text, is_blocked) values
     ('1649367846501', 1, 'test title example', 'test post text example', 'false'),

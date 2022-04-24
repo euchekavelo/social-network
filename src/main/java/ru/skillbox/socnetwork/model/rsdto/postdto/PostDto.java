@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDto {
+
     Integer id;
     Long time;
     PersonDto author;

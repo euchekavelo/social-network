@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -35,12 +36,15 @@ public class PersonRepository {
         return false;
     }
 
-    public Person getPersonAfterLogin(LoginDto loginDto) {
+    public Person getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
         Person person;
         try {
             person = getByEmail(loginDto.getEmail());
         } catch (DataAccessException e) {
-            return null;
+            throw new InvalidRequestException("invalid login");
+        }
+        if (!loginDto.checkPassword(person.getPassword())) {
+            throw new InvalidRequestException("invalid password");
         }
         return person;
     }

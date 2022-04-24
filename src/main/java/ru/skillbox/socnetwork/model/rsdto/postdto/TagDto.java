@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TagDTO {
+public class TagDto {
 
     Integer id;
     String tag;

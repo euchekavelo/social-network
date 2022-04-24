@@ -22,6 +22,7 @@ public class CommentDto {
     String commentText;
     @JsonProperty("my_like")
     Boolean isLiked;
+    Integer likes;
     Long time;
     @JsonProperty("author")
     PersonDto author;
@@ -37,5 +38,6 @@ public class CommentDto {
         this.author = personDto;
         this.isBlocked = comment.getIsBlocked();
         this.isLiked = comment.getIsLiked();
+        this.likes = comment.getLikes();
     }
 }

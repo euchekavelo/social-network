@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ru.skillbox'
-version = '0.0.2-PostFrontFix'
+version = '0.0.2-CommentLikeAndTags'
 sourceCompatibility = '11'
 
 configurations {

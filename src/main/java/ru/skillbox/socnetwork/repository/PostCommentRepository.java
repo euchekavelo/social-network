@@ -15,12 +15,12 @@ import java.util.List;
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
 
-    public List<PostComment> getCommentsByPostId(int postId) {
-        String sql = "select pc.*, (cl.time > 0) as is_liked " +
+    public List<PostComment> getCommentsByPostId(int currentPersonId, int postId) {
+        String sql = "select pc.*, (cl.person_id = ?) as is_liked " +
                 "from post_comment pc " +
-                "left join comment_like cl on cl.comment_id = pc.id " +
-                "where pc.post_id = ?";
-        return jdbc.query(sql, new PostCommentMapper(), postId);
+                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
+                "where pc.post_id = ? order by time";
+        return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
     public void add(CommentDto comment) {
