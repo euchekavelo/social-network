@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-application-dev-alexander.properties
+/application-dev-alexander.properties
 
 ### STS ###
 .apt_generated
@@ -36,3 +36,4 @@ out/
 
 ### VS Code ###
 .vscode/
+/gradle/
