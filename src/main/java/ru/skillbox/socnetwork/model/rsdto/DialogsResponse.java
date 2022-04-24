@@ -10,10 +10,11 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DialogsResponse {
     private Integer id;
-    @JsonProperty("unread_count")
-    private Integer unreadCount;
+    private PersonForDialogsDto recipient;
     @JsonProperty("last_message")
     private MessageDto messageDto;
+    @JsonProperty("unread_count")
+    private Integer unreadCount;
     private Integer count;
     private String message;
 
