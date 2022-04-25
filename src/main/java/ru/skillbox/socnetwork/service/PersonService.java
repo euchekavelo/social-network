@@ -169,7 +169,7 @@ public class PersonService {
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "localhost:8086/shift-email?token=" + token.getToken();
+        String link = "195.133.201.227/shift-email?token=" + token.getToken();
         mailService.send(email, "Your SocNetwork Email change link", link);
         return "ok";
     }
@@ -181,7 +181,7 @@ public class PersonService {
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "localhost:8086/change-password?token=" + token.getToken();
+        String link = "195.133.201.227/change-password?token=" + token.getToken();
         mailService.send(person.getEmail(), "SocNetwork Password recovery", link);
         return "ok";
     }
