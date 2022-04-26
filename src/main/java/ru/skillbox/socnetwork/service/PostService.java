@@ -46,18 +46,16 @@ public class PostService {
             PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
             List<CommentDto> commentDtoList = getCommentDtoList(postId);
             List<String> tags = tagService.getPostTags(postId);
-            return new PostDto(post, personDto, commentDtoList, tags);
+            return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
         } catch (EmptyResultDataAccessException e) {
-            throw new InvalidRequestException("Incorrect post data, can't ");
+            throw new InvalidRequestException("Incorrect post data, can't find this id " + postId);
         }
-
     }
 
     public void deletePostById(int postId) throws InvalidRequestException {
         if (postRepository.deleteById(postId) == 0) {
             throw new InvalidRequestException("No post id found to delete");
         }
-
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {

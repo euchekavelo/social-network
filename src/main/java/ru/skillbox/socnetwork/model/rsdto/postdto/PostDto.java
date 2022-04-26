@@ -48,6 +48,24 @@ public class PostDto {
         }
     }
 
+    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments, List<String> tags, Boolean isLiked) {
+        this.id = post.getId();
+        this.time = post.getTime();
+        this.author = personDto;
+        this.title = post.getTitle();
+        this.postText = post.getPostText();
+        this.likes = post.getLikes();
+        this.isBlocked = post.getIsBlocked();
+        this.comments = comments;
+        this.tags = tags;
+        this.isLiked = isLiked;
+        if (this.time < System.currentTimeMillis()) {
+            this.type = "POSTED";
+        } else {
+            this.type = "QUEUED";
+        }
+    }
+
     public PostDto(int id) {
         this.id = id;
     }
