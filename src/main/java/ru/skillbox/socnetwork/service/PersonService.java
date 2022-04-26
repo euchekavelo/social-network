@@ -82,7 +82,12 @@ public class PersonService {
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public Person updatePerson(UpdatePersonDto changedPerson, Person updatablePerson){
+    public Person updatePerson(UpdatePersonDto changedPerson){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        String email = securityUser.getUsername();
+        Person updatablePerson = getByEmail(email);
+
         if(changedPerson.getFirstName() != null &&
             !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
