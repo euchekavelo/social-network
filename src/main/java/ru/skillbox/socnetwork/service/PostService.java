@@ -27,8 +27,8 @@ public class PostService {
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
 
-    public List<PostDto> getAll(int offset, int perPage) {
-        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage));
+    public List<PostDto> getAll(int offset, int perPage, int personId) {
+        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), personId);
     }
 
     public List<PostDto> getWall(int personId, int offset, int perPage) {
@@ -67,12 +67,12 @@ public class PostService {
         ).collect(Collectors.toList());
     }
 
-    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
+    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, Integer personId) {
         return posts.stream().map(post -> {
                     PostDto postDto = new PostDto(post,
                             new PersonDto(personService.getById(post.getAuthor())),
                             getCommentDtoList(post.getId()));
-                    postDto.setIsLiked(likeRepository.getIsLiked(post.getAuthor(), post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(personId, post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());
@@ -118,6 +118,8 @@ public class PostService {
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
                 authorName, authorSurname, perPage);
         return getPostDtoListOfAllPersons(posts);
+   // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
+    //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
+        //return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
-
 }

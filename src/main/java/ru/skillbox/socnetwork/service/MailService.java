@@ -35,6 +35,7 @@ public class MailService {
     mailSender = getMailSender();
     SimpleMailMessage message = new SimpleMailMessage();
 
+    message.setFrom("skillboxsocnetwork@gmail.com");
     message.setTo(email);
     message.setSubject(subject);
     message.setText(text);

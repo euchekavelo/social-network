@@ -47,8 +47,8 @@ public class PostRepository {
     }
 
     public Post addPost(NewPostDto newPostDto) {
-        String sql = "insert into post (time, author, title, post_text) values (?, ?, ?, ?)";
-        jdbc.update(sql, newPostDto.getTime(), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText());
+        String sql = "insert into post (time, author, title, post_text, is_blocked) values (?, ?, ?, ?, ?)";
+        jdbc.update(sql, newPostDto.getTime(), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText(), false);
         return getLastPersonPost(newPostDto.getAuthorId());
     }
 

@@ -2,14 +2,12 @@ package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
-import ru.skillbox.socnetwork.controller.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -62,7 +60,7 @@ public class PostController {
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
-                                                                        @RequestBody CommentDto comment) {
+                                                                         @RequestBody CommentDto comment) {
         comment.setAuthor(new PersonDto(personService.getById(getSecurityUser().getId())));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
@@ -82,7 +80,7 @@ public class PostController {
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
-                                                                           @PathVariable int commentId) {
+                                                                         @PathVariable int commentId) {
         GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
         return ResponseEntity.ok(response);
     }
@@ -101,6 +99,7 @@ public class PostController {
             @RequestParam(value = "author", defaultValue = "", required = false) String author,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
+  //              (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, getSecurityUser().getId()));
                 (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage));
         return ResponseEntity.ok(response);
     }

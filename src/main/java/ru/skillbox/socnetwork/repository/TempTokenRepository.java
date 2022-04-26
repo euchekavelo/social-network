@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.TempToken;
+import ru.skillbox.socnetwork.model.mapper.TempTokenMapper;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class TempTokenRepository {
 
   public TempToken getToken(String token) {
     String sql = "select * from temptoken where token = ?";
-    return jdbc.queryForObject(sql, TempToken.class, token);
+    return jdbc.queryForObject(sql, new TempTokenMapper(), token);
   }
 
   public void deleteToken(String token) {

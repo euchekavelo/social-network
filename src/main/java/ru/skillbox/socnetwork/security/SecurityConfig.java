@@ -24,7 +24,7 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtCsrfFilter jwtCsrfFilter;
-    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://195.133.201.227:8080");
+    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://195.133.201.227:8080", "http://195.133.201.227");
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

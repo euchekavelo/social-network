@@ -32,12 +32,12 @@ public class PostLikeRepository {
         jdbc.update(sql, System.currentTimeMillis(), personId, itemId);
     }
 
-    public boolean getIsLiked(Integer personId, Integer itemId) {
-        return getPersonLike(personId, itemId) != null;
+    public boolean getIsLiked(Integer currentPersonId, Integer itemId) {
+        return getPersonLike(currentPersonId, itemId) != null;
     }
 
-    public void deleteLike(Integer id, int itemId) {
+    public void deleteLike(Integer currentPersonId, int itemId) {
         String sql = "DELETE FROM post_like WHERE person_id = ? AND post_id = ?";
-        jdbc.update(sql, id, itemId);
+        jdbc.update(sql, currentPersonId, itemId);
     }
 }
