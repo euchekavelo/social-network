@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDto {
+
     Integer id;
     Long time;
     PersonDto author;
@@ -25,12 +24,13 @@ public class PostDto {
     Integer likes;
     @JsonProperty("is_blocked")
     Boolean isBlocked;
+    List<String> tags;
     List<CommentDto> comments;
     String type;
     @JsonProperty("my_like")
     Boolean isLiked;
 
-    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments) {
+    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments, List<String> tags) {
         this.id = post.getId();
         this.time = post.getTime();
         this.author = personDto;
@@ -39,7 +39,26 @@ public class PostDto {
         this.likes = post.getLikes();
         this.isBlocked = post.getIsBlocked();
         this.comments = comments;
+        this.tags = tags;
         this.isLiked = false;
+        if (this.time < System.currentTimeMillis()) {
+            this.type = "POSTED";
+        } else {
+            this.type = "QUEUED";
+        }
+    }
+
+    public PostDto(Post post, PersonDto personDto, List<CommentDto> comments, List<String> tags, Boolean isLiked) {
+        this.id = post.getId();
+        this.time = post.getTime();
+        this.author = personDto;
+        this.title = post.getTitle();
+        this.postText = post.getPostText();
+        this.likes = post.getLikes();
+        this.isBlocked = post.getIsBlocked();
+        this.comments = comments;
+        this.tags = tags;
+        this.isLiked = isLiked;
         if (this.time < System.currentTimeMillis()) {
             this.type = "POSTED";
         } else {

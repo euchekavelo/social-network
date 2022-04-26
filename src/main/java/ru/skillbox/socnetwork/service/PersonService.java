@@ -73,7 +73,7 @@ public class PersonService {
         return saveFromRegistration(person);
     }
 
-    public PersonDto getPersonAfterLogin(LoginDto loginDto) {
+    public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
         Person person = personRepository.getPersonAfterLogin(loginDto);
         if (person == null || person.getIsBlocked()) {
             return null;
@@ -82,12 +82,7 @@ public class PersonService {
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public Person updatePerson(UpdatePersonDto changedPerson){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        String email = securityUser.getUsername();
-        Person updatablePerson = getByEmail(email);
-
+    public Person updatePerson(UpdatePersonDto changedPerson, Person updatablePerson){
         if(changedPerson.getFirstName() != null &&
             !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
@@ -153,7 +148,7 @@ public class PersonService {
         int countryId, int cityId,
         int perPage) {
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
-            countryId, cityId, perPage);
+                countryId, cityId, perPage);
 
         List<PersonDto> personsDto = new ArrayList<>();
         for (Person person : persons) {

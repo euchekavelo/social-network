@@ -2,7 +2,9 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
@@ -12,6 +14,7 @@ import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
+import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +28,10 @@ public class PostService {
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
+    private final TagService tagService;
 
-    public List<PostDto> getAll(int offset, int perPage, int personId) {
-        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), personId);
+    public List<PostDto> getAll(int offset, int perPage) {
+        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), getPersonId());
     }
 
     public List<PostDto> getWall(int personId, int offset, int perPage) {
@@ -36,19 +40,26 @@ public class PostService {
         return getPostDtoListOfOnePerson(posts, personDto);
     }
 
-    public PostDto getById(int postId) throws EmptyResultDataAccessException {
-        Post post = postRepository.getById(postId);
-        PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
-        List<CommentDto> commentDtoList = getCommentDtoList(postId);
-        return new PostDto(post, personDto, commentDtoList);
+    public PostDto getById(int postId) throws InvalidRequestException {
+        try {
+            Post post = postRepository.getById(postId);
+            PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
+            List<CommentDto> commentDtoList = getCommentDtoList(postId);
+            List<String> tags = tagService.getPostTags(postId);
+            return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
+        } catch (EmptyResultDataAccessException e) {
+            throw new InvalidRequestException("Incorrect post data, can't find this id " + postId);
+        }
     }
 
-    public void deletePostById(int postId) {
-        postRepository.deleteById(postId);
+    public void deletePostById(int postId) throws InvalidRequestException {
+        if (postRepository.deleteById(postId) == 0) {
+            throw new InvalidRequestException("No post id found to delete");
+        }
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getCommentsByPostId(postId);
+        List<PostComment> postComments = commentRepository.getCommentsByPostId(getPersonId(), postId);
         if (postComments == null) {
             return new ArrayList<>();
         }
@@ -59,39 +70,68 @@ public class PostService {
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
         return posts.stream().map(post -> {
-            PostDto postDto = new PostDto(post, personDto, getCommentDtoList(post.getId()));
-            postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
-            return postDto;
-            }
-            ).collect(Collectors.toList());
+                    PostDto postDto = new PostDto(
+                            post,
+                            personDto,
+                            getCommentDtoList(post.getId()),
+                            tagService.getPostTags(post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
+                    return postDto;
+                }
+        ).collect(Collectors.toList());
     }
 
-    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, Integer personId) {
+    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, int personId) {
         return posts.stream().map(post -> {
-                    PostDto postDto = new PostDto(post,
+                    PostDto postDto = new PostDto(
+                            post,
                             new PersonDto(personService.getById(post.getAuthor())),
-                            getCommentDtoList(post.getId()));
+                            getCommentDtoList(post.getId()),
+                            tagService.getPostTags(post.getId()));
                     postDto.setIsLiked(likeRepository.getIsLiked(personId, post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());
     }
 
-    public PostDto addPost(NewPostDto newPostDto) {
+    public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+        if (publishDate == -1) {
+            newPostDto.setTime(System.currentTimeMillis());
+        } else {
+            newPostDto.setTime(publishDate);
+        }
         Post post = postRepository.addPost(newPostDto);
-        return new PostDto(post, new PersonDto(personService.getById(newPostDto.getAuthorId())), new ArrayList<>());
+        tagService.addTagsFromNewPost(post.getId(), newPostDto);
+
+        return new PostDto(post, new PersonDto(
+                personService.getById(newPostDto.getAuthorId())),
+                new ArrayList<>(),
+                tagService.getPostTags(post.getId()));
     }
 
-    public PostDto editPost(int id, NewPostDto newPostDto) {
-        postRepository.editPost(id, newPostDto);
-        return getById(id);
+    public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
+        if (getPersonId() == newPostDto.getAuthorId()) {
+            throw new InvalidRequestException("You cannot edit a post, you are not the author.");
+        }
+        tagService.deletePostTags(postId);
+        tagService.addTagsFromNewPost(postId, newPostDto);
+        postRepository.editPost(postId, newPostDto);
+        return getById(postId);
     }
 
     public void updatePostLikeCount(Integer likes, Integer postId) {
-        postRepository.updatePostLikeCount(likes, postId);
+        postRepository.updateLikeCount(likes, postId);
     }
 
-    public CommentDto addCommentToPost(CommentDto comment) {
+    public void updateCommentLikeCount(Integer likes, Integer postId) {
+        commentRepository.updateLikeCount(likes, postId);
+    }
+
+    public CommentDto addCommentToPost(CommentDto comment, int id) {
+        comment.setAuthor(new PersonDto(personService.getById(getPersonId())));
+        comment.setTime(System.currentTimeMillis());
+        comment.setPostId(id);
+        comment.setIsBlocked(false);
         commentRepository.add(comment);
         return comment;
     }
@@ -108,8 +148,14 @@ public class PostService {
         return commentDto;
     }
 
-    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
+    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
+        int currentPersonId = getPersonId();
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
         return getPostDtoListOfAllPersons(posts, currentPersonId);
+    }
+
+    private Integer getPersonId() {
+        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return auth.getId();
     }
 }
