@@ -28,10 +28,4 @@ public class StorageController {
     ));
   }
 
-  @PostMapping(path = "/{token}")
-  public void updateToken(@PathVariable String token) {
-    storageService.updateToken(token);
-  }
-
-
 }

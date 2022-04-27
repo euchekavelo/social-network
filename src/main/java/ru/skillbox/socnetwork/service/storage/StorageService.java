@@ -5,22 +5,22 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
-import java.io.BufferedInputStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,6 @@ public class StorageService {
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) {
-
     Person person = null;
     FileMetadata fileMetadata = null;
     try {
@@ -69,8 +68,7 @@ public class StorageService {
     }
   }
 
-  //Temporary entry to update dropbox auth token (currently expires in 4 hours)
-  public void updateToken(String newToken) {
+  public static void updateToken(String newToken) {
     token = newToken;
     client = new DbxClientV2(config, token);
   }
