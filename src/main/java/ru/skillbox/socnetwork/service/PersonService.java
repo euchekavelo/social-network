@@ -3,6 +3,7 @@ package ru.skillbox.socnetwork.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@DebugLogs
 public class PersonService {
 
     private final PersonRepository personRepository;

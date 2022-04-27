@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -15,6 +16,7 @@ import ru.skillbox.socnetwork.service.PersonService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/account")
+@InfoLogs
 public class AccountController {
 
     private final PersonService personService;

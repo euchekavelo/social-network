@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class PostRepository {
     private final JdbcTemplate jdbc;
 

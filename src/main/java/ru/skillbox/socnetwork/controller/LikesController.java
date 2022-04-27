@@ -6,7 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
+import ru.skillbox.socnetwork.exception.BadRequestResponseEntity;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.PutLikeDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.postdto.LikedDto;
@@ -18,6 +19,7 @@ import ru.skillbox.socnetwork.service.LikeService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
+@InfoLogs
 public class LikesController {
 
     private final String POST = "Post";

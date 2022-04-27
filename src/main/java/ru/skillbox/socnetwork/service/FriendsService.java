@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@DebugLogs
 public class FriendsService {
 
     private final PersonRepository personRepository;
@@ -67,28 +68,33 @@ public class FriendsService {
         }
 
         Optional<Friendship> friendshipFromInitiator = friendshipRepository
-                .getFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId, TypeCode.FRIEND.toString());
+                .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
         Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
-                .getFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId, TypeCode.FRIEND.toString());
+                .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
+
         if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
-            throw new InvalidRequestException("It is not possible to apply as a friend, " +
-                    "because these users are already friends.");
-        }
+            Friendship friendshipInitiator = friendshipFromInitiator.orElse(null);
+            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(null);
 
-        Optional<Friendship> initiatedRequest = friendshipRepository
-                .getFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId, TypeCode.REQUEST.toString());
-        Optional<Friendship> receivedRequest = friendshipRepository
-                .getFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId, TypeCode.REQUEST.toString());
+            if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.FRIEND) ||
+                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.FRIEND)) {
+                throw new InvalidRequestException("It is not possible to apply as a friend, " +
+                        "because these users are already friends.");
 
-        if (initiatedRequest.isEmpty() && receivedRequest.isEmpty()) {
+            } else if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
+                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
+                throw new InvalidRequestException("The request is not possible because the specified user is blocked.");
+
+            } else if (friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.REQUEST) {
+                throw new InvalidRequestException("It is not possible to submit a request to add as a friend, " +
+                        "as it has already been submitted earlier.");
+
+            } else if (friendshipInitiator == null && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
+                    friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
+                            TypeCode.FRIEND.toString());
+            }
+        } else
             friendshipRepository.createFriendRequestByPersonIds(authorizedUserId, focusPersonId);
-        } else if (initiatedRequest.isEmpty()) {
-            friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
-                    TypeCode.FRIEND.toString());
-        } else {
-            throw new InvalidRequestException("It is not possible to submit a request to add as a friend, " +
-                    "as it has already been submitted earlier.");
-        }
 
         return new MessageResponseDto("ok");
     }

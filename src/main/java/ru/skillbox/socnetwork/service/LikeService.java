@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.CommentLike;
 import ru.skillbox.socnetwork.model.entity.PostLike;
 import ru.skillbox.socnetwork.model.rsdto.postdto.LikedDto;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@DebugLogs
 public class LikeService {
 
     private final PostLikeRepository postLikeRepository;
