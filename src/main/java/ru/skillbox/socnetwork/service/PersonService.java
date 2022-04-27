@@ -6,7 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.DeletedUser;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
+@DebugLogs
 public class PersonService {
 
     private final PersonRepository personRepository;

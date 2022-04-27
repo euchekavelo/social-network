@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
@@ -19,6 +20,7 @@ import ru.skillbox.socnetwork.service.PersonService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
+@InfoLogs
 public class AuthController {
 
     private final PersonService personService;

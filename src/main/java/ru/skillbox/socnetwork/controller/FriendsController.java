@@ -3,7 +3,8 @@ package ru.skillbox.socnetwork.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.service.FriendsService;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@InfoLogs
 public class FriendsController {
 
     private final FriendsService friendsService;
@@ -22,6 +24,7 @@ public class FriendsController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+
         GeneralListResponse<PersonDto> generalListResponse =
                 new GeneralListResponse<>(friendsService.getListIncomingFriendRequests(), offset, itemPerPage);
 
@@ -32,6 +35,8 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> addFriend(@PathVariable Integer id)
             throws InvalidRequestException {
         GeneralResponse<DialogsResponse> generalResponse =
+
+        GeneralResponse<MessageResponseDto> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
@@ -41,6 +46,8 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriend(@PathVariable Integer id)
             throws InvalidRequestException {
         GeneralResponse<DialogsResponse> generalResponse =
+
+        GeneralResponse<MessageResponseDto> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
@@ -51,6 +58,7 @@ public class FriendsController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+
         GeneralListResponse<PersonDto> generalListResponse =
                 new GeneralListResponse<>(friendsService.getUserFriends(), offset, itemPerPage);
 
@@ -61,6 +69,7 @@ public class FriendsController {
     public ResponseEntity<GeneralListResponse<PersonDto>> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
+
         GeneralListResponse<PersonDto> generalListResponse =
                 new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage);
 
@@ -70,8 +79,10 @@ public class FriendsController {
     @PostMapping("is/friends")
     public ResponseEntity<GeneralResponse<List<FriendshipPersonDto>>> getInformationAboutFriendships(
             @RequestBody UserIdsDto userIdsDto) {
+
         GeneralResponse<List<FriendshipPersonDto>> generalResponse =
                 new GeneralResponse<>(friendsService.getInformationAboutFriendships(userIdsDto));
+
         return ResponseEntity.ok(generalResponse);
     }
 }

@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.InfoLogs;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users/")
+@InfoLogs
 public class ProfileController {
 
     private final PersonService personService;
