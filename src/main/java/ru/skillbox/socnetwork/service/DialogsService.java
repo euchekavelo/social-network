@@ -30,8 +30,8 @@ public class DialogsService {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            DialogsResponse dialogsResponse = null;
             List<DialogsDto> dialogList = messageRepository.getDialogList(securityUser.getId());
+            DialogsResponse dialogsResponse = null;
             List<DialogsResponse> dialogsResponseList = new ArrayList<>();
 
             for (DialogsDto dto : dialogList) {
@@ -64,15 +64,36 @@ public class DialogsService {
                 new GeneralResponse<>("invalid_request", "string"));
     }
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getMessageById(Integer id) {
+        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
         List<MessageDto> messageList = messageRepository.getMessageList(id);
+        List<MessageDto> messageDtoList = new ArrayList<>();
+        MessageDto messageDto = null;
+        for (MessageDto dto : messageList) {
+            boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
+            messageDto = new MessageDto();
+            PersonForDialogsDto recipient = null;
+            PersonForDialogsDto author = null;
 
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
-                    messageList.size(), 0, 20, messageList));
+            if (isSendByMe) {
+                recipient = messageRepository.getPersonForDialog(dto.getRecipientId());
+                author = messageRepository.getPersonForDialog(dto.getAuthorId());
+            } else {
+                author = messageRepository.getPersonForDialog(dto.getAuthorId());
+                recipient = messageRepository.getPersonForDialog(dto.getRecipientId());
+            }
+            messageDto.setId(dto.getId());
+            messageDto.setAuthor(author);
+            messageDto.setRecipient(recipient);
+            messageDto.setTime(dto.getTime());
+            messageDto.setSentByMe(isSendByMe);
+            messageDto.setMessageText(dto.getMessageText());
+            messageDto.setReadStatus(dto.getReadStatus());
+            messageDtoList.add(messageDto);
         }
-
-        return ResponseEntity.status(401).body(
-                new GeneralResponse<>("invalid_request", "string"));
+        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
+                messageList.size(), 0, 10, messageDtoList));
     }
     public ResponseEntity<GeneralResponse<DialogsResponse>> getUnreadMessageCount() {
         SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
