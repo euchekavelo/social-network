@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
+import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.repository.MessageRepository;
+import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,25 +20,42 @@ public class DialogsService {
 
     private final MessageRepository messageRepository;
 
-    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialogs(Integer id) {
+    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(MessageRequest messageRequest, Integer id) {
+        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext();
+
+        return null;
+    }
+
+    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialogs() {
+        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             DialogsResponse dialogsResponse = null;
-            List<DialogsDto> dialogList = messageRepository.getDialogList(id);
+            List<DialogsDto> dialogList = messageRepository.getDialogList(securityUser.getId());
             List<DialogsResponse> dialogsResponseList = new ArrayList<>();
 
             for (DialogsDto dto : dialogList) {
-                PersonForDialogsDto recipient = new PersonForDialogsDto(dto.getRecipientId(), dto.getPhoto(),
-                        dto.getFirstName(),dto.getLastName(), dto.getEMail(), dto.getLastOnlineTime());
+                MessageDto authorIdAndRecipientId = messageRepository.getAuthorAndRecipientById(dto.getMessageId());
+                boolean isSendByMe = securityUser.getId() == authorIdAndRecipientId.getAuthorId();
+                PersonForDialogsDto recipient = null;
+
+
+                if (isSendByMe) {
+                    recipient = messageRepository.getPersonForDialog(authorIdAndRecipientId.getRecipientId());
+                } else {
+                    recipient = messageRepository.getPersonForDialog(authorIdAndRecipientId.getAuthorId());
+                }
                 dialogsResponse = new DialogsResponse();
 
                 dialogsResponse.setId(dto.getDialogId());
                 dialogsResponse.setRecipient(recipient);
                 dialogsResponse.setMessageDto(new MessageDto(dto.getMessageId(),
-                        messageRepository.getPersonForDialog(dto.getAuthorId()), recipient, dto.getTime(),
-                        id == dto.getAuthorId(), dto.getMessageText(), dto.getReadStatus()));
+                        messageRepository.getPersonForDialog(authorIdAndRecipientId.getAuthorId()), recipient, dto.getTime(),
+                        isSendByMe, dto.getMessageText(), dto.getReadStatus()));
                 dialogsResponse.setUnreadCount(dto.getUnreadCount());
                 dialogsResponseList.add(dialogsResponse);
             }
+
             return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(),
                     dialogList.size(), 0, 0, dialogsResponseList));
         }
@@ -54,10 +74,10 @@ public class DialogsService {
         return ResponseEntity.status(401).body(
                 new GeneralResponse<>("invalid_request", "string"));
     }
-    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnreadMessageCount(Integer id) {
-
+    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnreadMessageCount() {
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount(id)));
+            return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), messageRepository.getUnreadCount(securityUser.getId())));
         }
 
         return ResponseEntity.status(401).body(
