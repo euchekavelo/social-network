@@ -73,7 +73,7 @@ public class PersonService {
         return saveFromRegistration(person);
     }
 
-    public PersonDto getPersonAfterLogin(LoginDto loginDto) {
+    public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
         Person person = personRepository.getPersonAfterLogin(loginDto);
         if (person == null || person.getIsBlocked()) {
             return null;
@@ -153,7 +153,7 @@ public class PersonService {
         int countryId, int cityId,
         int perPage) {
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
-            countryId, cityId, perPage);
+                countryId, cityId, perPage);
 
         List<PersonDto> personsDto = new ArrayList<>();
         for (Person person : persons) {

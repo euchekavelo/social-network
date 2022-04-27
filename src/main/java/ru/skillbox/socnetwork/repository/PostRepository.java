@@ -55,7 +55,7 @@ public class PostRepository {
         jdbc.update(sql, newPostDto.getTitle(), newPostDto.getPostText(), id);
     }
 
-    public void updatePostLikeCount(Integer likes, Integer postId) {
+    public void updateLikeCount(Integer likes, Integer postId) {
         String sql = "update post set likes = ? where id = ?";
         jdbc.update(sql, likes, postId);
     }

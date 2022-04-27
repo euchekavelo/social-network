@@ -8,6 +8,7 @@ import ru.skillbox.socnetwork.model.entity.CommentLike;
 import ru.skillbox.socnetwork.model.mapper.CommentLikeMapper;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class CommentLikeRepository {
