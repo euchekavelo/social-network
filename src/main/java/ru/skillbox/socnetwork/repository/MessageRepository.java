@@ -31,7 +31,7 @@ public class MessageRepository {
         String sql = "SELECT dialog_id, MAX(time) AS time, COUNT(*) AS unread_count, MAX(message_text) AS message_text, " +
                 "MAX(read_status) AS read_status, MAX(message.id) AS message_id " +
                 "FROM message WHERE recipient_id = ? OR author_id = ? GROUP BY dialog_id";
-        return jdbc.query(sql, new DialogMapper(), id, id);
+        return jdbc.query(sql, new DialogsMapper(), id, id);
     }
     public List<MessageDto> getMessageList(Integer id) {
         String sql = "select id, time, author_id, recipient_id, message_text, read_status FROM message WHERE dialog_id = ?";

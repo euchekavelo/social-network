@@ -1,26 +1,21 @@
 package ru.skillbox.socnetwork.model.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
+import ru.skillbox.socnetwork.model.rsdto.DialogDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
-import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
-public class DialogMapper implements RowMapper<DialogsDto> {
+public class DialogMapper implements RowMapper<DialogDto> {
     @Override
-    public DialogsDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-        DialogsDto dialogsDto = new DialogsDto();
+    public DialogDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+        DialogDto dialogDto = new DialogDto();
 
-        dialogsDto.setDialogId(rs.getInt("dialog_id"));
-        dialogsDto.setTime(rs.getLong("time"));
-        dialogsDto.setUnreadCount(rs.getInt("unread_count"));
-        dialogsDto.setMessageText(rs.getString("message_text"));
-        dialogsDto.setReadStatus(rs.getString("read_status"));
-        dialogsDto.setMessageId(rs.getInt("message_id"));
+        dialogDto.setId(rs.getInt("id"));
+        dialogDto.setAuthorId(rs.getInt("author_id"));
+        dialogDto.setRecipientId(rs.getInt("recipient_id"));
 
-        return dialogsDto;
+        return dialogDto;
     }
 }
