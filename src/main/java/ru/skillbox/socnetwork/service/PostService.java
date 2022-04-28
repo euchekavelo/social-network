@@ -67,6 +67,7 @@ public class PostService {
         ).collect(Collectors.toList());
     }
 
+
     private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, Integer personId) {
         return posts.stream().map(post -> {
                     PostDto postDto = new PostDto(post,
@@ -109,7 +110,8 @@ public class PostService {
         return commentDto;
     }
 
-    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author, int perPage) {
+    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author,
+                                                      int perPage, int currentPersonId) {
 
         String[] authorNameSurname = author.split("\\s", 2);
         String authorName = authorNameSurname[0];
@@ -117,9 +119,9 @@ public class PostService {
 
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
                 authorName, authorSurname, perPage);
-        return getPostDtoListOfAllPersons(posts);
-   // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
-    //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
-        //return getPostDtoListOfAllPersons(posts, currentPersonId);
+        //return getPostDtoListOfAllPersons(posts);
+        // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
+        //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
+        return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 }

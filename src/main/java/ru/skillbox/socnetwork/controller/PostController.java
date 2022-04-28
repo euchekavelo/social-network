@@ -99,8 +99,9 @@ public class PostController {
             @RequestParam(value = "author", defaultValue = "", required = false) String author,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-  //              (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, getSecurityUser().getId()));
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage,
+                        getSecurityUser().getId()));
+
         return ResponseEntity.ok(response);
     }
 }
