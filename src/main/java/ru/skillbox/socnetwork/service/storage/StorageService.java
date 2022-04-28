@@ -30,10 +30,10 @@ public class StorageService {
   private static final DbxRequestConfig config = DbxRequestConfig.newBuilder("socNet").build();
   private static DbxClientV2 client = new DbxClientV2(config, token);
   private final PersonRepository personRepository;
+  private final StorageCache cache;
 
   public String getDefaultProfileImage() throws DbxException {
-    return client.sharing().listSharedLinksBuilder().withPath("/default.jpg").start()
-        .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
+    return cache.getLink(StorageCache.DEFAULT);
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) {
@@ -41,21 +41,28 @@ public class StorageService {
     FileMetadata fileMetadata = null;
     try {
       InputStream stream = new BufferedInputStream(file.getInputStream());
-      String fileName = generateName(file.getOriginalFilename());
 
+      //Generate new random file name
+      String fileName = "/" + generateName(file.getOriginalFilename());
+
+      //Get current user
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
       person = personRepository.getByEmail(securityUser.getUsername());
 
       deleteFile(getRelativePath(person.getPhoto()));
-      person.setPhoto(getAbsolutePath("/" + fileName));
-      personRepository.updatePhoto(person);
-      fileMetadata = client.files().uploadBuilder("/" + fileName)
+
+      fileMetadata = client.files().uploadBuilder(fileName)
           .withMode(WriteMode.ADD).uploadAndFinish(stream);
-      if (client.sharing().listSharedLinksBuilder().withPath("/" + fileName).start()
+
+      //Share image if not shared yet
+      if (client.sharing().listSharedLinksBuilder().withPath(fileName).start()
           .getLinks().isEmpty()) {
         client.sharing().createSharedLinkWithSettings(fileMetadata.getPathDisplay());
       }
+
+      person.setPhoto(getAbsolutePath(fileName));
+      personRepository.updatePhoto(person);
     } catch (DbxException | IOException e) {
       e.printStackTrace();
     }
@@ -63,7 +70,7 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals("/default.jpg")) {
+    if (!path.equals(StorageCache.DEFAULT)) {
       client.files().deleteV2(path);
     }
   }
@@ -79,7 +86,7 @@ public class StorageService {
     return (matcher.find()) ? matcher.group(1) : "";
   }
 
-  public String getAbsolutePath(String path) throws DbxException {
+  private String getAbsolutePath(String path) throws DbxException {
     return client.sharing().listSharedLinksBuilder().withPath(path).start()
         .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
   }

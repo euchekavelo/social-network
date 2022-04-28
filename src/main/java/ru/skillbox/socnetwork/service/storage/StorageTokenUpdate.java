@@ -55,6 +55,8 @@ public class StorageTokenUpdate {
     DbxCredential.Writer.writeToFile(newCredential, new File(PATH));
 
     StorageService.updateToken(result.getAccessToken());
+
+    //Temp notification
     mailService.send("kolomarat@gmail.com", "Token updated", "New token: " + result.getAccessToken());
   }
 }

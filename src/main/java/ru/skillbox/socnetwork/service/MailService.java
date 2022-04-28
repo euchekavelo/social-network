@@ -12,14 +12,22 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public class MailService {
 
-  private JavaMailSender mailSender;
+//  @Value("${skillbox.app.mail.user}")
+//  private String username;
+//  @Value("${skillbox.app.mail.password}")
+//  private String password;
+
+  private final String username = "skillboxsocnetwork@gmail.com";
+  private final String password = "newpassword123";
 
   private JavaMailSender getMailSender(){
+    System.out.println("username: " + username);
+    System.out.println("password: " + password);
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
     mailSender.setHost("smtp.gmail.com");
     mailSender.setPort(587);
-    mailSender.setUsername("skillboxsocnetwork@gmail.com");
-    mailSender.setPassword("newpassword123");
+    mailSender.setUsername(username);
+    mailSender.setPassword(password);
 
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");
@@ -32,10 +40,10 @@ public class MailService {
 
 
   public void send(String email, String subject, String text) {
-    mailSender = getMailSender();
+    JavaMailSender mailSender = getMailSender();
     SimpleMailMessage message = new SimpleMailMessage();
 
-    message.setFrom("skillboxsocnetwork@gmail.com");
+    message.setFrom(username);
     message.setTo(email);
     message.setSubject(subject);
     message.setText(text);
