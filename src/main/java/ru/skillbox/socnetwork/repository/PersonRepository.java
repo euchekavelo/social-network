@@ -65,9 +65,9 @@ public class PersonRepository {
     public List<Person> getListRecommendedFriends(String email) {
         return jdbc.query("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), " +
                 "friends_ids AS (SELECT f.dst_person_id AS id FROM friendship f WHERE f.src_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST') " +
+                "(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST', 'BLOCKED') " +
                 "UNION SELECT f.src_person_id AS id FROM friendship f WHERE f.dst_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code = 'FRIEND') SELECT * FROM person " +
+                "(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'BLOCKED')) SELECT * FROM person " +
                 "WHERE id <> (SELECT * FROM authorized_person_id) and id NOT IN (SELECT * FROM friends_ids) " +
                 "ORDER BY RANDOM() LIMIT 20", new PersonMapper(), email);
     }
