@@ -1,3 +1,3 @@
 ALTER TABLE dialog
-ADD COLUMN author_id int4,
-ADD COLUMN recipient_id int4;
+ADD COLUMN person_id int4,
+ADD COLUMN dialog_id int4;

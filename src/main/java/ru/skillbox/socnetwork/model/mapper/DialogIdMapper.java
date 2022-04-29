@@ -6,17 +6,12 @@ import ru.skillbox.socnetwork.model.rsdto.DialogDto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DialogsMapper implements RowMapper<DialogDto> {
+public class DialogIdMapper  implements RowMapper<DialogDto> {
     @Override
     public DialogDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         DialogDto dialogDto = new DialogDto();
 
         dialogDto.setDialogId(rs.getInt("dialog_id"));
-        dialogDto.setTime(rs.getLong("time"));
-        dialogDto.setUnreadCount(rs.getInt("unread_count"));
-        dialogDto.setMessageText(rs.getString("message_text"));
-        dialogDto.setReadStatus(rs.getString("read_status"));
-        dialogDto.setMessageId(rs.getInt("message_id"));
 
         return dialogDto;
     }

@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
@@ -19,38 +18,48 @@ import java.util.List;
 public class DialogsService {
 
     private final MessageRepository messageRepository;
+    private final DialogRepository dialogRepository;
 
-    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(MessageRequest messageRequest, Integer id) {
-        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext();
+    public ResponseEntity<GeneralListResponse<MessageDto>> createDialog (List<Integer> userList) {
+        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        dialogRepository.createDialog(securityUser.getId());
+        Integer dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId()).getDialogId();
+                System.out.println(dialogId);
+        for (Integer id : userList) {
+            dialogRepository.addPersonDialog(id, dialogId);
+        }
+        return null;
+    }
+    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage (MessageRequest messageRequest, Integer dialog_id) {
+        SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
 
+        messageRepository.sendMessage (System.currentTimeMillis(), securityUser.getId(),
+                dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialog_id, securityUser.getId()).getId(),
+                messageRequest.getMessageText(), dialog_id);
         return null;
     }
 
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialogs() {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
+
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            List<DialogsDto> dialogList = messageRepository.getDialogList(securityUser.getId());
+            List<DialogDto> dialogList = messageRepository.getDialogList(securityUser.getId());
             DialogsResponse dialogsResponse = null;
             List<DialogsResponse> dialogsResponseList = new ArrayList<>();
 
-            for (DialogsDto dto : dialogList) {
-                MessageDto authorIdAndRecipientId = messageRepository.getAuthorAndRecipientById(dto.getMessageId());
-                boolean isSendByMe = securityUser.getId() == authorIdAndRecipientId.getAuthorId();
-                PersonForDialogsDto recipient = null;
-
-
-                if (isSendByMe) {
-                    recipient = messageRepository.getPersonForDialog(authorIdAndRecipientId.getRecipientId());
-                } else {
-                    recipient = messageRepository.getPersonForDialog(authorIdAndRecipientId.getAuthorId());
-                }
+            for (DialogDto dto : dialogList) {
+                PersonForDialogsDto author = messageRepository.getAuthorByMessageId(dto.getMessageId());
+                PersonForDialogsDto recipient = messageRepository.getRecipientByMessageId (dto.getMessageId());
+                boolean isSendByMe = securityUser.getId() == author.getId();
                 dialogsResponse = new DialogsResponse();
 
                 dialogsResponse.setId(dto.getDialogId());
                 dialogsResponse.setRecipient(recipient);
                 dialogsResponse.setMessageDto(new MessageDto(dto.getMessageId(),
-                        messageRepository.getPersonForDialog(authorIdAndRecipientId.getAuthorId()), recipient, dto.getTime(),
+                        author, recipient, dto.getTime(),
                         isSendByMe, dto.getMessageText(), dto.getReadStatus()));
                 dialogsResponse.setUnreadCount(dto.getUnreadCount());
                 dialogsResponseList.add(dialogsResponse);
@@ -68,6 +77,10 @@ public class DialogsService {
                 .getAuthentication().getPrincipal();
 
         List<MessageDto> messageList = messageRepository.getMessageList(id);
+
+        if (messageList.stream().anyMatch(a -> a.getReadStatus().equals("SENT"))) {
+            messageRepository.updateReadStatus(id);
+        }
         List<MessageDto> messageDtoList = new ArrayList<>();
         MessageDto messageDto = null;
         for (MessageDto dto : messageList) {
