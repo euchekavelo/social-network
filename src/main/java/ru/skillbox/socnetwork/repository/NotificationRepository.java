@@ -7,4 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
+
+    public void deleteAllPersonNotifications(Integer personId){
+        String sql = "delete from notification where person_id = ?";
+        jdbc.update(sql, personId);
+    }
 }

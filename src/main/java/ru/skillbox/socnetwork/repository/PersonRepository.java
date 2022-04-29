@@ -189,4 +189,10 @@ public class PersonRepository {
                 "limit ?";
         return jdbc.query(sql, new PersonMapper(), firstName, lastName, dateFrom, dateTo, perPage);
     }
+
+    public void delete(Integer id) {
+        String sql = "delete from person where id = ?";
+        Object[] args = new Object[]{id};
+        jdbc.update(sql, id);
+    }
 }

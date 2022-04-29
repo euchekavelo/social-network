@@ -32,8 +32,12 @@ public class StorageService {
   private final PersonRepository personRepository;
   private final StorageCache cache;
 
-  public String getDefaultProfileImage() throws DbxException {
+  public String getDefaultProfileImage(){
     return cache.getLink(StorageCache.DEFAULT);
+  }
+
+  public String getDeletedProfileImage() {
+    return cache.getLink(StorageCache.DELETED);
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) {
@@ -53,11 +57,11 @@ public class StorageService {
       deleteFile(getRelativePath(person.getPhoto()));
 
       fileMetadata = client.files().uploadBuilder(fileName)
-          .withMode(WriteMode.ADD).uploadAndFinish(stream);
+              .withMode(WriteMode.ADD).uploadAndFinish(stream);
 
       //Share image if not shared yet
       if (client.sharing().listSharedLinksBuilder().withPath(fileName).start()
-          .getLinks().isEmpty()) {
+              .getLinks().isEmpty()) {
         client.sharing().createSharedLinkWithSettings(fileMetadata.getPathDisplay());
       }
 
@@ -88,7 +92,7 @@ public class StorageService {
 
   private String getAbsolutePath(String path) throws DbxException {
     return client.sharing().listSharedLinksBuilder().withPath(path).start()
-        .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
+            .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
   }
 
   private String generateName(String name) {

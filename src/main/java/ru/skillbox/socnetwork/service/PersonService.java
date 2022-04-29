@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.service;
 
-import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.security.core.Authentication;
@@ -34,6 +33,7 @@ public class PersonService {
     private final StorageService storageService;
     private final TempTokenService tempTokenService;
     private final MailService mailService;
+    private final DeletedUserService deletedUserService;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -65,11 +65,7 @@ public class PersonService {
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
-        try {
-            person.setPhoto(storageService.getDefaultProfileImage());
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
+        person.setPhoto(storageService.getDefaultProfileImage());
         return saveFromRegistration(person);
     }
 
@@ -79,7 +75,7 @@ public class PersonService {
             return null;
         } else {
             return new PersonDto(person,
-                tokenProvider.generateToken(loginDto.getEmail()));
+                    tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
     public Person updatePerson(UpdatePersonDto changedPerson){
@@ -89,11 +85,11 @@ public class PersonService {
         Person updatablePerson = getByEmail(email);
 
         if(changedPerson.getFirstName() != null &&
-            !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
+                !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
         }
         if(changedPerson.getLastName() != null &&
-            !changedPerson.getLastName().equals(updatablePerson.getLastName())){
+                !changedPerson.getLastName().equals(updatablePerson.getLastName())){
             updatablePerson.setLastName(changedPerson.getLastName());
         }
         String date;
@@ -112,21 +108,21 @@ public class PersonService {
         }
         if(!changedPerson.getPhone().isEmpty()){
             String phone = (changedPerson.getPhone().charAt(0) == '7') ? changedPerson.getPhone() :
-                "7" + changedPerson.getPhone();
+                    "7" + changedPerson.getPhone();
             if(!phone.equals(updatablePerson.getPhone())) {
                 updatablePerson.setPhone(phone);
             }
         }
         if(changedPerson.getAbout() != null &&
-            !changedPerson.getAbout().equals(updatablePerson.getAbout())){
+                !changedPerson.getAbout().equals(updatablePerson.getAbout())){
             updatablePerson.setAbout(changedPerson.getAbout());
         }
         if(changedPerson.getCity() != null &&
-            !changedPerson.getCity().equals(updatablePerson.getCity())){
+                !changedPerson.getCity().equals(updatablePerson.getCity())){
             updatablePerson.setCity(changedPerson.getCity());
         }
         if(changedPerson.getCountry() != null &&
-            !changedPerson.getCountry().equals(updatablePerson.getCountry())){
+                !changedPerson.getCountry().equals(updatablePerson.getCountry())){
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         return personRepository.updatePerson(updatablePerson);
@@ -149,9 +145,9 @@ public class PersonService {
     }
 
     public List<PersonDto> getPersonsBySearchParameters(String firstName, String lastName,
-        long ageFrom, long ageTo,
-        int countryId, int cityId,
-        int perPage) {
+                                                        long ageFrom, long ageTo,
+                                                        int countryId, int cityId,
+                                                        int perPage) {
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
                 countryId, cityId, perPage);
 
@@ -206,11 +202,20 @@ public class PersonService {
         return generator.generate(10);
     }
 
-//    public void setBlockPerson(Person person, Boolean block){
-//        personRepository.setBlockPerson(person, block);
-//    }
-//
-//    public void deletePerson(Person person){
-//        personRepository.deletePerson(person);
-//    }
+    public String setBlockPerson() throws InvalidRequestException{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+        if(person == null){
+            throw new InvalidRequestException("User with email " + securityUser.getUsername() + " not registered");
+        }
+        deletedUserService.add(person);
+        person.setIsDeleted(true);
+        person.setFirstName("Deleted");
+        person.setLastName("");
+        personRepository.updatePerson(person);
+        person.setPhoto(storageService.getDeletedProfileImage());
+        personRepository.updatePhoto(person);
+        return "ok";
+    }
 }

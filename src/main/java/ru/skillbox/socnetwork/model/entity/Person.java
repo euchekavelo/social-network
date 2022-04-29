@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 /*
 Временно добавлены аннотации @JsonProperty для правильного отображения сущности на фронте, через запросы
 напрямую через репозиторий
@@ -35,6 +32,8 @@ public class Person {
     private Long lastOnlineTime;
     @JsonProperty("is_blocked")
     private Boolean isBlocked;
+    @JsonProperty("is_deleted")
+    private Boolean isDeleted;
 
     public Person() {
         this.messagesPermission = TypePermission.ALL;
