@@ -9,6 +9,7 @@ import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.oauth.DbxRefreshResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ru.skillbox.socnetwork.service.MailService;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class StorageTokenUpdate {
 
     //Save new credentials
     DbxCredential newCredential = new DbxCredential(
-            result.getAccessToken(), result.getExpiresAt(),
-            credential.getRefreshToken(), credential.getAppKey(), credential.getAppSecret());
+              result.getAccessToken(), result.getExpiresAt(),
+              credential.getRefreshToken(), credential.getAppKey(), credential.getAppSecret());
     DbxCredential.Writer.writeToFile(newCredential, new File(PATH));
 
     StorageService.updateToken(result.getAccessToken());

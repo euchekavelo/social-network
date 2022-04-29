@@ -40,19 +40,19 @@ public class ProfileController {
         String email = securityUser.getUsername();
         PersonDto personDto = new PersonDto(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                personDto));
+            "string",
+            System.currentTimeMillis(),
+            personDto));
     }
 
     @PutMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<Person>> updateProfile(
-            @RequestBody UpdatePersonDto updatePersonDto){
+        @RequestBody UpdatePersonDto updatePersonDto){
 
         return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                personService.updatePerson(updatePersonDto)
+            "string",
+            System.currentTimeMillis(),
+            personService.updatePerson(updatePersonDto)
         ));
     }
 
