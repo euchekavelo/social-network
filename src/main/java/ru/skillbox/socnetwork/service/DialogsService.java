@@ -10,6 +10,7 @@ import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,20 +24,28 @@ public class DialogsService {
     public ResponseEntity<GeneralListResponse<MessageDto>> createDialog (List<Integer> userList) {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        Integer dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId()).getDialogId();
-        dialogRepository.createDialog(securityUser.getId());
-        for (Integer id : userList) {
-            dialogRepository.addPersonDialog(id, dialogId);
+        Integer dialogId;
+        for (Integer recipientId : userList) {
+            dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId(), recipientId).getDialogId();
+            if (dialogId == 0) {
+                dialogRepository.createDialog(securityUser.getId());
+                dialogId = dialogRepository.getDialogIdByAuthor(securityUser.getId()).getDialogId();
+                dialogRepository.updateDialog(securityUser.getId(), recipientId, dialogId);
+            }
         }
         return null;
     }
-    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage (MessageRequest messageRequest, Integer dialog_id) {
+    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage (MessageRequest messageRequest, Integer dialogId) {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-
+        DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, securityUser.getId());
+        Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), securityUser.getId()).getDialogId();
+        if (recipientDialogId == 0) {
+            dialogRepository.createDialogForMessage(recipient.getId(), securityUser.getId(), dialogId);
+        }
         messageRepository.sendMessage (System.currentTimeMillis(), securityUser.getId(),
-                dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialog_id, securityUser.getId()).getId(),
-                messageRequest.getMessageText(), dialog_id);
+                recipient.getId(),
+                messageRequest.getMessageText(), dialogId);
         return null;
     }
 
@@ -48,10 +57,12 @@ public class DialogsService {
             List<DialogDto> dialogList = dialogRepository.getDialogList(securityUser.getId());
             DialogsResponse dialogsResponse = null;
             List<DialogsResponse> dialogsResponseList = new ArrayList<>();
+            PersonForDialogsDto recipient = null;
+            PersonForDialogsDto author = null;
 
             for (DialogDto dto : dialogList) {
-                PersonForDialogsDto recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityUser.getId());
-                PersonForDialogsDto author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityUser.getId());
+                recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityUser.getId());
+                author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityUser.getId());
                 boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
                 dialogsResponse = new DialogsResponse();
                 dialogsResponse.setId(dto.getDialogId());

@@ -27,7 +27,7 @@ public class DialogRepository {
                 "AND message.dialog_id = dialog.dialog_id AND author_id <> ?) AS unread_count " +
                 "FROM dialog " +
                 "LEFT JOIN message ON message.dialog_id = dialog.dialog_id " +
-                "WHERE person_id = ? " +
+                "WHERE dialog.author_id = ? " +
                 "GROUP BY dialog.dialog_id ORDER BY time DESC";
         return jdbc.query(sql, new DialogsMapper(), id, id);
     }
@@ -35,8 +35,8 @@ public class DialogRepository {
     public PersonForDialogsDto getAuthorByDialogId (Integer dialogId, Integer authorId) {
         String sql = "SELECT person.id, photo, first_name, last_name, e_mail, last_online_time " +
                 "FROM dialog " +
-                "INNER JOIN person ON person_id = person.id " +
-                "WHERE dialog.dialog_id = ? AND dialog.person_id = ?";
+                "INNER JOIN person ON author_id = person.id " +
+                "WHERE dialog.dialog_id = ? AND dialog.author_id = ?";
 
         return jdbc.queryForObject(sql, new PersonForDialogsMapper(), dialogId, authorId);
     }
@@ -45,28 +45,51 @@ public class DialogRepository {
     public PersonForDialogsDto getRecipientBydialogId (Integer dialogId, Integer authorId) {
         String sql = "SELECT person.id, photo, first_name, last_name, e_mail, last_online_time " +
                 "FROM dialog " +
-                "INNER JOIN person ON person_id = person.id " +
-                "WHERE dialog.dialog_id = ? AND dialog.person_id <> ?";
+                "INNER JOIN person ON recipient_id = person.id " +
+                "WHERE dialog.dialog_id = ? AND dialog.author_id = ?";
 
         return jdbc.queryForObject(sql, new PersonForDialogsMapper(), dialogId, authorId);
     }
-    public void addPersonDialog(Integer userId, Integer dialogId) {
-        String sql = "INSERT INTO dialog (person_id, dialog_id) " +
-                "VALUES (?, ?)";
-        jdbc.update(sql, userId, dialogId);
+    public void updateDialog(Integer authorId, Integer recipientId, Integer dialogId) {
+        String sql = "UPDATE dialog SET author_id = ?, recipient_id = ? " +
+                "WHERE dialog_id = ?";
+        jdbc.update(sql, authorId, recipientId, dialogId);
     }
+
+    public void createDialogForMessage(Integer authorId, Integer recipientId, Integer dialogId) {
+        String sql = "INSERT INTO dialog (author_id, recipient_id, dialog_id) " +
+                "VALUES (?, ?, ?)";
+        jdbc.update(sql, authorId, recipientId, dialogId);
+    }
+
     public void createDialog(Integer author_id) {
-        String sql = "INSERT INTO dialog (person_id, dialog_id) " +
+        String sql = "INSERT INTO dialog (author_id, dialog_id) " +
                 "VALUES (?, (SELECT MAX(dialog_id) + 1 FROM dialog))";
         jdbc.update(sql, author_id);
     }
 
-    public DialogDto getDialogIdByPerson (Integer id) {
-        String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE person_id = ?";
-        return jdbc.queryForObject(sql, new DialogIdMapper(), id);
+    public DialogDto getDialogIdByAuthor (Integer authorId) {
+        String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? ";
+        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId);
+    }
+
+    /*public void createDialog(Integer author_id) {
+        String sql = "INSERT INTO dialog (person_id, dialog_id) " +
+                "VALUES (?, (SELECT MAX(dialog_id) + 1 FROM dialog))";
+        jdbc.update(sql, author_id);
+    }*/
+
+    public DialogDto getDialogIdByPerson (Integer authorId, Integer recipientId) {
+        String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ?";
+        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
+    }
+
+    public DialogDto getDialogIdByAuthor (Integer authorId, Integer recipientId) {
+        String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ?";
+        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
     }
     public DialogDto getRecipientIdByDialogIdAndAuthorId (Integer dialog_id, Integer author_id) {
-        String sql = "SELECT person_id AS recipient_id FROM dialog WHERE dialog_id = ? AND person_id <> ?";
+        String sql = "SELECT recipient_id FROM dialog WHERE dialog_id = ? AND author_id = ?";
 
         return jdbc.queryForObject(sql, new RecipientMapper(), dialog_id, author_id);
     }
