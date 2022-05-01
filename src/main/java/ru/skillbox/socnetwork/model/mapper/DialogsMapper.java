@@ -15,6 +15,7 @@ public class DialogsMapper implements RowMapper<DialogDto> {
         dialogDto.setTime(rs.getLong("time"));
         dialogDto.setUnreadCount(rs.getInt("unread_count"));
         dialogDto.setMessageText(rs.getString("message_text"));
+        dialogDto.setAuthorId(rs.getInt("last_author_id"));
         dialogDto.setReadStatus(rs.getString("read_status"));
         dialogDto.setMessageId(rs.getInt("message_id"));
 

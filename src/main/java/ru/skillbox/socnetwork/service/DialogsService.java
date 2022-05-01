@@ -23,9 +23,8 @@ public class DialogsService {
     public ResponseEntity<GeneralListResponse<MessageDto>> createDialog (List<Integer> userList) {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        dialogRepository.createDialog(securityUser.getId());
         Integer dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId()).getDialogId();
-                System.out.println(dialogId);
+        dialogRepository.createDialog(securityUser.getId());
         for (Integer id : userList) {
             dialogRepository.addPersonDialog(id, dialogId);
         }
@@ -46,16 +45,15 @@ public class DialogsService {
                 .getAuthentication().getPrincipal();
 
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            List<DialogDto> dialogList = messageRepository.getDialogList(securityUser.getId());
+            List<DialogDto> dialogList = dialogRepository.getDialogList(securityUser.getId());
             DialogsResponse dialogsResponse = null;
             List<DialogsResponse> dialogsResponseList = new ArrayList<>();
 
             for (DialogDto dto : dialogList) {
-                PersonForDialogsDto author = messageRepository.getAuthorByMessageId(dto.getMessageId());
-                PersonForDialogsDto recipient = messageRepository.getRecipientByMessageId (dto.getMessageId());
-                boolean isSendByMe = securityUser.getId() == author.getId();
+                PersonForDialogsDto recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityUser.getId());
+                PersonForDialogsDto author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityUser.getId());
+                boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
                 dialogsResponse = new DialogsResponse();
-
                 dialogsResponse.setId(dto.getDialogId());
                 dialogsResponse.setRecipient(recipient);
                 dialogsResponse.setMessageDto(new MessageDto(dto.getMessageId(),

@@ -53,7 +53,7 @@ public class MessageRepository {
                 "(SELECT COUNT(*) FROM message WHERE message.read_status = 'SENT' " +
                 "AND message.dialog_id = dialog.dialog_id AND author_id <> ?) AS unread_count " +
                 "FROM dialog " +
-                "INNER JOIN message ON message.dialog_id = dialog.dialog_id " +
+                "LEFT JOIN message ON message.dialog_id = dialog.dialog_id " +
                 "WHERE person_id = ? " +
                 "GROUP BY dialog.dialog_id";
         return jdbc.query(sql, new DialogsMapper(), id, id);
