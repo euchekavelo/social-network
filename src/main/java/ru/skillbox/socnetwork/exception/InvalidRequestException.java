@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.controller.exception;
+package ru.skillbox.socnetwork.exception;
 
 public class InvalidRequestException extends Exception {
 

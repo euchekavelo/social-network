@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.City;
 import ru.skillbox.socnetwork.model.entity.Country;
 import ru.skillbox.socnetwork.repository.CityCountryRepository;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@DebugLogs
 public class SearchService {
 
     private final CityCountryRepository cityCountryRepository;

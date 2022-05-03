@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Tag;
-import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.mapper.TagMapper;
 
 import java.util.List;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class TagRepository {
     private final JdbcTemplate jdbc;
 

@@ -10,10 +10,12 @@ import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.service.SearchService;
 
 import java.util.List;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/platform/")
+@InfoLogs
 public class PlatformController {
 
     private final SearchService searchService;

@@ -3,7 +3,6 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.mapper.CountMapper;
 import ru.skillbox.socnetwork.model.mapper.DialogMapper;
 import ru.skillbox.socnetwork.model.mapper.MessageMapper;
@@ -11,9 +10,11 @@ import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 
 import java.util.List;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class MessageRepository {
     private final JdbcTemplate jdbc;
 
