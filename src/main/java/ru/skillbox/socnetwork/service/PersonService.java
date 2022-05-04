@@ -79,7 +79,7 @@ public class PersonService {
             return null;
         } else {
             return new PersonDto(person,
-                tokenProvider.generateToken(loginDto.getEmail()));
+                    tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
     public Person updatePerson(UpdatePersonDto changedPerson){
@@ -89,11 +89,11 @@ public class PersonService {
         Person updatablePerson = getByEmail(email);
 
         if(changedPerson.getFirstName() != null &&
-            !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
+                !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
         }
         if(changedPerson.getLastName() != null &&
-            !changedPerson.getLastName().equals(updatablePerson.getLastName())){
+                !changedPerson.getLastName().equals(updatablePerson.getLastName())){
             updatablePerson.setLastName(changedPerson.getLastName());
         }
         String date;
@@ -112,21 +112,21 @@ public class PersonService {
         }
         if(!changedPerson.getPhone().isEmpty()){
             String phone = (changedPerson.getPhone().charAt(0) == '7') ? changedPerson.getPhone() :
-                "7" + changedPerson.getPhone();
+                    "7" + changedPerson.getPhone();
             if(!phone.equals(updatablePerson.getPhone())) {
                 updatablePerson.setPhone(phone);
             }
         }
         if(changedPerson.getAbout() != null &&
-            !changedPerson.getAbout().equals(updatablePerson.getAbout())){
+                !changedPerson.getAbout().equals(updatablePerson.getAbout())){
             updatablePerson.setAbout(changedPerson.getAbout());
         }
         if(changedPerson.getCity() != null &&
-            !changedPerson.getCity().equals(updatablePerson.getCity())){
+                !changedPerson.getCity().equals(updatablePerson.getCity())){
             updatablePerson.setCity(changedPerson.getCity());
         }
         if(changedPerson.getCountry() != null &&
-            !changedPerson.getCountry().equals(updatablePerson.getCountry())){
+                !changedPerson.getCountry().equals(updatablePerson.getCountry())){
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         return personRepository.updatePerson(updatablePerson);
@@ -149,9 +149,9 @@ public class PersonService {
     }
 
     public List<PersonDto> getPersonsBySearchParameters(String firstName, String lastName,
-        long ageFrom, long ageTo,
-        int countryId, int cityId,
-        int perPage) {
+                                                        long ageFrom, long ageTo,
+                                                        int countryId, int cityId,
+                                                        int perPage) {
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
                 countryId, cityId, perPage);
 
