@@ -18,15 +18,24 @@ public class NotificationDto {
     @JsonProperty("person_id")
     private Integer personId;
     @JsonProperty("entity_id")
-    private Integer notificationTypeId;
+    private Integer entityId;
     private String contact;
 
-    public NotificationDto(Notification notification){
+    public NotificationDto(Integer typeId, Long sentTime,
+                           Integer personId, Integer entityId, String contact) {
+        this.typeId = typeId;
+        this.sentTime = sentTime;
+        this.personId = personId;
+        this.entityId = entityId;
+        this.contact = contact;
+    }
+
+    public NotificationDto(Notification notification) {
         this.id = notification.getId();
-        this.typeId = notification.getNotificationTypeId();
+        this.typeId = notification.getTypeId();
         this.sentTime = notification.getSentTime();
         this.personId = notification.getPersonId();
-        this.notificationTypeId = notification.getNotificationTypeId();
+        this.entityId = notification.getEntityId();
         this.contact = notification.getContact();
     }
 }

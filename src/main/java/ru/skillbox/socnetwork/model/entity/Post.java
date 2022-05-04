@@ -12,8 +12,8 @@ public class Post {
     private Integer author;
     private String title;
     @JsonProperty("post_text")
-    private String postText;
+    private String postText;//
     @JsonProperty("is_blocked")
-    private Boolean isBlocked = false;
-    private Integer likes;
+    private Boolean isBlocked = false;//
+    private Integer likes;//
 }

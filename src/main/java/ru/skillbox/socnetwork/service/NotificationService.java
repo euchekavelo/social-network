@@ -15,10 +15,10 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
-    public List<NotificationDto> getNotifications(int offset, int perPag) {
+    public List<NotificationDto> getNotifications(int offset, int perPage) {
 
         List<NotificationDto> notificationsDto = new ArrayList<>();
-        List <Notification> notifications = notificationRepository.getNotifications(offset, perPag);
+        List <Notification> notifications = notificationRepository.getNotifications(offset, perPage);
         for (Notification notification : notifications) {
             notificationsDto.add(new NotificationDto(notification));
         }

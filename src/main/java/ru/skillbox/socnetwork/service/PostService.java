@@ -3,6 +3,11 @@ package ru.skillbox.socnetwork.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.model.entity.Notification;
+import ru.skillbox.socnetwork.model.entity.NotificationType;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
+import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
@@ -26,6 +31,7 @@ public class PostService {
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
 
     public List<PostDto> getAll(int offset, int perPage, int personId) {
         return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), personId);
@@ -81,6 +87,10 @@ public class PostService {
 
     public PostDto addPost(NewPostDto newPostDto) {
         Post post = postRepository.addPost(newPostDto);
+
+        NotificationDto notificationDto = new NotificationDto(1, System.currentTimeMillis(),
+                10, post.getId(), "e-mail");
+        notificationRepository.addNotification(notificationDto);
         return new PostDto(post, new PersonDto(personService.getById(newPostDto.getAuthorId())), new ArrayList<>());
     }
 
