@@ -195,4 +195,9 @@ public class PersonRepository {
         Object[] args = new Object[]{id};
         jdbc.update(sql, id);
     }
+
+    public void setDeleted(Integer id, Boolean b){
+        String sql = "update person set is_deleted = ? where person.id = ?";
+        jdbc.update(sql, b, id);
+    }
 }

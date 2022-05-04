@@ -39,12 +39,14 @@ public class DeletedUserService {
         deletePersonData(user.getPersonId());
         storageService.deleteFile(user.getPhoto());
         deletedUsersRepository.delete(user.getId());
+        personRepository.setDeleted(user.getPersonId(), false);
       }
     }
   }
 
   public void add(Person person){
     deletedUsersRepository.addDeletedUser(person);
+    personRepository.setDeleted(person.getId(), true);
   }
 
   @Transactional
