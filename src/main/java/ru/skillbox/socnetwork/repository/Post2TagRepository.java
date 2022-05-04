@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.entity.Post2Tag;
-import ru.skillbox.socnetwork.model.entity.Tag;
 import ru.skillbox.socnetwork.model.mapper.Post2TagMapper;
-import ru.skillbox.socnetwork.model.mapper.TagMapper;
 
 import java.util.List;
 
@@ -28,5 +26,15 @@ public class Post2TagRepository {
     public void deletePostTags(int postId) {
         String sql = "delete from post2tag where post_id = ?";
         jdbc.update(sql, postId);
+    }
+
+    public void deleteAllPersonTags(Integer personId){
+        String sql = "DELETE " +
+                "FROM post2tag " +
+                "WHERE post_id " +
+                "IN (SELECT id " +
+                "FROM post " +
+                "WHERE author = ?)";
+        jdbc.update(sql, personId);
     }
 }

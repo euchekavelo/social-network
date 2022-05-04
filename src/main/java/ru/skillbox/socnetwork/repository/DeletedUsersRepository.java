@@ -17,7 +17,7 @@ public class DeletedUsersRepository {
 
   public void addDeletedUser(Person person){
     DeletedUser deletedUser = new DeletedUser(person);
-    String sql = "insert into deleted_users (person_id, photo, first_name, last_name, expire) values (?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO deleted_users (person_id, photo, first_name, last_name, expire) VALUES (?, ?, ?, ?, ?)";
     jdbc.update(sql,
             deletedUser.getPersonId(),
             deletedUser.getPhoto(),
@@ -27,16 +27,21 @@ public class DeletedUsersRepository {
   }
 
   public List<DeletedUser> getAll(){
-    return jdbc.query("select * from deleted_users", new DeletedUserMapper());
+    return jdbc.query("SELECT * FROM deleted_users", new DeletedUserMapper());
   }
 
   public List<DeletedUser> getAllExpired(){
-    return jdbc.query("select * from deleted_users where expire < ?", new DeletedUserMapper());
+    return jdbc.query("SELECT * FROM deleted_users WHERE expire <= ?", new DeletedUserMapper(), System.currentTimeMillis());
   }
 
   public void delete(Integer id){
-    String sql = "delete from deleted_users where id = ?";
+    String sql = "DELETE FROM deleted_users WHERE id = ?";
     Object[] args = new Object[]{id};
     jdbc.update(sql, id);
+  }
+
+  public DeletedUser getDeletedUser(Integer personId){
+    String sql = "SELECT * FROM deleted_users WHERE person_id = ?";
+    return jdbc.queryForObject(sql, new DeletedUserMapper(), personId);
   }
 }

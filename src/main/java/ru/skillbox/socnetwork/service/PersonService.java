@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.model.entity.DeletedUser;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -217,5 +218,23 @@ public class PersonService {
         person.setPhoto(storageService.getDeletedProfileImage());
         personRepository.updatePhoto(person);
         return "ok";
+    }
+
+    public Person returnProfile(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+
+        DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
+
+        person.setPhoto(deletedUser.getPhoto());
+        person.setFirstName(deletedUser.getFirstName());
+        person.setLastName(deletedUser.getLastName());
+
+        personRepository.updatePerson(person);
+        personRepository.updatePhoto(person);
+
+        deletedUserService.delete(deletedUser.getId());
+        return person;
     }
 }

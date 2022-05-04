@@ -65,6 +65,16 @@ public class ProfileController {
         ));
     }
 
+    @PutMapping(path = "me/return")
+    public ResponseEntity<GeneralResponse<PersonDto>> returnProfile(){
+
+        return ResponseEntity.ok(new GeneralResponse<>(
+                "string",
+                System.currentTimeMillis(),
+                new PersonDto(personService.returnProfile())
+        ));
+    }
+
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<PersonDto>> getProfileById(@PathVariable int id) {
         PersonDto personDto = new PersonDto(personService.getById(id));

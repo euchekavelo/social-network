@@ -46,4 +46,14 @@ public class PostLikeRepository {
         String sql = "delete from post_like where person_id = ?";
         jdbc.update(sql, personId);
     }
+
+    public void deleteAllPersonPostsLikes(Integer personId){
+        String sql = "DELETE " +
+                "FROM post_like " +
+                "WHERE post_id " +
+                "IN (SELECT id " +
+                "FROM post " +
+                "WHERE author = ?)";
+        jdbc.update(sql, personId);
+    }
 }

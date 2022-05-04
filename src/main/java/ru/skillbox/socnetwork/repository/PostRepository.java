@@ -65,4 +65,9 @@ public class PostRepository {
         String sql = "select * from post where post_text like ? and time > ? and time < ? and is_blocked = 'f'";
         return jdbc.query(sql, new PostMapper(), text, dateFrom, dateTo);
     }
+
+    public void deleteAllPersonPosts(Integer personId){
+        String sql = "DELETE FROM post WHERE author = ?";
+        jdbc.update(sql, personId);
+    }
 }
