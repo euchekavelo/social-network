@@ -3,7 +3,12 @@ package ru.skillbox.socnetwork.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.InvalidRequestException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
@@ -15,6 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/account")
+@InfoLogs
 public class AccountController {
 
     private final PersonService personService;

@@ -1,11 +1,14 @@
 package ru.skillbox.socnetwork.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.DialogsService;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/dialogs")
+@InfoLogs
 public class DialogsController {
 
     private final DialogsService dialogsService;

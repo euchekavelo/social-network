@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ru.skillbox'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-CommentLikeAndTags'
 sourceCompatibility = '11'
 
 configurations {
@@ -24,6 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	implementation 'org.liquibase:liquibase-core:4.8.0'
 	implementation 'org.postgresql:postgresql:42.3.3'

@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.PostLike;
 import ru.skillbox.socnetwork.model.mapper.PostLikeMapper;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class PostLikeRepository {
     private final JdbcTemplate jdbc;
 

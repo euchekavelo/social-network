@@ -3,6 +3,8 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
+
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.mapper.NotificationMapper;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
 

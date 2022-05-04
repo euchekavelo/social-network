@@ -3,11 +3,13 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.mapper.TempTokenMapper;
 
 @Repository
 @RequiredArgsConstructor
+@DebugLogs
 public class TempTokenRepository {
   private final JdbcTemplate jdbc;
 

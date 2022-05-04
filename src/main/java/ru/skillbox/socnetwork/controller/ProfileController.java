@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.entity.Person;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users/")
+@InfoLogs
 public class ProfileController {
 
     private final PersonService personService;
@@ -95,12 +97,8 @@ public class ProfileController {
         @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
         @RequestBody NewPostDto newPostDto) {
         newPostDto.setAuthorId(id);
-        if (publishDate == -1) {
-            newPostDto.setTime(System.currentTimeMillis());
-        } else {
-            newPostDto.setTime(publishDate);
-        }
-        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto));
+
+        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));
         return ResponseEntity.ok(response);
     }
 

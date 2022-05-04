@@ -2,34 +2,30 @@ package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
-import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.PersonService;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
+@InfoLogs
 public class AuthController {
 
     private final PersonService personService;
-    private final JwtTokenProvider tokenProvider;
-
 
     @PostMapping(value = "/login")
-    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) throws InvalidRequestException {
 
-        return ResponseEntity.ok()
-                .body(new GeneralResponse<>("string", System.currentTimeMillis(),
-                        personService.getPersonAfterLogin(loginDto)));
+        return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonAfterLogin(loginDto)));
     }
 
     /**
@@ -37,20 +33,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<GeneralResponse<DialogsResponse>> logout() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.isAuthenticated());
-        if (auth != null) {
-            auth.setAuthenticated(false);
-            return ResponseEntity.ok()
-                    .body(new GeneralResponse<>(
-                            "string",
-                            System.currentTimeMillis(),
-                            new DialogsResponse("ok")));
-        }
-        return ResponseEntity.ok()
-                .body(new GeneralResponse<>(
-                        "string",
-                        System.currentTimeMillis(),
-                        new DialogsResponse("ok")));
+
+        return ResponseEntity.ok(new GeneralResponse<>(new DialogsResponse("ok")));
     }
 }

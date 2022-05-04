@@ -1,11 +1,13 @@
-package ru.skillbox.socnetwork.controller.exception;
+package ru.skillbox.socnetwork.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 
 @ControllerAdvice
+@InfoLogs
 public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(InvalidRequestException.class)

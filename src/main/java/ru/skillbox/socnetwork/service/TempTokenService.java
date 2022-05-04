@@ -2,11 +2,13 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.repository.TempTokenRepository;
 
 @Service
 @RequiredArgsConstructor
+@DebugLogs
 public class TempTokenService {
 
   private final TempTokenRepository tempTokenRepository;

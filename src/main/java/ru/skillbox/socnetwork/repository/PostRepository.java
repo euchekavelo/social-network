@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
+@DebugLogs
 public class PostRepository {
     private final JdbcTemplate jdbc;
 
@@ -57,7 +59,7 @@ public class PostRepository {
         jdbc.update(sql, newPostDto.getTitle(), newPostDto.getPostText(), id);
     }
 
-    public void updatePostLikeCount(Integer likes, Integer postId) {
+    public void updateLikeCount(Integer likes, Integer postId) {
         String sql = "update post set likes = ? where id = ?";
         jdbc.update(sql, likes, postId);
     }

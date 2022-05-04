@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/post")
+@InfoLogs
 public class PostController {
 
     private final PostService postService;
@@ -29,66 +30,56 @@ public class PostController {
 
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable int id) {
-        GeneralResponse<PostDto> response = new GeneralResponse<PostDto>();
-        try {
-            response.setData(postService.getById(id));
-        } catch (EmptyResultDataAccessException e) {
-            return new BadRequestResponseEntity("entity not found");
-        }
-        return ResponseEntity.ok(response);
+    public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable int id)
+            throws InvalidRequestException {
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getById(id)));
     }
 
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id) {
+    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable int id)
+            throws InvalidRequestException {
+
         postService.deletePostById(id);
-        GeneralResponse<PostDto> response = new GeneralResponse<>(new PostDto(id));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new GeneralResponse<>(new PostDto(id)));
     }
 
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> editPostById(@PathVariable int id, @RequestBody NewPostDto newPostDto) {
-        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.editPost(id, newPostDto));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<GeneralResponse<PostDto>> editPostById(
+            @PathVariable int id, @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
+
+            return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(@PathVariable int id) {
-        GeneralResponse<List<CommentDto>> response = new GeneralResponse<>(postService.getCommentDtoList(id));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getCommentDtoList(id)));
     }
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
                                                                          @RequestBody CommentDto comment) {
-        comment.setAuthor(new PersonDto(personService.getById(getSecurityUser().getId())));
-        comment.setTime(System.currentTimeMillis());
-        comment.setPostId(id);
-        comment.setIsBlocked(false);
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.addCommentToPost(comment));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.addCommentToPost(comment, id)));
     }
 
     @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable int id,
                                                                          @PathVariable int commentId,
                                                                          @RequestBody CommentDto comment) {
+
         comment.setId(commentId);
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.editCommentToPost(comment));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
                                                                          @PathVariable int commentId) {
-        GeneralResponse<CommentDto> response = new GeneralResponse<>(postService.deleteCommentToPost(commentId));
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
     }
 
-    private SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
-    }
 
     @GetMapping()
     public ResponseEntity<GeneralResponse<List<PostDto>>> searchPostByText(

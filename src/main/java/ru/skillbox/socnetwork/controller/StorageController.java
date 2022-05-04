@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.service.storage.StorageService;
@@ -14,6 +15,7 @@ import ru.skillbox.socnetwork.service.storage.StorageService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/storage")
+@InfoLogs
 public class StorageController {
 
   private final StorageService storageService;
@@ -27,11 +29,5 @@ public class StorageController {
         storageService.uploadFile(file)
     ));
   }
-
-  @PostMapping(path = "/{token}")
-  public void updateToken(@PathVariable String token) {
-    storageService.updateToken(token);
-  }
-
 
 }
