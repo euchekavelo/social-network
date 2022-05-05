@@ -2,8 +2,8 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 
 import java.util.*;
 

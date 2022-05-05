@@ -14,18 +14,17 @@ public class TempTokenRepository {
   private final JdbcTemplate jdbc;
 
   public void addToken(TempToken token) {
-    String sql = "insert into temptoken (token, email) values (?, ?)";
+    String sql = "INSERT INTO temptoken (token, email) VALUES (?, ?)";
     jdbc.update(sql, token.getToken(), token.getEmail());
   }
 
   public TempToken getToken(String token) {
-    String sql = "select * from temptoken where token = ?";
+    String sql = "SELECT * FROM temptoken WHERE token = ?";
     return jdbc.queryForObject(sql, new TempTokenMapper(), token);
   }
 
   public void deleteToken(String token) {
-    String sql = "delete from temptoken where token = ?";
-    Object[] args = new Object[]{token};
+    String sql = "DELETE FROM temptoken WHERE token = ?";
     jdbc.update(sql, token);
   }
 }

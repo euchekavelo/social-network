@@ -6,8 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -154,5 +154,16 @@ public class PersonRepository {
 
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
         return template.query(sql, parameters, new PersonMapper());
+    }
+
+    public void delete(Integer id) {
+        String sql = "delete from person where id = ?";
+        Object[] args = new Object[]{id};
+        jdbc.update(sql, id);
+    }
+
+    public void setDeleted(Integer id, Boolean b){
+        String sql = "update person set is_deleted = ? where person.id = ?";
+        jdbc.update(sql, b, id);
     }
 }

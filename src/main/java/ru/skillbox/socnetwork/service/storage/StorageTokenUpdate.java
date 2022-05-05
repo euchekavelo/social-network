@@ -9,7 +9,6 @@ import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.oauth.DbxRefreshResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.skillbox.socnetwork.service.MailService;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,9 +20,7 @@ public class StorageTokenUpdate {
   private static final String APP_ID = "272m6nu2hx6xsuw";
   private static final String PATH = "/tmp/credentials.json";
 
-  MailService mailService = new MailService();
-
-  @Scheduled(fixedRateString = "PT03H")
+    @Scheduled(fixedRateString = "PT03H")
   public void refreshToken() throws JsonReader.FileLoadException, DbxException, IOException {
     File savedCredentials = new File(PATH);
     if(!savedCredentials.exists()) {
@@ -37,7 +34,6 @@ public class StorageTokenUpdate {
 
       credential = new DbxCredential(authFinish.getAccessToken(), authFinish
               .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
-//      File output = new File(PATH);
 
       DbxCredential.Writer.writeToFile(credential, savedCredentials);
     }
@@ -55,8 +51,5 @@ public class StorageTokenUpdate {
     DbxCredential.Writer.writeToFile(newCredential, new File(PATH));
 
     StorageService.updateToken(result.getAccessToken());
-
-    //Temp notification
-    mailService.send("kolomarat@gmail.com", "Token updated", "New token: " + result.getAccessToken());
   }
 }

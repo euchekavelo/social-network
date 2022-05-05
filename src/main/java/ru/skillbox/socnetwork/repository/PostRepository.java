@@ -93,4 +93,9 @@ public class PostRepository {
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
         return template.query(sql, parameters, new PostMapper());
     }
+
+    public void deleteAllPersonPosts(Integer personId){
+        String sql = "DELETE FROM post WHERE author = ?";
+        jdbc.update(sql, personId);
+    }
 }

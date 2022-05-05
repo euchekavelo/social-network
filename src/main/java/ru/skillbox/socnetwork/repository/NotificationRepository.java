@@ -17,6 +17,11 @@ import java.util.List;
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
 
+    public void deleteAllPersonNotifications(Integer personId){
+        String sql = "delete from notification where person_id = ?";
+        jdbc.update(sql, personId);
+    }
+
 
     public List<Notification> getNotifications(int offset, int perPage) {
         String sql = "select * from notification";

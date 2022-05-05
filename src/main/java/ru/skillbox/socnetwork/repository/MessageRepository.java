@@ -37,4 +37,9 @@ public class MessageRepository {
 
         return jdbc.queryForObject(sql, new CountMapper());
     }
+
+    public void deleteAllPersonMessages(Integer personId){
+        String sql = "delete from message where author_id = ? or recipient_id = ?";
+        jdbc.update(sql, personId, personId);
+    }
 }
