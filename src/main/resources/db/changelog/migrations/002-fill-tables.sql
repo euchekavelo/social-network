@@ -21,14 +21,12 @@ insert into post (time, author, title, post_text, is_blocked) values
 insert into tag (tag) values ('top15'), ('java'), ('code'), ('true_story'), ('spring'), ('core'), ('bootstrap');
 
 INSERT INTO message (time, author_id, recipient_id, message_text, read_status, dialog_id) values
-    ('1649367846501', 2, 1, 'test', 'SENT', 1),
-    ('1649367846502', 2, 1, 'test1', 'SENT', 1),
+    ('1649367846503', 2, 1, 'test', 'SENT', 1),
+    ('1649367846503', 2, 1, 'test1', 'SENT', 1),
+    ('1649367846505', 1, 2, 'hae', 'SENT', 1),
     ('1649367846503', 3, 1, 'test2', 'SENT', 2),
-    ('1649367846504', 4, 1, 'test3', 'SENT', 3),
-    ('1649367846505', 5, 1, 'test4', 'READ', 4),
-    ('1649367846506', 5, 1, 'test5', 'READ', 4),
-    ('1649367846507', 6, 1, 'test6', 'SENT', 5),
-    ('1649367846508', 6, 1, 'test7', 'SENT', 5);
-
-INSERT INTO dialog (id) values
-    (1), (2), (3), (4), (5);
+    ('1649367846503', 4, 1, 'test3', 'SENT', 3),
+    ('1649367846503', 5, 1, 'test4', 'READ', 4),
+    ('1649367846503', 5, 1, 'test5', 'READ', 4),
+    ('1649367846503', 6, 1, 'test6', 'SENT', 5),
+    ('1649367846503', 6, 1, 'test7', 'SENT', 5);
