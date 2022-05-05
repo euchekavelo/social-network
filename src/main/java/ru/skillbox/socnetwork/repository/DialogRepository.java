@@ -68,11 +68,6 @@ public class DialogRepository {
         return jdbc.queryForObject(sql, Integer.class, author_id);
     }
 
-    public DialogDto getDialogIdByAuthor (Integer authorId) {
-        String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? ";
-        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId);
-    }
-
     public DialogDto getDialogIdByPerson (Integer authorId, Integer recipientId) {
         String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ?";
         return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
