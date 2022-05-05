@@ -115,7 +115,14 @@ public class PostService {
         NotificationDto notificationDto = new NotificationDto(1, System.currentTimeMillis(),
                 10, post.getId(), "e-mail");
         notificationRepository.addNotification(notificationDto);
-        return new PostDto(post, new PersonDto(personService.getById(newPostDto.getAuthorId())), new ArrayList<>());
+
+        tagService.addTagsFromNewPost(post.getId(), newPostDto);
+
+        return new PostDto(post, new PersonDto(
+                personService.getById(newPostDto.getAuthorId())),
+                new ArrayList<>(),
+                tagService.getPostTags(post.getId()));
+
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {

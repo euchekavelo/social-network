@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.socnetwork.controller.exception.BadRequestResponseEntity;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -95,5 +96,10 @@ public class PostController {
                         getSecurityUser().getId()));
 
         return ResponseEntity.ok(response);
+    }
+
+    private SecurityUser getSecurityUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (SecurityUser) auth.getPrincipal();
     }
 }
