@@ -25,32 +25,36 @@ public class DialogsService {
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
 
-    public ResponseEntity<GeneralListResponse<MessageDto>> createDialog (List<Integer> userList) {
+    public ResponseEntity<GeneralResponse<DialogDto>> createDialog (List<Integer> userList) {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        Integer dialogId;
+        Integer dialogId = 0;
         for (Integer recipientId : userList) {
             dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId(), recipientId).getDialogId();
             if (dialogId == 0) {
-                dialogRepository.createDialog(securityUser.getId());
-                dialogId = dialogRepository.getDialogIdByAuthor(securityUser.getId()).getDialogId();
+                dialogId = dialogRepository.createDialog(securityUser.getId());
                 dialogRepository.updateDialog(securityUser.getId(), recipientId, dialogId);
             }
         }
-        return null;
+        DialogDto dialogDto = new DialogDto();
+        dialogDto.setId(dialogId);
+        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), dialogDto));
     }
     public ResponseEntity<GeneralResponse<MessageDto>> sendMessage (MessageRequest messageRequest, Integer dialogId) {
         SecurityUser securityUser = (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, securityUser.getId());
         Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), securityUser.getId()).getDialogId();
+        Long time = System.currentTimeMillis();
         if (recipientDialogId == 0) {
             dialogRepository.createDialogForMessage(recipient.getId(), securityUser.getId(), dialogId);
         }
-        messageRepository.sendMessage (System.currentTimeMillis(), securityUser.getId(),
+        Integer messageId = messageRepository.sendMessage (time, securityUser.getId(),
                 recipient.getId(),
                 messageRequest.getMessageText(), dialogId);
-        return null;
+        return ResponseEntity.ok(new GeneralResponse<>("String", time,
+                new MessageDto(messageId, time, securityUser.getId(), recipient.getRecipientId(),
+                        messageRequest.getMessageText(), "SENT")));
     }
 
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialogs() {

@@ -29,7 +29,7 @@ public class DialogsController {
     }
 
     @PostMapping
-    public ResponseEntity<GeneralListResponse<MessageDto>> createDialog(@RequestBody DialogRequest request) {
+    public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
         return dialogsService.createDialog(request.getUserIds());
     }

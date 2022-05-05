@@ -34,6 +34,16 @@ public class MessageDto {
         this.messageText = messageText;
         this.readStatus = readStatus;
     }
+
+    public MessageDto(Integer id, Long time, Integer authorId, Integer recipientId, String messageText, String readStatus) {
+        this.id = id;
+        this.time = time;
+        this.authorId = authorId;
+        this.recipientId = recipientId;
+        this.messageText = messageText;
+        this.readStatus = readStatus;
+    }
+
     public MessageDto() {
 
     }

@@ -22,11 +22,11 @@ public class MessageRepository {
         String sql = "UPDATE message SET read_status = 'READ' WHERE dialog_id = ? AND read_status = 'SENT'";
         jdbc.update(sql, id);
     }
-    public void sendMessage (Long time, Integer author_id,
+    public Integer sendMessage (Long time, Integer author_id,
                              Integer recipient_id, String message_text, Integer dialog_id) {
         String sql = "INSERT INTO message (time, author_id, recipient_id, message_text, read_status, dialog_id) " +
-                "VALUES (?, ?, ?, ?, 'SENT', ?)";
-        jdbc.update(sql, time, author_id, recipient_id, message_text, dialog_id);
+                "VALUES (?, ?, ?, ?, 'SENT', ?) RETURNING id ";
+        return jdbc.queryForObject(sql, Integer.class, time, author_id, recipient_id, message_text, dialog_id);
     }
 
     public PersonForDialogsDto getPersonForDialog (Integer id) {
