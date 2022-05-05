@@ -36,6 +36,8 @@ public class FriendsController {
             throws InvalidRequestException {
 
         GeneralResponse<DialogsResponse> generalResponse =
+
+        GeneralResponse<MessageResponseDto> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
 
         return ResponseEntity.ok(generalResponse);
@@ -46,6 +48,8 @@ public class FriendsController {
             throws InvalidRequestException {
 
         GeneralResponse<DialogsResponse> generalResponse =
+
+        GeneralResponse<MessageResponseDto> generalResponse =
                 new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
 
         return ResponseEntity.ok(generalResponse);

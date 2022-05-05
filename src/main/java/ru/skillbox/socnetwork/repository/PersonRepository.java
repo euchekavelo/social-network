@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -148,5 +148,16 @@ public class PersonRepository {
                 "and birth_date >= ? and birth_date <= ? " +
                 "limit ?";
         return jdbc.query(sql, new PersonMapper(), firstName, lastName, dateFrom, dateTo, perPage);
+    }
+
+    public void delete(Integer id) {
+        String sql = "delete from person where id = ?";
+        Object[] args = new Object[]{id};
+        jdbc.update(sql, id);
+    }
+
+    public void setDeleted(Integer id, Boolean b){
+        String sql = "update person set is_deleted = ? where person.id = ?";
+        jdbc.update(sql, b, id);
     }
 }

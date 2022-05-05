@@ -29,4 +29,14 @@ public class Post2TagRepository {
         String sql = "delete from post2tag where post_id = ?";
         jdbc.update(sql, postId);
     }
+
+    public void deleteAllPersonTags(Integer personId){
+        String sql = "DELETE " +
+                "FROM post2tag " +
+                "WHERE post_id " +
+                "IN (SELECT id " +
+                "FROM post " +
+                "WHERE author = ?)";
+        jdbc.update(sql, personId);
+    }
 }

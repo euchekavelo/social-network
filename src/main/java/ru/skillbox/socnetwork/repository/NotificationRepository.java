@@ -10,4 +10,9 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 @DebugLogs
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
+
+    public void deleteAllPersonNotifications(Integer personId){
+        String sql = "delete from notification where person_id = ?";
+        jdbc.update(sql, personId);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.model.entity.DeletedUser;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
@@ -36,6 +37,7 @@ public class PersonService {
     private final StorageService storageService;
     private final TempTokenService tempTokenService;
     private final MailService mailService;
+    private final DeletedUserService deletedUserService;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -67,11 +69,7 @@ public class PersonService {
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
-        try {
-            person.setPhoto(storageService.getDefaultProfileImage());
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
+        person.setPhoto(storageService.getDefaultProfileImage());
         return saveFromRegistration(person);
     }
 
@@ -208,11 +206,38 @@ public class PersonService {
         return generator.generate(10);
     }
 
-//    public void setBlockPerson(Person person, Boolean block){
-//        personRepository.setBlockPerson(person, block);
-//    }
-//
-//    public void deletePerson(Person person){
-//        personRepository.deletePerson(person);
-//    }
+    public String setBlockPerson() throws InvalidRequestException{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+        if(person == null){
+            throw new InvalidRequestException("User with email " + securityUser.getUsername() + " not registered");
+        }
+        deletedUserService.add(person);
+        person.setIsDeleted(true);
+        person.setFirstName("Deleted");
+        person.setLastName("");
+        personRepository.updatePerson(person);
+        person.setPhoto(storageService.getDeletedProfileImage());
+        personRepository.updatePhoto(person);
+        return "ok";
+    }
+
+    public Person returnProfile(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+
+        DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
+
+        person.setPhoto(deletedUser.getPhoto());
+        person.setFirstName(deletedUser.getFirstName());
+        person.setLastName(deletedUser.getLastName());
+
+        personRepository.updatePerson(person);
+        personRepository.updatePhoto(person);
+
+        deletedUserService.delete(deletedUser.getId());
+        return person;
+    }
 }
