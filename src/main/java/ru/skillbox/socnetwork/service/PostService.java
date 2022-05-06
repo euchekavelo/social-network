@@ -84,7 +84,7 @@ public class PostService {
                             personDto,
                             getCommentDtoList(post.getId()),
                             tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(likeRepository.getIsLiked(postDto.getAuthorId(), post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(personDto.getId(), post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());

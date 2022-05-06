@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ru.skillbox'
-version = '0.0.2-CommentLikeAndTags'
+version = '0.0.4_06.05.22'
 sourceCompatibility = '11'
 
 configurations {
