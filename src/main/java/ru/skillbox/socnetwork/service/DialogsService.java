@@ -32,8 +32,7 @@ public class DialogsService {
         for (Integer recipientId : userList) {
             dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId(), recipientId).getDialogId();
             if (dialogId == 0) {
-                dialogId = dialogRepository.createDialog(securityUser.getId());
-                dialogRepository.updateDialog(securityUser.getId(), recipientId, dialogId);
+                dialogId = dialogRepository.createDialog(securityUser.getId(), recipientId);
             }
         }
         DialogDto dialogDto = new DialogDto();
@@ -69,8 +68,10 @@ public class DialogsService {
             PersonForDialogsDto author = null;
 
             for (DialogDto dto : dialogList) {
+
                 recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityUser.getId());
                 author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityUser.getId());
+
                 boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
                 dialogsResponse = new DialogsResponse();
                 dialogsResponse.setId(dto.getDialogId());

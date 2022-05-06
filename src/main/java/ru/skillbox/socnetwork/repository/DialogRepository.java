@@ -62,10 +62,10 @@ public class DialogRepository {
         jdbc.update(sql, authorId, recipientId, dialogId);
     }
 
-    public Integer createDialog(Integer author_id) {
-        String sql = "INSERT INTO dialog (author_id, dialog_id) " +
-                "VALUES (?, (SELECT MAX(dialog_id) + 1 FROM dialog)) RETURNING id";
-        return jdbc.queryForObject(sql, Integer.class, author_id);
+    public Integer createDialog(Integer authorId, Integer recipientId) {
+        String sql = "INSERT INTO dialog (author_id, recipient_id, dialog_id) " +
+                "VALUES (?, ?, (SELECT MAX(dialog_id) + 1 FROM dialog)) RETURNING id";
+        return jdbc.queryForObject(sql, Integer.class, authorId, recipientId);
     }
 
     public DialogDto getDialogIdByPerson (Integer authorId, Integer recipientId) {
