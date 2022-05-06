@@ -29,6 +29,6 @@ databaseChangeLog:
       comment: dialog table changes
       sqlFile:
         encoding: UTF-8
-        path: migrations/004-dialog-table-changes.sql
+        path: migrations/004-dialog-and-message-table-changes.sql
         relativeToChangelogFile: true
 
