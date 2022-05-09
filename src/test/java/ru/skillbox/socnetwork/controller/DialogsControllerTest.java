@@ -79,4 +79,16 @@ public class DialogsControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.read_status").value("SENT"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.author_id").value(1));
     }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void getMessagesByDialogIdTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/dialogs/1/messages"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("string"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.length()").value(3));
+    }
 }
