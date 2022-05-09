@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -46,5 +47,36 @@ public class DialogsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("string"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(11));
+    }
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void getDialogsTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                 .get("/api/v1/dialogs"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("string"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total").value(5))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.length()").value(5));
+//                .andExpect(MockMvcResultMatchers.content()
+//                        .bytes(Files.readAllBytes(Paths.get("src/test/resources/json/dialog_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void sendMessageTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/v1/dialogs/1/messages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Files.readAllBytes(Paths.get("src/test/resources/json/send_message_rq.json")))
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("String"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.isSentByMe").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.message_text").value("test"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.read_status").value("SENT"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author_id").value(1));
     }
 }
