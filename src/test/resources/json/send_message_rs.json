@@ -1,9 +1,7 @@
 {
     "error": "String",
-    "timestamp": 1652121883756,
     "data": {
         "id": 18,
-        "time": 1652121883756,
         "isSentByMe": false,
         "message_text": "test",
         "read_status": "SENT",

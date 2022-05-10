@@ -1,6 +1,5 @@
 {
     "error": "string",
-    "timestamp": 1652121458869,
     "total": 5,
     "offset": 0,
     "perPage": 0,
@@ -9,28 +8,28 @@
             "id": 1,
             "recipient": {
                 "id": 2,
-                "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                "first_name": "Иван",
-                "last_name": "Иванов",
-                "e_mail": "i@mail.ru",
+                "photo": null,
+                "first_name": "Ivan",
+                "last_name": "Ivanov",
+                "e_mail": "ivanov@mail.ru",
                 "last_online_time": 0
             },
             "last_message": {
                 "id": 11,
                 "author": {
                     "id": 1,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тест",
-                    "last_name": "Тест",
+                    "photo": null,
+                    "first_name": "Test",
+                    "last_name": "Test",
                     "e_mail": "test@mail.ru",
                     "last_online_time": 0
                 },
                 "recipient": {
                     "id": 2,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Иван",
-                    "last_name": "Иванов",
-                    "e_mail": "i@mail.ru",
+                    "photo": null,
+                    "first_name": "Ivan",
+                    "last_name": "Ivanov",
+                    "e_mail": "ivanov@mail.ru",
                     "last_online_time": 0
                 },
                 "time": 1649367846505,
@@ -44,28 +43,28 @@
             "id": 5,
             "recipient": {
                 "id": 6,
-                "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                "first_name": "Онуфрий",
-                "last_name": "Онуфриев",
-                "e_mail": "o@mail.ru",
+                "photo": null,
+                "first_name": "Onufriy",
+                "last_name": "Onufriev",
+                "e_mail": "onufriy@mail.ru",
                 "last_online_time": 0
             },
             "last_message": {
                 "id": 17,
                 "author": {
                     "id": 1,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тест",
-                    "last_name": "Тест",
+                    "photo": null,
+                    "first_name": "Test",
+                    "last_name": "Test",
                     "e_mail": "test@mail.ru",
                     "last_online_time": 0
                 },
                 "recipient": {
                     "id": 6,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Онуфрий",
-                    "last_name": "Онуфриев",
-                    "e_mail": "o@mail.ru",
+                    "photo": null,
+                    "first_name": "Onufriy",
+                    "last_name": "Onufriev",
+                    "e_mail": "onufriy@mail.ru",
                     "last_online_time": 0
                 },
                 "time": 1649367846503,
@@ -79,28 +78,28 @@
             "id": 4,
             "recipient": {
                 "id": 5,
-                "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                "first_name": "Илья",
-                "last_name": "Ильин",
-                "e_mail": "l@mail.ru",
+                "photo": null,
+                "first_name": "Ilya",
+                "last_name": "Ilin",
+                "e_mail": "ilin@mail.ru",
                 "last_online_time": 0
             },
             "last_message": {
                 "id": 15,
                 "author": {
                     "id": 1,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тест",
-                    "last_name": "Тест",
+                    "photo": null,
+                    "first_name": "Test",
+                    "last_name": "Test",
                     "e_mail": "test@mail.ru",
                     "last_online_time": 0
                 },
                 "recipient": {
                     "id": 5,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Илья",
-                    "last_name": "Ильин",
-                    "e_mail": "l@mail.ru",
+                    "photo": null,
+                    "first_name": "Ilya",
+                    "last_name": "Ilin",
+                    "e_mail": "ilin@mail.ru",
                     "last_online_time": 0
                 },
                 "time": 1649367846503,
@@ -114,28 +113,28 @@
             "id": 2,
             "recipient": {
                 "id": 3,
-                "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                "first_name": "Петр",
-                "last_name": "Петров",
-                "e_mail": "p@mail.ru",
+                "photo": null,
+                "first_name": "Petr",
+                "last_name": "Petrov",
+                "e_mail": "petrov@mail.ru",
                 "last_online_time": 0
             },
             "last_message": {
                 "id": 12,
                 "author": {
                     "id": 1,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тест",
-                    "last_name": "Тест",
+                    "photo": null,
+                    "first_name": "Test",
+                    "last_name": "Test",
                     "e_mail": "test@mail.ru",
                     "last_online_time": 0
                 },
                 "recipient": {
                     "id": 3,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Петр",
-                    "last_name": "Петров",
-                    "e_mail": "p@mail.ru",
+                    "photo": null,
+                    "first_name": "Petr",
+                    "last_name": "Petrov",
+                    "e_mail": "petrov@mail.ru",
                     "last_online_time": 0
                 },
                 "time": 1649367846503,
@@ -149,28 +148,28 @@
             "id": 3,
             "recipient": {
                 "id": 4,
-                "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                "first_name": "Тихон",
-                "last_name": "Тихонов",
-                "e_mail": "t@mail.ru",
+                "photo": null,
+                "first_name": "Tihon",
+                "last_name": "Tihonov",
+                "e_mail": "tihonov@mail.ru",
                 "last_online_time": 0
             },
             "last_message": {
                 "id": 13,
                 "author": {
                     "id": 1,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тест",
-                    "last_name": "Тест",
+                    "photo": null,
+                    "first_name": "Test",
+                    "last_name": "Test",
                     "e_mail": "test@mail.ru",
                     "last_online_time": 0
                 },
                 "recipient": {
                     "id": 4,
-                    "photo": "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1",
-                    "first_name": "Тихон",
-                    "last_name": "Тихонов",
-                    "e_mail": "t@mail.ru",
+                    "photo": null,
+                    "first_name": "Tihon",
+                    "last_name": "Tihonov",
+                    "e_mail": "tihonov@mail.ru",
                     "last_online_time": 0
                 },
                 "time": 1649367846503,
