@@ -9,12 +9,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
+import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
+import ru.skillbox.socnetwork.repository.FriendshipRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
@@ -25,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +41,7 @@ public class PersonService {
     private final StorageService storageService;
     private final TempTokenService tempTokenService;
     private final MailService mailService;
+    private final FriendshipRepository friendshipRepository;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -206,6 +212,78 @@ public class PersonService {
     private String generateToken(){
         RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(65, 90).build();
         return generator.generate(10);
+    }
+
+    private SecurityUser getAuthorizedUser() {
+        return (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public DialogsResponse blockUser(Integer focusPersonId) throws InvalidRequestException {
+        String email = getAuthorizedUser().getUsername();
+        Integer authorizedUserId = personRepository.getByEmail(email).getId();
+        if (focusPersonId.equals(authorizedUserId)) {
+            throw new InvalidRequestException("You can't block yourself.");
+        }
+
+        Optional<Friendship> friendshipFromInitiator = friendshipRepository
+                .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
+        Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
+                .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
+
+        if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
+            Friendship friendshipInitiator = friendshipFromInitiator.orElse(null);
+            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(null);
+
+            if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
+                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
+
+                throw new InvalidRequestException("Blocking is not possible, because user in relation to the current " +
+                        "user is already blocked.");
+
+            } else if (friendshipInitiator != null && friendshipInitiator.getCode() != TypeCode.BLOCKED) {
+                friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+                        TypeCode.BLOCKED.toString());
+            } else if (friendshipFocusPerson != null && friendshipFocusPerson.getCode() != TypeCode.BLOCKED){
+                friendshipRepository.fullUpdateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
+                        TypeCode.BLOCKED.toString());
+            }
+        } else {
+            friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+                    TypeCode.BLOCKED.toString());
+        }
+
+        return new DialogsResponse("ok");
+    }
+
+    public DialogsResponse unblockUser(Integer focusPersonId) throws InvalidRequestException {
+        String email = getAuthorizedUser().getUsername();
+        Integer authorizedUserId = personRepository.getByEmail(email).getId();
+        if (authorizedUserId.equals(focusPersonId)) {
+            throw new InvalidRequestException("Unlocking in relation to yourself is not possible.");
+        }
+
+        Optional<Friendship> friendshipFromInitiator = friendshipRepository
+                .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
+        Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
+                .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
+
+        if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
+            Friendship friendshipInitiator = friendshipFromInitiator.orElse(null);
+            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(null);
+
+            if (friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.BLOCKED) {
+                friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+                        TypeCode.BLOCKED.toString());
+
+            } else if (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.BLOCKED) {
+                throw new InvalidRequestException("Unlocking is not possible. " +
+                        "Unlocking can only be done by a focus person.");
+            }
+        } else {
+            throw new InvalidRequestException("Blocking in relation to the focus person was not detected.");
+        }
+
+        return new DialogsResponse("ok");
     }
 
 //    public void setBlockPerson(Person person, Boolean block){

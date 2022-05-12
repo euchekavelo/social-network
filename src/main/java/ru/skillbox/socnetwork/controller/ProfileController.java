@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
@@ -100,5 +101,25 @@ public class ProfileController {
 
         GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> blockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.blockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @DeleteMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> unblockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.unblockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
     }
 }

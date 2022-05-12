@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Friendship;
-import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.mapper.FriendshipMapper;
 import ru.skillbox.socnetwork.model.mapper.FriendshipPersonMapper;
 import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
@@ -22,15 +21,20 @@ public class FriendshipRepository {
 
     private final JdbcTemplate jdbc;
 
-    public int removeFriendlyStatusByPersonIds(Integer srcPersonId, Integer dstPersonId) {
+    public int deleteFriendRequestById(Integer id, Integer dstPersonId) {
         return jdbc.update("DELETE FROM friendship f " +
-                "WHERE f.code = 'FRIEND' and f.src_person_id = ? and f. dst_person_id = ?", srcPersonId, dstPersonId);
+                "WHERE f.id = ? and f.dst_person_id = ? and f.code = 'REQUEST'", id, dstPersonId);
     }
 
-    public void createFriendRequestByPersonIds(Integer srcPersonId, Integer dstPersonId) {
+    public int removeFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
+        return jdbc.update("DELETE FROM friendship f WHERE f.src_person_id = ? and f. dst_person_id = ? " +
+                "AND f.code = CAST(? AS code_type)", srcPersonId, dstPersonId, typeCode);
+    }
+
+    public void createFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
         jdbc.update("INSERT INTO friendship (src_person_id, dst_person_id, time, code) " +
                 "VALUES (?, ?, ?, CAST(? AS code_type))",
-                srcPersonId, dstPersonId, System.currentTimeMillis(), TypeCode.REQUEST.toString());
+                srcPersonId, dstPersonId, System.currentTimeMillis(), typeCode);
     }
 
     public Optional<Friendship> getFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId,
@@ -47,8 +51,21 @@ public class FriendshipRepository {
 
     public void updateFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
         jdbc.update("UPDATE friendship SET time = ?, code = CAST(? AS code_type) " +
-                "WHERE src_person_id = ? and dst_person_id = ?",
+                        "WHERE src_person_id = ? and dst_person_id = ?",
                 System.currentTimeMillis(), typeCode, srcPersonId, dstPersonId);
+    }
+
+    public void fullUpdateFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("srcPersonId", srcPersonId);
+        parameters.addValue("dstPersonId", dstPersonId);
+        parameters.addValue("typeCode", typeCode);
+        parameters.addValue("currentTime", System.currentTimeMillis());
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+
+        template.update("UPDATE friendship SET time = :currentTime, code = CAST(:typeCode AS code_type), " +
+                "src_person_id = :dstPersonId,  dst_person_id = :srcPersonId WHERE src_person_id = :srcPersonId " +
+                "AND dst_person_id = :dstPersonId", parameters);
     }
 
     public List<FriendshipPersonDto> getInformationAboutFriendships(String email, List<Integer> userIds) {
