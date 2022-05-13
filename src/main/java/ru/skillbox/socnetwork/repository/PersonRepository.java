@@ -21,6 +21,12 @@ public class PersonRepository {
 
     private final JdbcTemplate jdbc;
 
+    public void updateLastOnlineTimeByEmail (String email, Long time) {
+        String sql = "UPDATE person SET last_online_time = ? WHERE email = ?";
+
+        jdbc.update(sql, time, email);
+    }
+
     public Person getById(int id) {
         String sql = "select * from person where id = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), id);

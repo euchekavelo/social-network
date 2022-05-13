@@ -43,7 +43,6 @@ public class DialogRepository {
         return jdbc.queryForObject(sql, new PersonForDialogsMapper(), dialogId, authorId);
     }
 
-    //TODO доработать для групового чата
     public PersonForDialogsDto getRecipientBydialogId (Integer dialogId, Integer authorId) {
         String sql = "SELECT person.id, photo, first_name, last_name, e_mail, last_online_time " +
                 "FROM dialog " +
