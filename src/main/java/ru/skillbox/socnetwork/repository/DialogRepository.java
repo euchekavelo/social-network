@@ -19,17 +19,19 @@ public class DialogRepository {
     private final JdbcTemplate jdbc;
 
     public List<DialogDto> getDialogList(Integer id) {
-        String sql = "SELECT dialog.dialog_id, MAX(time) AS time, " +
-                "(SELECT message_text FROM message WHERE dialog_id = dialog.dialog_id ORDER BY time DESC LIMIT 1) AS message_text," +
-                "(SELECT author_id FROM message WHERE dialog_id = dialog.dialog_id ORDER BY time DESC LIMIT 1) AS last_author_id," +
-                "MAX(read_status) AS read_status, MAX(message.id) AS message_id, " +
-                "(SELECT COUNT(*) FROM message WHERE message.read_status = 'SENT' " +
-                "AND message.dialog_id = dialog.dialog_id AND author_id <> ?) AS unread_count " +
-                "FROM dialog " +
-                "LEFT JOIN message ON message.dialog_id = dialog.dialog_id " +
-                "WHERE dialog.author_id = ? " +
-                "GROUP BY dialog.dialog_id ORDER BY time DESC";
-        return jdbc.query(sql, new DialogsMapper(), id, id);
+        StringBuffer sqlBuff = new StringBuffer();
+        sqlBuff.append("SELECT dialog.dialog_id, MAX(time) AS time, (SELECT message_text FROM message ");
+        sqlBuff.append("WHERE dialog_id = dialog.dialog_id ORDER BY time DESC LIMIT 1) AS message_text,");
+        sqlBuff.append("(SELECT author_id FROM message WHERE dialog_id = dialog.dialog_id ORDER BY time DESC LIMIT 1) ");
+        sqlBuff.append("AS last_author_id, MAX(read_status) AS read_status, MAX(message.id) AS message_id, ");
+        sqlBuff.append("(SELECT COUNT(*) FROM message WHERE message.read_status = 'SENT' ");
+        sqlBuff.append("AND message.dialog_id = dialog.dialog_id AND author_id <> ?) AS unread_count ");
+        sqlBuff.append("FROM dialog ");
+        sqlBuff.append("LEFT JOIN message ON message.dialog_id = dialog.dialog_id ");
+        sqlBuff.append("WHERE dialog.author_id = ? ");
+        sqlBuff.append("GROUP BY dialog.dialog_id ORDER BY time DESC");
+
+        return jdbc.query(sqlBuff.toString(), new DialogsMapper(), id, id);
     }
 
     public PersonForDialogsDto getAuthorByDialogId (Integer dialogId, Integer authorId) {
