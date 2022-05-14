@@ -4,18 +4,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.model.entity.Notification;
+import ru.skillbox.socnetwork.model.entity.NotificationType;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
+import ru.skillbox.socnetwork.repository.NotificationRepository;
+import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +36,7 @@ public class PostService {
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
     private final TagService tagService;
 
     public List<PostDto> getAll(int offset, int perPage) {
@@ -77,13 +84,14 @@ public class PostService {
                             personDto,
                             getCommentDtoList(post.getId()),
                             tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(personDto.getId(), post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());
     }
 
-    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, int personId) {
+
+    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, Integer personId) {
         return posts.stream().map(post -> {
                     PostDto postDto = new PostDto(
                             post,
@@ -103,12 +111,18 @@ public class PostService {
             newPostDto.setTime(publishDate);
         }
         Post post = postRepository.addPost(newPostDto);
+
+        NotificationDto notificationDto = new NotificationDto(1, System.currentTimeMillis(),
+                10, post.getId(), "e-mail");
+        notificationRepository.addNotification(notificationDto);
+
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(
                 personService.getById(newPostDto.getAuthorId())),
                 new ArrayList<>(),
                 tagService.getPostTags(post.getId()));
+
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
@@ -150,9 +164,18 @@ public class PostService {
         return commentDto;
     }
 
-    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo) {
-        int currentPersonId = getPersonId();
-        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
+    public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author,
+                                                      int perPage, int currentPersonId) {
+
+        String[] authorNameSurname = author.split("\\s", 2);
+        String authorName = authorNameSurname[0];
+        String authorSurname = authorNameSurname.length >= 2 ? authorNameSurname[1] : "";
+
+        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
+                authorName, authorSurname, perPage);
+        //return getPostDtoListOfAllPersons(posts);
+        // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
+        //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
         return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 

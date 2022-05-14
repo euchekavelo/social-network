@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Friendship;
+import ru.skillbox.socnetwork.model.entity.DeletedUser;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
@@ -42,6 +43,7 @@ public class PersonService {
     private final TempTokenService tempTokenService;
     private final MailService mailService;
     private final FriendshipRepository friendshipRepository;
+    private final DeletedUserService deletedUserService;
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -73,11 +75,7 @@ public class PersonService {
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
-        try {
-            person.setPhoto(storageService.getDefaultProfileImage());
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
+        person.setPhoto(storageService.getDefaultProfileImage());
         return saveFromRegistration(person);
     }
 
@@ -100,8 +98,8 @@ public class PersonService {
             !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
         }
-        if(changedPerson.getLastName() != null &&
-            !changedPerson.getLastName().equals(updatablePerson.getLastName())){
+        if (changedPerson.getLastName() != null &&
+                !changedPerson.getLastName().equals(updatablePerson.getLastName())) {
             updatablePerson.setLastName(changedPerson.getLastName());
         }
         String date;
@@ -111,36 +109,36 @@ public class PersonService {
             long dateTime;
             try {
                 dateTime = format.parse(date).getTime();
-                if(dateTime != updatablePerson.getBirthDate()){
+                if (dateTime != updatablePerson.getBirthDate()) {
                     updatablePerson.setBirthDate(dateTime);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        if(!changedPerson.getPhone().isEmpty()){
+        if (!changedPerson.getPhone().isEmpty()) {
             String phone = (changedPerson.getPhone().charAt(0) == '7') ? changedPerson.getPhone() :
-                "7" + changedPerson.getPhone();
-            if(!phone.equals(updatablePerson.getPhone())) {
+                    "7" + changedPerson.getPhone();
+            if (!phone.equals(updatablePerson.getPhone())) {
                 updatablePerson.setPhone(phone);
             }
         }
-        if(changedPerson.getAbout() != null &&
-            !changedPerson.getAbout().equals(updatablePerson.getAbout())){
+        if (changedPerson.getAbout() != null &&
+                !changedPerson.getAbout().equals(updatablePerson.getAbout())) {
             updatablePerson.setAbout(changedPerson.getAbout());
         }
-        if(changedPerson.getCity() != null &&
-            !changedPerson.getCity().equals(updatablePerson.getCity())){
+        if (changedPerson.getCity() != null &&
+                !changedPerson.getCity().equals(updatablePerson.getCity())) {
             updatablePerson.setCity(changedPerson.getCity());
         }
-        if(changedPerson.getCountry() != null &&
-            !changedPerson.getCountry().equals(updatablePerson.getCountry())){
+        if (changedPerson.getCountry() != null &&
+                !changedPerson.getCountry().equals(updatablePerson.getCountry())) {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         return personRepository.updatePerson(updatablePerson);
     }
 
-    public void updatePhoto(String photo, Person person){
+    public void updatePhoto(String photo, Person person) {
         person.setPhoto(photo);
         personRepository.updatePhoto(person);
     }
@@ -286,11 +284,38 @@ public class PersonService {
         return new DialogsResponse("ok");
     }
 
-//    public void setBlockPerson(Person person, Boolean block){
-//        personRepository.setBlockPerson(person, block);
-//    }
-//
-//    public void deletePerson(Person person){
-//        personRepository.deletePerson(person);
-//    }
+    public String setBlockPerson() throws InvalidRequestException{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+        if(person == null){
+            throw new InvalidRequestException("User with email " + securityUser.getUsername() + " not registered");
+        }
+        deletedUserService.add(person);
+        person.setIsDeleted(true);
+        person.setFirstName("Deleted");
+        person.setLastName("");
+        personRepository.updatePerson(person);
+        person.setPhoto(storageService.getDeletedProfileImage());
+        personRepository.updatePhoto(person);
+        return "ok";
+    }
+
+    public Person returnProfile(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        Person person = getByEmail(securityUser.getUsername());
+
+        DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
+
+        person.setPhoto(deletedUser.getPhoto());
+        person.setFirstName(deletedUser.getFirstName());
+        person.setLastName(deletedUser.getLastName());
+
+        personRepository.updatePerson(person);
+        personRepository.updatePhoto(person);
+
+        deletedUserService.delete(deletedUser.getId());
+        return person;
+    }
 }

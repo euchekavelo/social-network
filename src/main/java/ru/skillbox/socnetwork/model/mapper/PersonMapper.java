@@ -6,10 +6,6 @@ import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class PersonMapper implements RowMapper<Person> {
 
@@ -33,6 +29,7 @@ public class PersonMapper implements RowMapper<Person> {
         mapper.setIsApproved(rs.getBoolean("is_approved"));
         mapper.setMessagesPermission(getPermission(rs.getObject("messages_permission")));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
+        mapper.setIsDeleted(rs.getBoolean("is_deleted"));
         return mapper;
     }
 
@@ -40,5 +37,3 @@ public class PersonMapper implements RowMapper<Person> {
         return object == null ? TypePermission.ALL : (TypePermission) object;
     }
 }
-
-

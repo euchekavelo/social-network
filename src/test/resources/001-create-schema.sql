@@ -16,6 +16,7 @@ drop table if exists notification_type;
 drop table if exists temptoken;
 drop table if exists databasechangelog;
 drop table if exists databasechangeloglock;
+drop table if exists deleted_users;
 
 drop type if exists permission_type;
 drop type if exists action_type;

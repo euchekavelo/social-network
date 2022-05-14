@@ -81,4 +81,9 @@ public class FriendshipRepository {
                         "WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.src_person_id IN (:userIds)",
                             parameters, new FriendshipPersonMapper());
     }
+
+    public void deleteAllPersonFriendships(Integer personId){
+        String sql = "delete from friendship where src_person_id = ? or dst_person_id = ?";
+        jdbc.update(sql, personId, personId);
+    }
 }

@@ -10,7 +10,9 @@ insert into person (id, first_name, last_name, reg_date, birth_date, e_mail, pho
     (5, 'Ilya', 'Ilin', '1649367846500', '1649367846000', 'ilin@mail.ru', '+7(999)9999999',
      '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Tbilisi', 'Georgia'),
     (6, 'Onufriy', 'Onufriev', '1649367846500', '1649367846000', 'onufriy@mail.ru', '+7(999)9999999',
-     '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan');
+     '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan'),
+    (7, 'Onufriy', 'Testoviy', '1649367846500', '1649367846000', 'onufriy1@mail.ru', '+7(999)9999999',
+    '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan');
 
 insert into post (id, time, author, title, post_text, is_blocked, likes) values
     (1, '1649367846501', 1, 'test title example', 'test post text example', 'false', 2),
