@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Sql(value = {"/003-person-table-changes.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/004-dialog-and-message-table-changes.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/005-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class PlatformControllerTest {
+class PlatformControllerTest {
 
     private final String CITIES_DATA = "{\"data\":[\"Perm\",\"Tbilisi\",\"Tver\",\"Saratov\",\"Alma-Ata\",\"Kaliningrad\"]}";
 

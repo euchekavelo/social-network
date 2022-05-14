@@ -47,10 +47,6 @@ public class TagService {
         return tags.stream().filter(t -> t.getTag().equals(tag)).findFirst().orElseThrow().getId();
     }
 
-    private String getTagName(List<Tag> tags, int tagId) {
-        return tags.stream().filter(tag -> tag.getId().equals(tagId)).findFirst().orElseThrow().getTag();
-    }
-
     public void deletePostTags(int postId) {
         post2TagRepository.deletePostTags(postId);
     }

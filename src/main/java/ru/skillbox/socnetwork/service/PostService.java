@@ -4,24 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
-import ru.skillbox.socnetwork.model.entity.Notification;
-import ru.skillbox.socnetwork.model.entity.NotificationType;
-import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
-import ru.skillbox.socnetwork.repository.PostCommentRepository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
+import ru.skillbox.socnetwork.repository.NotificationRepository;
+import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +122,7 @@ public class PostService {
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
-        if (getPersonId() == newPostDto.getAuthorId()) {
+        if (getPersonId().equals(newPostDto.getAuthorId())) {
             throw new InvalidRequestException("You cannot edit a post, you are not the author.");
         }
         tagService.deletePostTags(postId);
@@ -173,9 +169,6 @@ public class PostService {
 
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
                 authorName, authorSurname, perPage);
-        //return getPostDtoListOfAllPersons(posts);
-        // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
-        //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
         return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 

@@ -21,10 +21,9 @@ class SocialNetworkApplicationTests {
 	private MockMvc mockMvc;
 
 	@Test
-	public void unauthorizedAccessDeniedTest() throws Exception {
+	void unauthorizedAccessDeniedTest() throws Exception {
 		this.mockMvc.perform(get("/api/v1/post/1"))
 				.andDo(print())
-				.andExpect(status().isForbidden());
+				.andExpect(status().isUnauthorized());
 	}
-
 }

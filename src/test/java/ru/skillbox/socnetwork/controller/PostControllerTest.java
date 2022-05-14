@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Sql(value = {"/003-person-table-changes.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/004-dialog-and-message-table-changes.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/005-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class PostControllerTest {
+class PostControllerTest {
 
     private final String FEED = "{\"error\":\"string\"," +
             "\"total\":20," +
@@ -139,7 +139,7 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getExistentPostByIdTest() throws Exception {
+    void getExistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -149,7 +149,7 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getNonexistentPostByIdTest() throws Exception {
+    void getNonexistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/-1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -160,7 +160,7 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getWallTest() throws Exception {
+    void getWallTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/wall"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -170,7 +170,7 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getFeedsTest() throws Exception {
+    void getFeedsTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/feeds"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())

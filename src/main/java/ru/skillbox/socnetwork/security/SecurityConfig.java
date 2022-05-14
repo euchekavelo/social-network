@@ -24,7 +24,8 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtCsrfFilter jwtCsrfFilter;
-    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://195.133.201.227:8080", "http://195.133.201.227");
+    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://localhost",
+            "http://195.133.201.227:8080", "http://195.133.201.227");
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,8 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**", "/api/v1/account/register").permitAll()
-                .antMatchers("/static/**", "/api/v1/platform/**").permitAll()
-                .antMatchers("/*", "/api/v1/auth/logout").permitAll()
+                .antMatchers("/static/**", "/api/v1/platform/**", "/*").permitAll()
                 .antMatchers("/api/v1/account/password/**").permitAll()
                 .anyRequest()
                 .authenticated()
@@ -65,8 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.applyPermitDefaultValues();
             configuration.setAllowedOrigins(hosts);
             configuration.setAllowedMethods(List.of("OPTIONS", "DELETE", "POST", "GET", "PATCH", "PUT"));
-            configuration.setExposedHeaders(List.of("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
-                    "Access-Control-Request-Headers", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+            configuration.setExposedHeaders(List.of("Content-Type", "X-Requested-With", "accept", "Origin",
+                    "Access-Control-Request-Method", "Access-Control-Request-Headers", "Access-Control-Allow-Origin",
+                    "Access-Control-Allow-Credentials"));
             configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -38,9 +38,9 @@ public class LikeService {
             likesDto.setUsers(postLikeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
             return likesDto;
         } else if (type.equals(COMMENT)) {
-            List<CommentLike> LikeList = commentLikeRepository.getLikes(itemId);
-            likesDto.setLikes(LikeList.size());
-            likesDto.setUsers(LikeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
+            List<CommentLike> likeList = commentLikeRepository.getLikes(itemId);
+            likesDto.setLikes(likeList.size());
+            likesDto.setUsers(likeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
             return likesDto;
         }
         throw new InvalidRequestException("Bad like type. Required 'Post' or 'Comment' types");
