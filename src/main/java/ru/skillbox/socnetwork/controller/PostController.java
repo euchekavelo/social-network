@@ -68,7 +68,7 @@ public class PostController {
                                                                          @PathVariable int commentId,
                                                                          @RequestBody CommentDto comment) {
 
-        comment.setId(commentId);
+        comment.setId(commentId - 1000);
         return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 

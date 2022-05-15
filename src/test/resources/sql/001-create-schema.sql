@@ -48,6 +48,7 @@ create table if not exists person (
     messages_permission permission_type,
     last_online_time bigint,
     is_blocked boolean,
+    is_deleted boolean,
     primary key (id)
 );
 

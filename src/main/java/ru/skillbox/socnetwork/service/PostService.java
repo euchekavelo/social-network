@@ -156,6 +156,7 @@ public class PostService {
     public CommentDto deleteCommentToPost(int commentId) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(commentId);
+        commentId-=1000;
         commentRepository.deleteById(commentId);
         return commentDto;
     }

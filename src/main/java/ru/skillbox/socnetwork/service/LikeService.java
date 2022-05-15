@@ -58,6 +58,11 @@ public class LikeService {
             }
             return getLikes(itemId, POST);
         } else if (type.equals(COMMENT)) {
+            /**
+             * itemId-=1000;
+             * fix front bag with incorrect likes. When you like comment, and this like put to post
+             */
+            itemId-=1000;
             Optional<CommentLike> optionalLikeDto = Optional
                     .ofNullable(commentLikeRepository.getPersonLike(getPersonId(), itemId));
             if (optionalLikeDto.isEmpty()) {
@@ -98,6 +103,11 @@ public class LikeService {
             postService.updatePostLikeCount(likesDto.getLikes(), itemId);
             return likesDto;
         } else if (type.equals(COMMENT)) {
+            /**
+             * itemId-=1000;
+             * fix front bag with incorrect likes. When you like comment, and this like put to post
+             */
+            itemId-=1000;
             commentLikeRepository.deleteLike(getPersonId(), itemId);
             List<CommentLike> likeList = commentLikeRepository.getLikes(itemId);
             likesDto.setLikes(likeList.size());
