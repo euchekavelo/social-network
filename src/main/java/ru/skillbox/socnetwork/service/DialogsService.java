@@ -25,6 +25,13 @@ public class DialogsService {
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
 
+    public GeneralResponse<DialogDto> deleteDialogByById (Integer id) {
+        DialogDto dto = new DialogDto();
+
+        dto.setId(dialogRepository.deleteDialog(id, getSecurityUser().getId()));
+
+        return new GeneralResponse<>("string", System.currentTimeMillis(), dto);
+    }
     public GeneralResponse<DialogDto> createDialog (List<Integer> userList) {
         SecurityUser securityUser = getSecurityUser();
         Integer dialogId = 0;

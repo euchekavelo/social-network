@@ -17,7 +17,11 @@ import java.util.List;
 public class DialogRepository {
 
     private final JdbcTemplate jdbc;
+    public Integer deleteDialog (Integer dialogId, Integer personId) {
+        String sql = "DELETE FROM dialog WHERE dialog_id = ? AND author_id = ? RETURNING dialog_id";
 
+        return jdbc.queryForObject(sql, Integer.class, dialogId, personId);
+    }
     public List<DialogDto> getDialogList(Integer id) {
         StringBuffer sqlBuff = new StringBuffer();
         sqlBuff.append("SELECT dialog.dialog_id, MAX(time) AS time, (SELECT message_text FROM message ");

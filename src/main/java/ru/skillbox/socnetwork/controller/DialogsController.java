@@ -34,6 +34,11 @@ public class DialogsController {
         return ResponseEntity.ok(dialogsService.createDialog(request.getUserIds()));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
+        return ResponseEntity.ok(dialogsService.deleteDialogByById (id));
+    }
+
     @GetMapping("/{id}/messages")
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable Integer id) {
         return ResponseEntity.ok(dialogsService.getMessageById(id));
