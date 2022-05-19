@@ -100,7 +100,7 @@ public class PostService {
         ).collect(Collectors.toList());
     }
 
-    public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+    public PostDto addPost(NewPostDto newPostDto, long publishDate) throws InvalidRequestException {
         if (publishDate == -1) {
             newPostDto.setTime(System.currentTimeMillis());
         } else {
@@ -125,8 +125,8 @@ public class PostService {
         if (getPersonId().equals(newPostDto.getAuthorId())) {
             throw new InvalidRequestException("You cannot edit a post, you are not the author.");
         }
-        tagService.deletePostTags(postId);
-        tagService.addTagsFromNewPost(postId, newPostDto);
+//        tagService.deletePostTags(postId);
+        tagService.editOldTags(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
         return getById(postId);
     }
@@ -156,7 +156,6 @@ public class PostService {
     public CommentDto deleteCommentToPost(int commentId) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(commentId);
-        commentId-=1000;
         commentRepository.deleteById(commentId);
         return commentDto;
     }
@@ -171,6 +170,10 @@ public class PostService {
         List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
                 authorName, authorSurname, perPage);
         return getPostDtoListOfAllPersons(posts, currentPersonId);
+    }
+
+    public Integer getPostCount() {
+        return postRepository.getPostCount();
     }
 
     private Integer getPersonId() {

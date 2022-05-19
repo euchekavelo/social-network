@@ -37,6 +37,15 @@ public class GeneralResponse<T> {
         this.data = data;
     }
 
+    public GeneralResponse(T data, int total, int offset, int perPage) {
+        this.error = "string";
+        this.timestamp = System.currentTimeMillis();
+        this.total = total;
+        this.offset = offset;
+        this.perPage = perPage;
+        this.data = data;
+    }
+
     public GeneralResponse(String error, String errorDescription) {
         this.error = error;
         this.errorDescription = errorDescription;

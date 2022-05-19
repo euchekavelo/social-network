@@ -1,8 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.logging.InfoLogs;
@@ -10,8 +8,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.PersonTemp;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDTONew;
-import ru.skillbox.socnetwork.model.rsdto.TempResponseDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.NotificationService;
 import ru.skillbox.socnetwork.service.PersonService;

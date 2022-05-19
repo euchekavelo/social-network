@@ -20,7 +20,7 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource("/properties/application-test-roman.properties")
+@TestPropertySource("/properties/application-test-alexandr.properties")
 @Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/003-person-table-changes.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)

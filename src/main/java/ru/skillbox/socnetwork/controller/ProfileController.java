@@ -41,19 +41,19 @@ public class ProfileController {
         String email = securityUser.getUsername();
         PersonDto personDto = new PersonDto(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            personDto));
+                "string",
+                System.currentTimeMillis(),
+                personDto));
     }
 
     @PutMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<Person>> updateProfile(
-        @RequestBody UpdatePersonDto updatePersonDto){
+            @RequestBody UpdatePersonDto updatePersonDto) {
 
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            personService.updatePerson(updatePersonDto)
+                "string",
+                System.currentTimeMillis(),
+                personService.updatePerson(updatePersonDto)
         ));
     }
 
@@ -69,7 +69,7 @@ public class ProfileController {
     }
 
     @PutMapping(path = "me/return")
-    public ResponseEntity<GeneralResponse<PersonDto>> returnProfile(){
+    public ResponseEntity<GeneralResponse<PersonDto>> returnProfile() {
 
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
@@ -88,17 +88,20 @@ public class ProfileController {
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getWallByProfileId(@PathVariable int id,
-                                                     @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                     @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage));
+    public ResponseEntity<Object> getWallByProfileId
+            (@PathVariable int id,
+             @RequestParam(value = "offset", defaultValue = "0") int offset,
+             @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
+        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
+                postService.getPostCount(), offset, perPage);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addNewPost(@PathVariable int id,
-                                             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
-                                             @RequestBody NewPostDto newPostDto) {
+    public ResponseEntity<Object> addNewPost
+            (@PathVariable int id,
+             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
+             @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
         newPostDto.setAuthorId(id);
 
         GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));

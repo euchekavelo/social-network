@@ -28,7 +28,7 @@ public class CommentDto {
     Boolean isBlocked;
 
     public CommentDto(PostComment comment, PersonDto personDto) {
-        this.id = comment.getId() + 1000;
+        this.id = comment.getId();
         this.parentId = comment.getParentId();
         this.postId = comment.getPostId();
         this.commentText = comment.getCommentText();
@@ -38,20 +38,4 @@ public class CommentDto {
         this.isLiked = comment.getIsLiked();
         this.likes = comment.getLikes();
     }
-
-    public void setIdMinusThousand(int id) {
-        this.id = id - 1000;
-    }
-
-//    public CommentDto(NewCommentDto comment) {
-//        this.id = comment.getId() + 1000;
-//        this.parentId = comment.getParentId();
-//        this.postId = comment.getPostId();
-//        this.commentText = comment.getCommentText();
-//        this.time = comment.getTime();
-//        this.author = comment.getAuthor();
-//        this.isBlocked = comment.getIsBlocked();
-//        this.isLiked = comment.getIsLiked();
-//        this.likes = comment.getLikes();
-//    }
 }

@@ -3,6 +3,7 @@ package ru.skillbox.socnetwork.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,8 @@ import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -64,6 +67,11 @@ public class PostRepository {
         jdbc.update(sql, likes, postId);
     }
 
+    public Integer getPostCount() {
+        String sql = "select count(*) from post";
+        return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("count"));
+    }
+
     public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
                                                    String authorSurname, int perPage) {
 
@@ -94,7 +102,7 @@ public class PostRepository {
         return template.query(sql, parameters, new PostMapper());
     }
 
-    public void deleteAllPersonPosts(Integer personId){
+    public void deleteAllPersonPosts(Integer personId) {
         String sql = "DELETE FROM post WHERE author = ?";
         jdbc.update(sql, personId);
     }

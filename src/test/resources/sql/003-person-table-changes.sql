@@ -6,5 +6,3 @@ create table deleted_users(
   last_name varchar(50),
   expire bigint
 );
-
-ALTER TABLE person ADD COLUMN is_deleted boolean;
