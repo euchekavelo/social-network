@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
@@ -53,13 +54,16 @@ public class PostService {
             List<String> tags = tagService.getPostTags(postId);
             return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
         } catch (EmptyResultDataAccessException e) {
-            throw new InvalidRequestException("Incorrect post data, can't find this id " + postId);
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_CANT_FIND_ID.getMessage() + postId);
         }
     }
 
     public void deletePostById(int postId) throws InvalidRequestException {
         if (postRepository.deleteById(postId) == 0) {
-            throw new InvalidRequestException("No post id found to delete");
+            throw new InvalidRequestException(ExceptionText.POST_ID_NOT_FOUND_TO_DELETE.getMessage());
+        } else {
+            commentRepository.deleteCommentsByPostId(postId);
+            tagService.deletePostTags(postId);
         }
     }
 
@@ -123,9 +127,8 @@ public class PostService {
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
         if (getPersonId().equals(newPostDto.getAuthorId())) {
-            throw new InvalidRequestException("You cannot edit a post, you are not the author.");
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage());
         }
-//        tagService.deletePostTags(postId);
         tagService.editOldTags(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
         return getById(postId);

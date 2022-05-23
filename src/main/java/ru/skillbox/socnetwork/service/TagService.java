@@ -1,14 +1,12 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Tag;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.Post2TagRepository;
 import ru.skillbox.socnetwork.repository.TagRepository;
 
@@ -36,10 +34,8 @@ public class TagService {
 
     public void addTag(String tag) throws InvalidRequestException {
         if (tag.length() > MAX_TAG_LENGTH) {
-            System.out.println("too long tag, max length is "
-                    + MAX_TAG_LENGTH + ", current = " + tag.length());
-            throw new InvalidRequestException("too long tag, max length is "
-                    + MAX_TAG_LENGTH + ", current = " + tag.length());
+            throw new InvalidRequestException(
+                    MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.name() + tag.length());
         } else {
         tagRepository.addTag(tag);
         }

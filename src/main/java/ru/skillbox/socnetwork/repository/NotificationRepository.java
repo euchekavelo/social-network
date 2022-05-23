@@ -39,7 +39,7 @@ public class NotificationRepository {
     }
 
     public Notification getLastNotification() {
-        String sql = "select * from notification where id = 6";
+        String sql = "select * from notification";
         return jdbc.queryForObject(sql, new NotificationMapper());
     }
 }

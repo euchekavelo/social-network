@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
 import org.springframework.test.context.TestPropertySource;
@@ -64,7 +65,8 @@ class PostControllerTest {
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
-                        .json(Files.readString(Path.of("src/test/resources/json/post_platform_likes/wall.json"))));
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/wall.json"))));
     }
 
     @Test
@@ -75,6 +77,24 @@ class PostControllerTest {
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
-                        .json(Files.readString(Path.of("src/test/resources/json/post_platform_likes/feeds.json"))));
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/feeds.json"))));
     }
+
+    @Test
+    @WithUserDetails("petrov@mail.ru")
+    void addPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/3/wall")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"new post\"," +
+                                "\"post_text\":\"new post text\"," +
+                                "\"tags\":[\"java\",\"new post\"]}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json((Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/new_post.json")))));
+    }
+
 }

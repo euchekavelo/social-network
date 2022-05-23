@@ -34,8 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String localhost;
 
     private final JwtCsrfFilter jwtCsrfFilter;
-//    private final List<String> hosts = List.of("http://localhost:8080", "http://localhost:8086", "http://localhost",
-//            "http://195.133.201.227:8080", "http://195.133.201.227:8086", "http://195.133.201.227");
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -87,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private List<String> getHosts() {
         List<String> links = new ArrayList<>();
         String http = "http://";
-        String[] hosts = new String[]{localhost, server};
+        String[] hosts = new String[]{getLocalhost(), getServer()};
         String[] ports = new String[]{":8080", ":8086", ""};
         for (String host : hosts) {
             for (String port : ports) {

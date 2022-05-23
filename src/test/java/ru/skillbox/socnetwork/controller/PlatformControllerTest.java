@@ -42,4 +42,12 @@ class PlatformControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(CITIES_DATA));
     }
+
+    @Test
+    void getLanguages() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/platform/languages"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("{\"data\":[\"Русский\"]}"));
+    }
 }

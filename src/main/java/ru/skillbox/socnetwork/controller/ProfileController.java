@@ -98,7 +98,7 @@ public class ProfileController {
     }
 
     @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addNewPost
+    public ResponseEntity<GeneralResponse<PostDto>> addNewPost
             (@PathVariable int id,
              @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
              @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
