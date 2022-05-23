@@ -19,6 +19,7 @@ import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -89,17 +90,13 @@ public class PostController {
             @RequestParam(value = "date_to", defaultValue = "0", required = false) long dateTo,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "author", defaultValue = "", required = false) String author,
+            @RequestParam(value = "tags", defaultValue = "", required = false) List<String> tags,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
 
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage,
-                        getSecurityUser().getId()));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, tags, perPage,
+                        PostService.getSecurityUser().getId()));
 
         return ResponseEntity.ok(response);
-    }
-
-    private SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
     }
 }

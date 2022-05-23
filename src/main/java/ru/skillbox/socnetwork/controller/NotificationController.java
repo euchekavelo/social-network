@@ -39,9 +39,9 @@ public class NotificationController {
                 person1.getLastName(), person1.getPhoto());
 
         List<NotificationDTONew> notification = new ArrayList<>();
-        notification.add(new NotificationDTONew(1, "Новый пост", System.currentTimeMillis(),
+        notification.add(new NotificationDTONew(1, "POST", System.currentTimeMillis(),
                 person, "e-mail"));
-        notification.add(new NotificationDTONew(2, "Новый пост", System.currentTimeMillis(),
+        notification.add(new NotificationDTONew(2, "POST", System.currentTimeMillis(),
                 person, "нe-mail"));
 
 //        GeneralResponse<List<NotificationDto>> response = new GeneralResponse<>
@@ -60,9 +60,9 @@ public class NotificationController {
                 person1.getLastName(), person1.getPhoto());
 
         List<NotificationDTONew> notification = new ArrayList<>();
-        notification.add(new NotificationDTONew(1, "Новый пост", System.currentTimeMillis(),
+        notification.add(new NotificationDTONew(1, "POST", System.currentTimeMillis(),
                 person, "e-mail"));
-        notification.add(new NotificationDTONew(2, "Новый пост", System.currentTimeMillis(),
+        notification.add(new NotificationDTONew(2, "POST", System.currentTimeMillis(),
                 person, "нe-mail"));
 
 //        GeneralResponse<List<NotificationDto>> response = new GeneralResponse<>

@@ -11,6 +11,7 @@ import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -67,35 +68,61 @@ public class PostRepository {
     public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
                                                    String authorSurname, int perPage) {
 
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("name", "%" + authorName + "%");
         parameters.addValue("surname", "%" + authorSurname + "%");
         parameters.addValue("text", "%" + text + "%");
         parameters.addValue("dateFrom", dateFrom);
         parameters.addValue("dateTo", dateTo);
-        String sql = "select " +
-                "post.id, " +
-                "time, " +
-                "author, " +
-                "title, " +
-                "post_text, " +
-                "post.is_blocked, " +
-                "likes " +
-                "from post " +
-                " join person on post.author = person.id" +
-                " where ((first_name like :name and last_name like :surname)" +
-                " or (first_name like :surname and last_name like :name))" +
-                " and (post_text like :text or title like :text)" +
-                " and time > :dateFrom" +
-                " and time < :dateTo" +
-                " and post.is_blocked = 'f'";
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("select p.*")
+                .append("from post p")
+                .append(" join person on p.author = person.id")
+                .append(" where ((first_name like :name and last_name like :surname)")
+                .append(" or (first_name like :surname and last_name like :name))")
+                .append(" and (post_text like :text or title like :text)")
+                .append(" and time > :dateFrom")
+                .append(" and time < :dateTo")
+                .append(" and p.is_blocked = 'f'");
 
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        return template.query(sql, parameters, new PostMapper());
+        return template.query(sql.toString(), parameters, new PostMapper());
     }
 
-    public void deleteAllPersonPosts(Integer personId){
+    public void deleteAllPersonPosts(Integer personId) {
         String sql = "DELETE FROM post WHERE author = ?";
         jdbc.update(sql, personId);
+    }
+
+    public List<Post> choosePostsWhichContainsTextWithTags(String text, long dateFrom, long dateTo, String authorName,
+                                                           String authorSurname, String tags, int perPage) {
+//        List<String> tags = new ArrayList<>();
+//        tags.add("good");
+//        tags.add("прекрасный");
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("name", "%" + authorName + "%");
+        parameters.addValue("surname", "%" + authorSurname + "%");
+        parameters.addValue("text", "%" + text + "%");
+        parameters.addValue("dateFrom", dateFrom);
+        parameters.addValue("dateTo", dateTo);
+        StringBuilder sql = new StringBuilder();
+        sql.append("select p.* ")
+                .append("from post p")
+                .append(" join person on p.author = person.id")
+                .append(" left join post2tag pt on p.id = pt.post_id")
+                .append(" left join tag t on pt.tag_id = t.id")
+                .append(" where ((first_name like :name and last_name like :surname)")
+                .append(" or (first_name like :surname and last_name like :name))")
+                .append(" and (post_text like :text or title like :text)")
+                .append(" and time > :dateFrom")
+                .append(" and time < :dateTo")
+                .append(" and p.is_blocked = 'f'")
+                .append(tags);
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+        return template.query(sql.toString(), parameters, new PostMapper());
     }
 }

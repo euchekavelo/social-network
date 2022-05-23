@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
@@ -24,7 +25,9 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -165,17 +168,15 @@ public class PostService {
     }
 
     public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author,
-                                                      int perPage, int currentPersonId) {
+                                                      List<String> tags, int perPage, int currentPersonId) {
 
         String[] authorNameSurname = author.split("\\s", 2);
         String authorName = authorNameSurname[0];
         String authorSurname = authorNameSurname.length >= 2 ? authorNameSurname[1] : "";
 
-        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
-                authorName, authorSurname, perPage);
-        //return getPostDtoListOfAllPersons(posts);
-        // public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, int currentPersonId) {
-        //    List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo);
+        List<Post> posts = postRepository.choosePostsWhichContainsTextWithTags(text, dateFrom, dateTo,
+                authorName, authorSurname, getSqlString(tags), perPage);
+
         return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 
@@ -183,4 +184,29 @@ public class PostService {
         SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getId();
     }
+
+    public static SecurityUser getSecurityUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (SecurityUser) auth.getPrincipal();
+    }
+
+    private String getSqlString(List<String> tags) {
+        StringBuilder tagsString = new StringBuilder();
+        if (tags.size() > 0) {
+            tagsString.append(" and (");
+            for (int i = 0; i < tags.size(); i++) {
+                tagsString.append("t.tag like '").append(tags.get(i)).append("'");
+                if (i != tags.size() - 1) {
+                    tagsString.append(" OR ");
+                } else {
+                    tagsString.append(")");
+                }
+            }
+            tagsString.append(" group by p.id order by count(t.tag) desc");
+        } else {
+            tagsString.append(" group by p.id");
+        }
+        return tagsString.toString();
+    }
+
 }
