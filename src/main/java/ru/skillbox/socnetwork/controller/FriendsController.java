@@ -19,6 +19,16 @@ public class FriendsController {
 
     private final FriendsService friendsService;
 
+    @DeleteMapping("/friends/request/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriendRequest(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse = new GeneralResponse<>("string",
+                System.currentTimeMillis(), friendsService.deleteFriendRequestById(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
     @GetMapping("/friends/request")
     public ResponseEntity<GeneralListResponse<PersonDto>> getListFriendRequests(
             @RequestParam(value = "name", required = false) String name,
@@ -74,7 +84,7 @@ public class FriendsController {
         return ResponseEntity.ok(generalListResponse);
     }
 
-    @PostMapping("is/friends")
+    @PostMapping("/is/friends")
     public ResponseEntity<GeneralResponse<List<FriendshipPersonDto>>> getInformationAboutFriendships(
             @RequestBody UserIdsDto userIdsDto) {
 

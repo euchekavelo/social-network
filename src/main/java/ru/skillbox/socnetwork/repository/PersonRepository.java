@@ -71,29 +71,41 @@ public class PersonRepository {
     }
 
     public List<Person> getListRecommendedFriends(String email) {
-        return jdbc.query("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), " +
-                "friends_ids AS (SELECT f.dst_person_id AS id FROM friendship f WHERE f.src_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST', 'BLOCKED') " +
-                "UNION SELECT f.src_person_id AS id FROM friendship f WHERE f.dst_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'BLOCKED')) SELECT * FROM person " +
-                "WHERE id <> (SELECT * FROM authorized_person_id) and id NOT IN (SELECT * FROM friends_ids) " +
-                "ORDER BY RANDOM() LIMIT 20", new PersonMapper(), email);
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), ")
+                .append("friends_ids AS (SELECT f.dst_person_id AS id FROM friendship f WHERE f.src_person_id = ")
+                .append("(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'REQUEST', 'BLOCKED') ")
+                .append("UNION SELECT f.src_person_id AS id FROM friendship f WHERE f.dst_person_id = ")
+                .append("(SELECT * FROM authorized_person_id) AND f.code IN ('FRIEND', 'BLOCKED')) ")
+                .append("SELECT * FROM person WHERE id <> ")
+                .append("(SELECT * FROM authorized_person_id) and id NOT IN (SELECT * FROM friends_ids) ")
+                .append("ORDER BY RANDOM() LIMIT 20");
+
+        return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
     public List<Person> getUserFriends(String email) {
-        return jdbc.query("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), " +
-                "friends_ids AS (SELECT f.dst_person_id AS id FROM friendship f WHERE f.src_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code = 'FRIEND' UNION SELECT f.src_person_id AS id " +
-                "FROM friendship f WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.code = 'FRIEND') " +
-                "SELECT * FROM person p WHERE p.id IN (SELECT * FROM friends_ids) ORDER BY p.last_name, p.first_name",
-                new PersonMapper(), email);
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), ")
+                .append("friends_ids AS (SELECT f.dst_person_id AS id FROM friendship f WHERE f.src_person_id = ")
+                .append("(SELECT * FROM authorized_person_id) AND f.code = 'FRIEND' ")
+                .append("UNION SELECT f.src_person_id AS id ")
+                .append("FROM friendship f WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) ")
+                .append("AND f.code = 'FRIEND') SELECT * FROM person p WHERE p.id IN (SELECT * FROM friends_ids) ")
+                .append("ORDER BY p.last_name, p.first_name");
+
+        return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
     public List<Person> getListIncomingFriendRequests(String email) {
-        return jdbc.query("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), " +
-                "persons_request_ids AS (SELECT f.src_person_id AS id FROM friendship f WHERE f.dst_person_id = " +
-                "(SELECT * FROM authorized_person_id) AND f.code = 'REQUEST') SELECT * FROM person p WHERE p.id IN " +
-                "(SELECT * FROM persons_request_ids) ORDER BY p.last_name, p.first_name", new PersonMapper(), email);
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("WITH authorized_person_id as (SELECT p.id FROM person p WHERE p.e_mail = ?), ")
+                .append("persons_request_ids AS (SELECT f.src_person_id AS id FROM friendship f ")
+                .append("WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.code = 'REQUEST') ")
+                .append("SELECT * FROM person p WHERE p.id IN (SELECT * FROM persons_request_ids) ")
+                .append("ORDER BY p.last_name, p.first_name");
+
+        return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
     public Person updatePerson(Person person) {

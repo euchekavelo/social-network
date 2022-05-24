@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
-import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -105,6 +104,26 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> blockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.blockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @DeleteMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> unblockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.unblockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
     @GetMapping("search")
     public ResponseEntity<GeneralResponse<List<PersonDto>>> searchByPeople(
             @RequestParam(value = "first_name", defaultValue = "", required = false) String firstName,
@@ -114,11 +133,11 @@ public class ProfileController {
             @RequestParam(value = "country_id", defaultValue = "1", required = false) int countryId,
             @RequestParam(value = "city_id", defaultValue = "1", required = false) int cityId,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
-            @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage) {
+            @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage){
 
-        GeneralResponse<List<PersonDto>> response = new GeneralResponse<>
-                (personService.getPersonsBySearchParameters(firstName, lastName, ageFrom, ageTo,
-                        countryId, cityId, perPage));
-        return ResponseEntity.ok(response);
-    }
+            GeneralResponse<List<PersonDto>> response = new GeneralResponse<>
+                    (personService.getPersonsBySearchParameters(firstName, lastName, ageFrom, ageTo,
+                            countryId, cityId, perPage));
+            return ResponseEntity.ok(response);
+        }
 }
