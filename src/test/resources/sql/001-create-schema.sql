@@ -52,6 +52,15 @@ create table if not exists person (
     primary key (id)
 );
 
+create table if not exists deleted_users(
+  id serial,
+  person_id int4,
+  photo varchar(255),
+  first_name varchar(50),
+  last_name varchar(50),
+  expire bigint
+);
+
 create table if not exists block_history (
     id serial,
     time bigint,
@@ -96,6 +105,9 @@ create table if not exists message (
 
 create table if not exists dialog (
     id serial,
+    author_id int4,
+    recipient_id int4,
+    dialog_id int4,
     primary key (id)
 );
 

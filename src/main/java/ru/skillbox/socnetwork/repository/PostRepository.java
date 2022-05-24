@@ -24,12 +24,12 @@ public class PostRepository {
     }
 
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE time < ? ORDER BY id DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM post WHERE time < ? ORDER BY time DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
     public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM post WHERE author = ? ORDER BY time DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
     }
 
@@ -44,7 +44,7 @@ public class PostRepository {
     }
 
     public Post getLastPersonPost(int personId) throws EmptyResultDataAccessException {
-        String sql = "select * from post where author = ? order by id desc limit 1";
+        String sql = "select * from post where author = ? order by time desc limit 1";
         return jdbc.queryForObject(sql, new PostMapper(), personId);
     }
 
