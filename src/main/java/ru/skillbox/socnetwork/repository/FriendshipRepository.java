@@ -74,12 +74,14 @@ public class FriendshipRepository {
         parameters.addValue("userIds", userIds);
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
 
-        return template.query("WITH authorized_person_id AS (SELECT p.id FROM person p WHERE p.e_mail = :email) " +
-                        "SELECT f.dst_person_id AS user_id, f.code AS status FROM friendship f " +
-                        "WHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.dst_person_id IN (:userIds) " +
-                        "UNION SELECT f.src_person_id AS user_id, f.code AS status FROM friendship f " +
-                        "WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.src_person_id IN (:userIds)",
-                            parameters, new FriendshipPersonMapper());
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("WITH authorized_person_id AS (SELECT p.id FROM person p WHERE p.e_mail = :email) ")
+                .append("SELECT f.dst_person_id AS user_id, f.code AS status FROM friendship f ")
+                .append("WHERE f.src_person_id = (SELECT * FROM authorized_person_id) AND f.dst_person_id IN (:userIds) ")
+                .append("UNION SELECT f.src_person_id AS user_id, f.code AS status FROM friendship f ")
+                .append("WHERE f.dst_person_id = (SELECT * FROM authorized_person_id) AND f.src_person_id IN (:userIds)");
+
+        return template.query(sqlQuery.toString(), parameters, new FriendshipPersonMapper());
     }
 
     public void deleteAllPersonFriendships(Integer personId){

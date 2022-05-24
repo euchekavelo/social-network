@@ -32,7 +32,7 @@ public class StorageService {
 
   @Value("${skillbox.app.logRootPath}")
   private String localRootPath;
-  private static String token = "sl.BIEQhGD8GkKBif8gMaHFkYbyV8JHRuo3tv41Z1K0EsnTHpehyOshvTJkax7_MxD5smqGZkGzWUb4WvVUtzlBqG_kRd-gzlVKEqfHv08DjU1sXn0QHShvnt_VgaBL-k3vB2cJ_SI";
+  private static String token = "";
   private static final DbxRequestConfig config = DbxRequestConfig.newBuilder("socNet").build();
   private static DbxClientV2 client = new DbxClientV2(config, token);
   private final PersonRepository personRepository;
@@ -47,7 +47,7 @@ public class StorageService {
     return cache.getLink(StorageCache.DELETED);
   }
 
-  @Scheduled(initialDelay = 15000, fixedRate = 120000)
+  @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
   public void uploadLogFiles() throws IOException, DbxException {
     List<File> logFiles = localFileService.getAllFilesInADirectory(localRootPath);
 
@@ -61,7 +61,7 @@ public class StorageService {
     localFileService.deleteLocalFilesInADirectory(localRootPath);
   }
 
-  @Scheduled(initialDelay = 15200, fixedRate = 180000)
+  @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
   public void deleteLogFolderInRemoteStorage() throws DbxException {
     deleteFile("/" + localRootPath);
   }
