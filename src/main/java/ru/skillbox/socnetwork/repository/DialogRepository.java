@@ -61,10 +61,10 @@ public class DialogRepository {
         jdbc.update(sql, authorId, recipientId, dialogId);
     }
 
-    public void createDialogForMessage(Integer authorId, Integer recipientId, Integer dialogId) {
+    public Integer createDialogForMessage(Integer authorId, Integer recipientId, Integer dialogId) {
         String sql = "INSERT INTO dialog (author_id, recipient_id, dialog_id) " +
-                "VALUES (?, ?, ?)";
-        jdbc.update(sql, authorId, recipientId, dialogId);
+                "VALUES (?, ?, ?) RETURNING id";
+        return jdbc.queryForObject(sql, Integer.class, authorId, recipientId, dialogId);
     }
 
     public Integer createDialog(Integer authorId, Integer recipientId) {
@@ -75,6 +75,11 @@ public class DialogRepository {
 
     public DialogDto getDialogIdByPerson (Integer authorId, Integer recipientId) {
         String sql = "SELECT MAX(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ?";
+        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
+    }
+
+    public DialogDto dialogCountByAuthorIdAndRecipientId (Integer authorId, Integer recipientId) {
+        String sql = "SELECT COUNT(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ? ";
         return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
     }
 

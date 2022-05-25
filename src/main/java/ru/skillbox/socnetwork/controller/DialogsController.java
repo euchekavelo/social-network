@@ -52,6 +52,9 @@ public class DialogsController {
     @PostMapping("/{id}/messages")
     public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
             @RequestBody MessageRequest messageRequest, @PathVariable Integer id) {
-        return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        if (!messageRequest.getMessageText().equals("")) {
+            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        }
+        return ResponseEntity.ok().build();
     }
 }

@@ -35,11 +35,14 @@ public class DialogsService {
     public GeneralResponse<DialogDto> createDialog (List<Integer> userList) {
         SecurityUser securityUser = getSecurityUser();
         Integer dialogId = 0;
-        for (Integer recipientId : userList) {
-            dialogId = dialogRepository.getDialogIdByPerson(securityUser.getId(), recipientId).getDialogId();
-            if (dialogId == 0) {
-                dialogId = dialogRepository.createDialog(securityUser.getId(), recipientId);
-            }
+        Integer dialogCount = 0;
+        Integer recipientId = userList.get(0);
+        dialogCount = dialogRepository.dialogCountByAuthorIdAndRecipientId(recipientId, securityUser.getId()).getDialogId();
+        if (dialogCount == 0) {
+            dialogId = dialogRepository.createDialog(securityUser.getId(), recipientId);
+        } else {
+            dialogId = dialogRepository.createDialogForMessage(securityUser.getId(), recipientId,
+                    dialogRepository.getDialogIdByPerson(recipientId, securityUser.getId()).getDialogId());
         }
         DialogDto dialogDto = new DialogDto();
         dialogDto.setId(dialogId);
