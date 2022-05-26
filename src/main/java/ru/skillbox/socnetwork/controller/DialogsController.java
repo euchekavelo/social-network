@@ -1,10 +1,13 @@
 package ru.skillbox.socnetwork.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
+import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.security.SecurityUser;
@@ -22,24 +25,36 @@ public class DialogsController {
 
     @GetMapping
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
+        return ResponseEntity.ok(dialogsService.getDialogs());
+    }
 
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @PostMapping
+    public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return dialogsService.getDialogs(securityUser.getId());
+        return ResponseEntity.ok(dialogsService.createDialog(request.getUserIds()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
+        return ResponseEntity.ok(dialogsService.deleteDialogByById (id));
     }
 
     @GetMapping("/{id}/messages")
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable Integer id) {
-
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return dialogsService.getMessageById(id);
+        return ResponseEntity.ok(dialogsService.getMessageById(id));
     }
 
-    @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/unreaded")
     public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(dialogsService.getUnreadMessageCount());
+    }
 
-        return dialogsService.getUnreadMessageCount(securityUser.getId());
+    @PostMapping("/{id}/messages")
+    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
+            @RequestBody MessageRequest messageRequest, @PathVariable Integer id) {
+        if (!messageRequest.getMessageText().equals("")) {
+            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        }
+        return ResponseEntity.ok().build();
     }
 }

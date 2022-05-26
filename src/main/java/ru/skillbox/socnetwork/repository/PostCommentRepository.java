@@ -64,4 +64,9 @@ public class PostCommentRepository {
                 "WHERE author = ?)";
         jdbc.update(sql, personId);
     }
+
+    public void deleteCommentsByPostId(int postId) {
+        String sql = "DELETE FROM post_comment WHERE post_id = ?";
+        jdbc.update(sql, postId);
+    }
 }

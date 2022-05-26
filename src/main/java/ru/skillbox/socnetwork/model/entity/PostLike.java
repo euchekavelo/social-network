@@ -3,8 +3,6 @@ package ru.skillbox.socnetwork.model.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @Data
 public class PostLike {

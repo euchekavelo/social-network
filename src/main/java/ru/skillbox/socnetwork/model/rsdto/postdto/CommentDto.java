@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
-import java.time.ZoneOffset;
-
 @Data
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

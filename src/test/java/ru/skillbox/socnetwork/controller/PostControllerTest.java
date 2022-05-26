@@ -1,9 +1,11 @@
 package ru.skillbox.socnetwork.controller;
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
 import org.springframework.test.context.TestPropertySource;
@@ -13,117 +15,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
-@Sql(value = {"/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class PostControllerTest {
-
-    private final String FEED = "{\"error\":\"string\"," +
-            "\"total\":20," +
-            "\"offset\":0," +
-            "\"perPage\":20," +
-            "\"data\":[{\"id\":5}, {\"id\":4}, {\"id\":3}, {\"id\":2}, {\"id\":1}]}";
-
-
-    private final String WALL = "{\"error\":\"string\"," +
-            "\"total\":20," +
-            "\"offset\":0," +
-            "\"perPage\":20," +
-            "\"data\":[{" +
-            "\"id\":1," +
-            "\"time\":1649367846501," +
-            "\"author\":{\"id\":1," +
-            "\"email\":\"test@mail.ru\"," +
-            "\"phone\":\"+7(111)1111111\"," +
-            "\"city\":\"Saratov\"," +
-            "\"country\":\"Russia\"," +
-            "\"first_name\":\"Test\"," +
-            "\"last_name\":\"Test\"," +
-            "\"reg_date\":1649367846500," +
-            "\"birth_date\":1649367846000," +
-            "\"messages_permission\":\"ALL\"," +
-            "\"last_online_time\":0," +
-            "\"is_blocked\":false}," +
-            "\"title\":\"test title example\"," +
-            "\"likes\":2," +
-            "\"tags\":[\"top15\",\"java\",\"code\",\"true_story\",\"spring\",\"core\",\"bootstrap\"]," +
-            "\"comments\":[{" +
-            "\"id\":1," +
-            "\"likes\":0," +
-            "\"time\":1649367846508," +
-            "\"parent_id\":0," +
-            "\"post_id\":1," +
-            "\"comment_text\":\"test title example\"," +
-            "\"my_like\":false," +
-            "\"author\":{\"id\":5," +
-            "\"email\":\"ilin@mail.ru\"," +
-            "\"phone\":\"+7(999)9999999\"," +
-            "\"city\":\"Tbilisi\"," +
-            "\"country\":\"Georgia\"," +
-            "\"first_name\":\"Ilya\"," +
-            "\"last_name\":\"Ilin\"," +
-            "\"reg_date\":1649367846500," +
-            "\"birth_date\":1649367846000," +
-            "\"messages_permission\":\"ALL\"," +
-            "\"last_online_time\":0," +
-            "\"is_blocked\":false}," +
-            "\"is_blocked\":false}]," +
-            "\"type\":\"POSTED\"," +
-            "\"post_text\":\"test post text example\"," +
-            "\"is_blocked\":false," +
-            "\"my_like\":true}]}";
-
-    private final String POST = "{\"error\":\"string\"," +
-            "\"total\":20," +
-            "\"offset\":0," +
-            "\"perPage\":20," +
-            "\"data\":{" +
-            "\"id\":1," +
-            "\"time\":1649367846501," +
-            "\"author\":{\"id\":1," +
-            "\"email\":\"test@mail.ru\"," +
-            "\"phone\":\"+7(111)1111111\"," +
-            "\"city\":\"Saratov\"," +
-            "\"country\":\"Russia\"," +
-            "\"first_name\":\"Test\"," +
-            "\"last_name\":\"Test\"," +
-            "\"reg_date\":1649367846500," +
-            "\"birth_date\":1649367846000," +
-            "\"messages_permission\":\"ALL\"," +
-            "\"last_online_time\":0," +
-            "\"is_blocked\":false}," +
-            "\"title\":\"test title example\"," +
-            "\"likes\":2," +
-            "\"tags\":[\"top15\",\"java\",\"code\",\"true_story\",\"spring\",\"core\",\"bootstrap\"]," +
-            "\"comments\":[{" +
-            "\"id\":1," +
-            "\"likes\":0," +
-            "\"time\":1649367846508," +
-            "\"parent_id\":0," +
-            "\"post_id\":1," +
-            "\"comment_text\":\"test title example\"," +
-            "\"my_like\":false," +
-            "\"author\":{\"id\":5," +
-            "\"email\":\"ilin@mail.ru\"," +
-            "\"phone\":\"+7(999)9999999\"," +
-            "\"city\":\"Tbilisi\"," +
-            "\"country\":\"Georgia\"," +
-            "\"first_name\":\"Ilya\"," +
-            "\"last_name\":\"Ilin\"," +
-            "\"reg_date\":1649367846500," +
-            "\"birth_date\":1649367846000," +
-            "\"messages_permission\":\"ALL\"," +
-            "\"last_online_time\":0," +
-            "\"is_blocked\":false}," +
-            "\"is_blocked\":false}]," +
-            "\"type\":\"POSTED\"," +
-            "\"post_text\":\"test post text example\"," +
-            "\"is_blocked\":false," +
-            "\"my_like\":true}}";
-
+@AutoConfigureEmbeddedDatabase
+        (provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.OPENTABLE,
+                refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_CLASS)
+@Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+class PostControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -137,17 +41,18 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getExistentPostByIdTest() throws Exception {
+    void getExistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(POST));
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of("src/test/resources/json/post_platform_likes/post.json"))));
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getNonexistentPostByIdTest() throws Exception {
+    void getNonexistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/-1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -158,21 +63,42 @@ public class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getWallTest() throws Exception {
+    void getWallTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/wall"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(WALL));
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/wall.json"))));
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getFeedsTest() throws Exception {
+    void getFeedsTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/feeds"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(FEED));
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/feeds.json"))));
     }
+
+    @Test
+    @WithUserDetails("petrov@mail.ru")
+    void addPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/3/wall")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"new post\"," +
+                                "\"post_text\":\"new post text\"," +
+                                "\"tags\":[\"java\",\"new post\"]}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json((Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/new_post.json")))));
+    }
+
 }

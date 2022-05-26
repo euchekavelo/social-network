@@ -35,6 +35,7 @@ public class LikesController {
     public ResponseEntity<GeneralResponse<LikesDto>> putAndGetAllLikes(
             @RequestBody PutLikeDto putLikeDto) throws InvalidRequestException {
 
+
             return ResponseEntity.ok(new GeneralResponse<>(likeService
                     .putAndGetAllLikes(putLikeDto.getItemId(), putLikeDto.getType())));
     }

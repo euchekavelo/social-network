@@ -7,6 +7,8 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,10 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.LocalFileService;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,10 +30,13 @@ import java.util.regex.Pattern;
 @DebugLogs
 public class StorageService {
 
+  @Value("${skillbox.app.logRootPath}")
+  private String localRootPath;
   private static String token = "";
   private static final DbxRequestConfig config = DbxRequestConfig.newBuilder("socNet").build();
   private static DbxClientV2 client = new DbxClientV2(config, token);
   private final PersonRepository personRepository;
+  private final LocalFileService localFileService;
   private final StorageCache cache;
 
   public String getDefaultProfileImage(){
@@ -40,6 +45,25 @@ public class StorageService {
 
   public String getDeletedProfileImage() {
     return cache.getLink(StorageCache.DELETED);
+  }
+
+  @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
+  public void uploadLogFiles() throws IOException, DbxException {
+    List<File> logFiles = localFileService.getAllFilesInADirectory(localRootPath);
+
+    for (File file : logFiles) {
+      try (InputStream in = new FileInputStream(file)) {
+        String abstractFilePath = file.getPath().replaceAll("\\\\", "/");
+        client.files().uploadBuilder("/" + abstractFilePath).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
+      }
+    }
+
+    localFileService.deleteLocalFilesInADirectory(localRootPath);
+  }
+
+  @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
+  public void deleteLogFolderInRemoteStorage() throws DbxException {
+    deleteFile("/" + localRootPath);
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) {

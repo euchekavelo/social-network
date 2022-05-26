@@ -8,9 +8,6 @@ public class LoginDto {
     private String email;
     private String password;
 
-    /**
-     *      TODO chek method checkPassword
-     */
     public boolean checkPassword (String inDBPassword) {
         return new BCryptPasswordEncoder().matches(this.password, inDBPassword);
     }

@@ -25,6 +25,16 @@ databaseChangeLog:
         relativeToChangelogFile: true
   - changeSet:
       id: 4
+      author: Roman Vladimirov
+      comment: dialog table changes
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/004-dialog-and-message-table-changes.sql
+        relativeToChangelogFile: true
+
+
+  - changeSet:
+      id: 5
       author: Igor Ganchenko
       comment: notification table changes
       sqlFile:

@@ -5,19 +5,23 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
+import ru.skillbox.socnetwork.repository.NotificationRepository;
+import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
@@ -57,13 +61,16 @@ public class PostService {
             List<String> tags = tagService.getPostTags(postId);
             return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
         } catch (EmptyResultDataAccessException e) {
-            throw new InvalidRequestException("Incorrect post data, can't find this id " + postId);
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_CANT_FIND_ID.getMessage() + postId);
         }
     }
 
     public void deletePostById(int postId) throws InvalidRequestException {
         if (postRepository.deleteById(postId) == 0) {
-            throw new InvalidRequestException("No post id found to delete");
+            throw new InvalidRequestException(ExceptionText.POST_ID_NOT_FOUND_TO_DELETE.getMessage());
+        } else {
+            commentRepository.deleteCommentsByPostId(postId);
+            tagService.deletePostTags(postId);
         }
     }
 
@@ -84,7 +91,7 @@ public class PostService {
                             personDto,
                             getCommentDtoList(post.getId()),
                             tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(likeRepository.getIsLiked(postDto.getId(), post.getId()));
+                    postDto.setIsLiked(likeRepository.getIsLiked(personDto.getId(), post.getId()));
                     return postDto;
                 }
         ).collect(Collectors.toList());
@@ -104,7 +111,7 @@ public class PostService {
         ).collect(Collectors.toList());
     }
 
-    public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+    public PostDto addPost(NewPostDto newPostDto, long publishDate) throws InvalidRequestException {
         long currentTime;
         if (publishDate == -1) {
             currentTime = System.currentTimeMillis();
@@ -118,6 +125,7 @@ public class PostService {
                 newPostDto.getAuthorId(), post.getId(), "e-mail");
 
         notificationRepository.addNotification(notificationDto);
+
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(
@@ -128,11 +136,10 @@ public class PostService {
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
-        if (getPersonId() == newPostDto.getAuthorId()) {
-            throw new InvalidRequestException("You cannot edit a post, you are not the author.");
+        if (getPersonId().equals(newPostDto.getAuthorId())) {
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage());
         }
-        tagService.deletePostTags(postId);
-        tagService.addTagsFromNewPost(postId, newPostDto);
+        tagService.editOldTags(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
         return getById(postId);
     }
@@ -177,6 +184,10 @@ public class PostService {
                 authorName, authorSurname, getSqlString(tags), perPage);
 
         return getPostDtoListOfAllPersons(posts, currentPersonId);
+    }
+
+    public Integer getPostCount() {
+        return postRepository.getPostCount();
     }
 
     private Integer getPersonId() {

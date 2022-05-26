@@ -5,7 +5,7 @@ import ru.skillbox.socnetwork.model.entity.PostComment;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+
 public class PostCommentMapper implements RowMapper<PostComment> {
     @Override
     public PostComment mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -50,8 +50,10 @@ public class FriendsService {
     public DialogsResponse deleteFriendById(Integer friendId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
-        int countFrom = friendshipRepository.removeFriendlyStatusByPersonIds(authorizedUserId, friendId);
-        int countTo = friendshipRepository.removeFriendlyStatusByPersonIds(friendId, authorizedUserId);
+        int countFrom = friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(authorizedUserId, friendId,
+                TypeCode.FRIEND.toString());
+        int countTo = friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(friendId, authorizedUserId,
+                TypeCode.FRIEND.toString());
         if (countFrom == 0 && countTo == 0) {
             throw new InvalidRequestException("Deletion is not possible. " +
                     "No friendly relationship found between the specified user.");
@@ -94,7 +96,8 @@ public class FriendsService {
                             TypeCode.FRIEND.toString());
             }
         } else
-            friendshipRepository.createFriendRequestByPersonIds(authorizedUserId, focusPersonId);
+            friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+                    TypeCode.REQUEST.toString());
 
         return new DialogsResponse("ok");
     }
@@ -110,5 +113,16 @@ public class FriendsService {
         String email = getAuthorizedUser().getUsername();
         List<Integer> userIds = userIdsDto.getUserIds();
         return friendshipRepository.getInformationAboutFriendships(email, userIds);
+    }
+
+    public DialogsResponse deleteFriendRequestById(Integer id) throws InvalidRequestException {
+        String email = getAuthorizedUser().getUsername();
+        Integer authorizedUserId = personRepository.getByEmail(email).getId();
+        int count = friendshipRepository.deleteFriendRequestById(id, authorizedUserId);
+        if (count == 0) {
+            throw new InvalidRequestException("Deletion failed. The specified friend request was not found.");
+        }
+
+        return new DialogsResponse("ok");
     }
 }

@@ -2,7 +2,6 @@ package ru.skillbox.socnetwork.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
 @Data
 public class PersonTemp {
