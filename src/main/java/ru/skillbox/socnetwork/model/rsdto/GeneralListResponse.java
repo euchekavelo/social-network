@@ -1,10 +1,12 @@
 package ru.skillbox.socnetwork.model.rsdto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Schema(hidden = true)
 public class GeneralListResponse<T> {
 
     private String error;

@@ -29,6 +29,7 @@ public class DeletedUserService {
   private final Post2TagRepository post2TagRepository;
   private final PostRepository postRepository;
   private final StorageService storageService;
+  private final MailService mailService;
 
   @Scheduled(fixedRateString = "PT01H")
   public void checkExpiredUsers() throws DbxException {
@@ -39,7 +40,7 @@ public class DeletedUserService {
         deletePersonData(user.getPersonId());
         storageService.deleteFile(user.getPhoto());
         deletedUsersRepository.delete(user.getId());
-        personRepository.setDeleted(user.getPersonId(), false);
+//        personRepository.setDeleted(user.getPersonId(), false);
       }
     }
   }
@@ -76,7 +77,9 @@ public class DeletedUserService {
 
     postRepository.deleteAllPersonPosts(personId);
 
+    String email = personRepository.getById(personId).getEmail();
     personRepository.delete(personId);
+    mailService.send(email, "Your account deleted!", "Your account and all your data was completely deleted!");
   }
 
   public DeletedUser getDeletedUser(Integer personId){

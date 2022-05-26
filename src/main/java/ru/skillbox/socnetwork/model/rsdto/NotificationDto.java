@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.model.rsdto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Notification;
@@ -9,6 +10,7 @@ import ru.skillbox.socnetwork.model.entity.Notification;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(hidden = true)
 public class NotificationDto {
     private Integer id;
     @JsonProperty("type_id")

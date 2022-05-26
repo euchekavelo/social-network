@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.model.rsdto.filedto;
 
 import com.dropbox.core.v2.files.FileMetadata;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Person;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 
 @Data
 @AllArgsConstructor
+@Schema(hidden = true)
 public class FileUploadDTO {
   private String id;
   private Integer ownerID;

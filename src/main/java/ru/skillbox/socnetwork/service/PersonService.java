@@ -3,6 +3,7 @@ package ru.skillbox.socnetwork.service;
 import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,6 +39,9 @@ public class PersonService {
     private final TempTokenService tempTokenService;
     private final MailService mailService;
     private final DeletedUserService deletedUserService;
+
+//    @Value("${skillbox.app.address}")
+    private final String HOST = "195.133.201.227";
 
     public List<Person> getAll() {
         return personRepository.getAll();
@@ -145,6 +149,8 @@ public class PersonService {
         }
         personRepository.updateEmail(person, body.get("email"));
         tempTokenService.deleteToken(body.get("token"));
+        mailService.send(email, "Your email has been changed", "Your email changed successfully!");
+        mailService.send(person.getEmail(), "Your email has been changed", "Your email changed successfully!");
         return "ok";
     }
 
@@ -169,7 +175,7 @@ public class PersonService {
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "195.133.201.227/shift-email?token=" + token.getToken();
+        String link = HOST + "/shift-email?token=" + token.getToken();
         mailService.send(email, "Your SocNetwork Email change link", link);
         return "ok";
     }
@@ -181,7 +187,7 @@ public class PersonService {
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "195.133.201.227/change-password?token=" + token.getToken();
+        String link = HOST + "/change-password?token=" + token.getToken();
         mailService.send(person.getEmail(), "SocNetwork Password recovery", link);
         return "ok";
     }
@@ -198,6 +204,7 @@ public class PersonService {
         person.setPassword(new BCryptPasswordEncoder().encode(body.get("password")));
         personRepository.updatePassword(person);
         tempTokenService.deleteToken(body.get("token"));
+        mailService.send(person.getEmail(), "Your password has been changed", "Your password changed successfully! You can now log in with new password!");
         return "ok";
     }
 
@@ -220,6 +227,7 @@ public class PersonService {
         personRepository.updatePerson(person);
         person.setPhoto(storageService.getDeletedProfileImage());
         personRepository.updatePhoto(person);
+        mailService.send(person.getEmail(), "Your account will be deleted in 3 days!", "You requested to delete your account, it will be completely deleted in 3 days!");
         return "ok";
     }
 
@@ -238,6 +246,7 @@ public class PersonService {
         personRepository.updatePhoto(person);
 
         deletedUserService.delete(deletedUser.getId());
+        mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");
         return person;
     }
 }

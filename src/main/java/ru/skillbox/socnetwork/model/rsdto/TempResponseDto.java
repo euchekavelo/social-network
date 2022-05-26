@@ -1,9 +1,11 @@
 package ru.skillbox.socnetwork.model.rsdto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 
+@Schema(hidden = true)
 public class TempResponseDto {
 
   private static final Map<String, Object> PLACE = Map

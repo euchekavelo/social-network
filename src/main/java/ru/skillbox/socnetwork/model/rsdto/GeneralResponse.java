@@ -2,23 +2,34 @@ package ru.skillbox.socnetwork.model.rsdto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
+@Schema
 public class GeneralResponse<T> {
+    @Schema(hidden = true)
     private Integer id;
+    @Schema(hidden = true)
     private String title;
+    @Schema(hidden = true)
     private String path;
     private String error;
     @JsonProperty("error_description")
+    @Schema(hidden = true)
     private String errorDescription;
+    @Schema(example = "1630627200000")
     private Long timestamp;
+    @Schema(hidden = true)
     private Integer total;
+    @Schema(hidden = true)
     private Integer offset;
+    @Schema(hidden = true)
     private Integer perPage;
+    @Schema(example = "ok")
     private T data;
 
     public GeneralResponse(String path, String error, String errorDescription, long timestamp) {

@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.model.rsdto.postdto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.PostComment;
@@ -10,6 +11,7 @@ import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 @Data
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(hidden = true)
 public class CommentDto {
     Integer id;
     @JsonProperty("parent_id")
