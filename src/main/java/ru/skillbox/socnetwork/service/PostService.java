@@ -7,25 +7,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
-import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
-import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
-
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,9 +9,8 @@ import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.mapper.PostMapper;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor

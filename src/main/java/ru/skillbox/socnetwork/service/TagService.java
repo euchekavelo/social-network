@@ -6,7 +6,7 @@ import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Tag;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.repository.Post2TagRepository;
 import ru.skillbox.socnetwork.repository.TagRepository;
 

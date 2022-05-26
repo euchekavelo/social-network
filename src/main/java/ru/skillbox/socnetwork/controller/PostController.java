@@ -3,21 +3,18 @@ package ru.skillbox.socnetwork.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
+import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
+
 
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
