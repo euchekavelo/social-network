@@ -14,6 +14,7 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.repository.PersonRepository;
@@ -239,5 +240,9 @@ public class PersonService {
 
         deletedUserService.delete(deletedUser.getId());
         return person;
+    }
+
+    public Person getPersonByNotification (NotificationDto notificationDto){
+        return personRepository.getById(notificationDto.getPersonId());
     }
 }

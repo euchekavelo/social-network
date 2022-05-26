@@ -7,9 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
-import ru.skillbox.socnetwork.model.entity.Notification;
-import ru.skillbox.socnetwork.model.entity.NotificationType;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
@@ -25,9 +24,7 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,17 +105,19 @@ public class PostService {
     }
 
     public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+        long currentTime;
         if (publishDate == -1) {
-            newPostDto.setTime(System.currentTimeMillis());
+            currentTime = System.currentTimeMillis();
         } else {
-            newPostDto.setTime(publishDate);
+            currentTime = publishDate;
         }
+        newPostDto.setTime(currentTime);
         Post post = postRepository.addPost(newPostDto);
 
-        NotificationDto notificationDto = new NotificationDto(1, System.currentTimeMillis(),
-                10, post.getId(), "e-mail");
-        notificationRepository.addNotification(notificationDto);
+        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST, currentTime,
+                newPostDto.getAuthorId(), post.getId(), "e-mail");
 
+        notificationRepository.addNotification(notificationDto);
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(

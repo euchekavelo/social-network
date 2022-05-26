@@ -23,3 +23,11 @@ databaseChangeLog:
         encoding: UTF-8
         path: migrations/003-person-table-changes.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 4
+      author: Igor Ganchenko
+      comment: notification table changes
+      sqlFile:
+        encoding: UTF-8
+        path: migrations/004-notification-table-changes.sql
+        relativeToChangelogFile: true
