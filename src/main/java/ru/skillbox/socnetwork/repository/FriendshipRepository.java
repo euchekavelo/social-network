@@ -21,11 +21,6 @@ public class FriendshipRepository {
 
     private final JdbcTemplate jdbc;
 
-    public int deleteFriendRequestById(Integer id, Integer dstPersonId) {
-        return jdbc.update("DELETE FROM friendship f " +
-                "WHERE f.id = ? and f.dst_person_id = ? and f.code = 'REQUEST'", id, dstPersonId);
-    }
-
     public int removeFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
         return jdbc.update("DELETE FROM friendship f WHERE f.src_person_id = ? and f. dst_person_id = ? " +
                 "AND f.code = CAST(? AS code_type)", srcPersonId, dstPersonId, typeCode);
