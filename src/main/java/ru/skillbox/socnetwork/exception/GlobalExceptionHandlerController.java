@@ -21,6 +21,9 @@ public class GlobalExceptionHandlerController {
         return ResponseEntity.badRequest().body(new ErrorResponseDto("Incorrectly formed incoming request body."));
     }
 
+    /*
+    TODO оптимизировать сообщение, оно появляется при любых emptyResultDataAccessException, не только в диалогах
+     */
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<ErrorResponseDto> emptyResultDataAccessException() {
         return ResponseEntity.badRequest().body(new ErrorResponseDto("Dialog doesn't exists"));

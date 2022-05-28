@@ -174,18 +174,11 @@ create table if not exists comment_like (
 
 create table if not exists notification (
     id serial,
-    type_id int4,
+    notification_type notification_code_type,
     sent_time bigint,
     person_id int4,
     entity_id int4,
     contact varchar(50),
-    primary key (id)
-);
-
-create table if not exists notification_type (
-    id serial,
-    code notification_code_type,
-    name varchar(50),
     primary key (id)
 );
 

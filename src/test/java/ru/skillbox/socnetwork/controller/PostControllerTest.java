@@ -52,6 +52,18 @@ class PostControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
+    void getExistentPostByIdWithoutCommentsTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/2"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/post_without_comments.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
     void getNonexistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/-1"))
                 .andDo(MockMvcResultHandlers.print())
@@ -101,4 +113,164 @@ class PostControllerTest {
                                 .of("src/test/resources/json/post_platform_likes/new_post.json")))));
     }
 
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void editPostWithTagTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/post/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"new edited post\"," +
+                                "\"post_text\":\"new edited post text\"," +
+                                "\"tags\":[\"java\",\"new post\",\"normal tag\"]}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/edited_post.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void editPostWithLongTagTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/post/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"new edited post\"," +
+                                "\"post_text\":\"new edited post text\"," +
+                                "\"tags\":[\"java\",\"new post\",\"very long phrase in english\"]}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error\":\"invalid_request\",\"error_description\":" +
+                                "\"15 symbol's is MAX tag length, current length is 27\"}"));
+    }
+
+    @Test
+    @WithUserDetails("petrov@mail.ru")
+    void editPostNoPersonTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/post/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"new edited post\"," +
+                                "\"post_text\":\"new edited post text\"," +
+                                "\"tags\":[\"java\",\"new post\"]}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error\":\"invalid_request\",\"error_description\":" +
+                                "\"You cannot edit this post, you are not the author. Author ID is 1\"}"));
+    }
+
+    @Test
+    @WithUserDetails("petrov@mail.ru")
+    void deleteNoPersonPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error\":\"invalid_request\",\"error_description\":" +
+                                "\"You cannot delete this post, you are not the author. Author ID is 1\"}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deletePostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"data\":{\"id\":1}}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deleteNonexistentPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/-1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error_description\":\"Incorrect post data, can't find this id -1\"}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void addCommentToPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/post/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"comment_text\": \"new comment\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/added_comment.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void editNotPersonCommentToPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/v1/post/1/comments/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"comment_text\": \"new comment\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error_description\":\"You cannot edit this comment, " +
+                                "you are not the author. Author ID is 5\"}"));
+    }
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void editCommentToPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/v1/post/1/comments/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"comment_text\": \"new comment\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/edited_comment.json"))));
+    }
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void deleteCommentTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1/comments/1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"data\":{\"id\":1}}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deleteNotPersonCommentTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1/comments/1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error_description\":\"You cannot delete this comment, " +
+                                "you are not the author. Author ID is 5\"}"));
+    }
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void deleteNonexistentCommentTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1/comments/-1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error_description\":\"Incorrect comment data, can't find this id -1\"}"));
+    }
 }

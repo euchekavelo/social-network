@@ -82,7 +82,7 @@ public class LikeService {
         throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
     }
 
-    public LikesDto deletePostLike(int itemId, String type) throws InvalidRequestException {
+    public LikesDto deleteLike(int itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
         if (type.equals(POST)) {
             postLikeRepository.deleteLike(getPersonId(), itemId);

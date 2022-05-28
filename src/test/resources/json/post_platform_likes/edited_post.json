@@ -17,7 +17,7 @@
       "last_online_time": 0,
       "is_blocked": false
     },
-    "title": "test title example",
+    "title": "new edited post",
     "likes": 2,
     "tags": [
       "top15",
@@ -26,7 +26,9 @@
       "true_story",
       "spring",
       "core",
-      "bootstrap"
+      "bootstrap",
+      "normal tag",
+      "new post"
     ],
     "comments": [
       {
@@ -54,7 +56,7 @@
       }
     ],
     "type": "POSTED",
-    "post_text": "test post text example",
+    "post_text": "new edited post text",
     "is_blocked": false,
     "my_like": true
   }

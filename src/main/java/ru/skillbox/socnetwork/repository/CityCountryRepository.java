@@ -29,9 +29,4 @@ public class CityCountryRepository {
         String sql = "select country from person group by country";
         return jdbc.query(sql, new CountryMapper());
     }
-
-    public List<CityCountry> getCityCountry() {
-        String sql = "select city, country from person group by city, country";
-        return jdbc.query(sql, new CityCountryMapper());
-    }
 }

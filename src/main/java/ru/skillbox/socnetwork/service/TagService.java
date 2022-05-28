@@ -35,7 +35,7 @@ public class TagService {
     public void addTag(String tag) throws InvalidRequestException {
         if (tag.length() > MAX_TAG_LENGTH) {
             throw new InvalidRequestException(
-                    MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.name() + tag.length());
+                    MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.getMessage() + tag.length());
         } else {
         tagRepository.addTag(tag);
         }
