@@ -12,7 +12,9 @@ insert into person (first_name, last_name, reg_date, birth_date, e_mail, phone, 
     ('Onufriy', 'Onufriev', '1649367846500', '1649367846000', 'onufriy@mail.ru', '+7(999)9999999',
      '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan'),
     ('Onufriy', 'Testoviy', '1649367846500', '1649367846000', 'onufriy1@mail.ru', '+7(999)9999999',
-    '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan');
+    '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Alma-Ata', 'Kazakhstan'),
+    ('Eduard', 'Eduardov', '1649367846500', '1649367846000', 'ivanov@mail.ru', '+7(999)9999999',
+     '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Tver', 'Russia');
 
 insert into post (time, author, title, post_text, is_blocked, likes) values
     ('1649367846501', 1, 'test title example', 'test post text example', 'false', 2),
@@ -70,4 +72,6 @@ insert into friendship (time, code, src_person_id, dst_person_id) values
    ('1653834211034', 'FRIEND', 1, 5),
    ('1653834026780', 'FRIEND', 1, 2),
    ('1653834026780', 'REQUEST', 3, 1),
-   ('1653834026780', 'REQUEST', 6, 1);
+   ('1653834026780', 'REQUEST', 6, 1),
+   ('1653834026780', 'BLOCKED', 7, 1),
+   ('1653834026780', 'REQUEST', 1, 8);

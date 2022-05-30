@@ -67,6 +67,8 @@ public class FriendsService {
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
             throw new InvalidRequestException("You can't send a request to yourself.");
+        } else if (personRepository.getById(focusPersonId) == null) {
+            throw new InvalidRequestException("Request denied. The specified user was not found in the database.");
         }
 
         Optional<Friendship> friendshipFromInitiator = friendshipRepository

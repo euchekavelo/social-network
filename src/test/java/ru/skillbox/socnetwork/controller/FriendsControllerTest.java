@@ -138,4 +138,90 @@ public class FriendsControllerTest {
                                 "/resources/json/friends_controller_test/friendships_with_specified_users.json"))))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/4"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendYourselfTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description")
+                        .value("You can't send a request to yourself."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendAgainTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("It is not possible to apply " +
+                        "as a friend, because these users are already friends."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendBlockedUserTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/8"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("It is not possible to submit a " +
+                        "request to add as a friend, as it has already been submitted earlier."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendNonExistentUserTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1232133"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("Object doesn't exists."));
+    }
+
+    @Test
+    public void unauthorizedAccessAddFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void deleteFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/5"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void deleteNonExistentFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/112398"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("Deletion is not possible. " +
+                        "No friendly relationship found between the specified user."));
+    }
+
+    @Test
+    public void unauthorizedAccessDeleteFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/2"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
 }
