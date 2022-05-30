@@ -5,6 +5,7 @@ import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
 /*
+TODO удалить это временное добавление! Только ДТО должно на фронте отображаться)
 Временно добавлены аннотации @JsonProperty для правильного отображения сущности на фронте, через запросы
 напрямую через репозиторий
 */

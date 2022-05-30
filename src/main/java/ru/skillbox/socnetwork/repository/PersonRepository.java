@@ -149,9 +149,6 @@ public class PersonRepository {
                 person.getEmail());
     }
 
-    /**
-     * TODO build correct country and city
-     */
     public List<Person> getPersonsFromSearch(String firstName, String lastName,
                                              long ageFrom, long ageTo,
                                              int countryId, int cityId,
