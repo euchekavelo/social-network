@@ -173,13 +173,24 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendBlockedUserTest() throws Exception {
+    public void sendFriendRequestAgainTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/8"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("error").value("invalid_request"))
                 .andExpect(jsonPath("error_description").value("It is not possible to submit a " +
                         "request to add as a friend, as it has already been submitted earlier."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendBlockedUserTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/7"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("The request is not possible " +
+                        "because the specified user is blocked."));
     }
 
     @Test
