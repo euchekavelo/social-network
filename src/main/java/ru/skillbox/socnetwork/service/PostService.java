@@ -11,10 +11,8 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
@@ -35,8 +33,8 @@ public class PostService {
     private final PostCommentRepository commentRepository;
     private final PersonService personService;
     private final PostLikeRepository likeRepository;
-    private final NotificationRepository notificationRepository;
     private final TagService tagService;
+    private final NotificationService notificationService;
 
     public List<PostDto> getAll(int offset, int perPage) {
         return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), getPersonId());
@@ -116,11 +114,8 @@ public class PostService {
         newPostDto.setTime(currentTime);
         Post post = postRepository.addPost(newPostDto);
 
-        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST, currentTime,
-                newPostDto.getAuthorId(), post.getId(), "e-mail");
-
-        notificationRepository.addNotification(notificationDto);
-
+        notificationService.addNotification(post.getAuthor(), post.getId(), currentTime,
+                TypeNotificationCode.POST, post.getTitle());
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(
@@ -153,7 +148,13 @@ public class PostService {
         comment.setPostId(id);
         comment.setIsBlocked(false);
         commentRepository.add(comment);
+        notificationService.addNotification(comment.getAuthor().getId(), comment.getId(), comment.getTime(),
+                TypeNotificationCode.POST_COMMENT, getShortString(comment.getCommentText()));
         return comment;
+    }
+
+    private String getShortString(String title) {
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
     public CommentDto editCommentToPost(CommentDto comment) {
