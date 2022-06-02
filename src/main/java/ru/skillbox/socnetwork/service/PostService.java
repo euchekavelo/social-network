@@ -2,7 +2,6 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
@@ -12,13 +11,13 @@ import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
-import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
-import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +57,21 @@ public class PostService {
         }
     }
 
+    private PostComment getPostCommentById(int commentId) throws InvalidRequestException {
+        try {
+            return commentRepository.getById(commentId);
+        } catch (EmptyResultDataAccessException exception) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_CANT_FIND_ID.getMessage() + commentId);
+        }
+    }
+
     public void deletePostById(int postId) throws InvalidRequestException {
-        if (postRepository.deleteById(postId) == 0) {
-            throw new InvalidRequestException(ExceptionText.POST_ID_NOT_FOUND_TO_DELETE.getMessage());
+        PostDto oldPost = this.getById(postId);
+        Integer authorId = oldPost.getAuthor().getId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
         } else {
+            postRepository.deleteById(postId);
             commentRepository.deleteCommentsByPostId(postId);
             tagService.deletePostTags(postId);
         }
@@ -69,7 +79,7 @@ public class PostService {
 
     public List<CommentDto> getCommentDtoList(int postId) {
         List<PostComment> postComments = commentRepository.getCommentsByPostId(getPersonId(), postId);
-        if (postComments == null) {
+        if (postComments.isEmpty()) {
             return new ArrayList<>();
         }
         return postComments.stream()
@@ -126,8 +136,10 @@ public class PostService {
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
-        if (getPersonId().equals(newPostDto.getAuthorId())) {
-            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage());
+        PostDto oldPost = this.getById(postId);
+        Integer authorId = oldPost.getAuthor().getId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
         }
         tagService.editOldTags(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
@@ -153,16 +165,25 @@ public class PostService {
         return comment;
     }
 
-    private String getShortString(String title) {
-        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
-    }
-
-    public CommentDto editCommentToPost(CommentDto comment) {
+    public CommentDto editCommentToPost(CommentDto comment) throws InvalidRequestException {
+        Integer authorId = this.getPostCommentById(comment.getId()).getAuthorId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
+        }
         commentRepository.edit(comment);
         return comment;
     }
 
-    public CommentDto deleteCommentToPost(int commentId) {
+    private String getShortString(String title) {
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
+    }
+
+
+    public CommentDto deleteCommentToPost(int commentId) throws InvalidRequestException {
+        Integer authorId = this.getPostCommentById(commentId).getAuthorId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
+        }
         CommentDto commentDto = new CommentDto();
         commentDto.setId(commentId);
         commentRepository.deleteById(commentId);
@@ -186,7 +207,7 @@ public class PostService {
         return postRepository.getPostCount();
     }
 
-    private Integer getPersonId() {
+    public Integer getPersonId() {
         SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getId();
     }

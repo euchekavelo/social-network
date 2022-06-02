@@ -1,8 +1,4 @@
 {
-  "error": "string",
-  "total": 5,
-  "offset": 0,
-  "perPage": 20,
   "data": [
     {
       "id": 1,
@@ -34,12 +30,12 @@
       ],
       "comments": [
         {
+          "id": 1,
           "likes": 0,
           "time": 1649367846508,
           "parent_id": 0,
           "post_id": 1,
           "comment_text": "test title example",
-          "my_like": false,
           "author": {
             "id": 5,
             "email": "ilin@mail.ru",

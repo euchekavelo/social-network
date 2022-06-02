@@ -38,9 +38,9 @@ public class PostRepository {
         return jdbc.queryForObject(sql, new PostMapper(), id);
     }
 
-    public int deleteById(int id) {
+    public void deleteById(int id) {
         String sql = "delete from post where id = ?";
-        return jdbc.update(sql, id);
+        jdbc.update(sql, id);
     }
 
     public Post getLastPersonPost(int personId) throws EmptyResultDataAccessException {

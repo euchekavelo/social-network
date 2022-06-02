@@ -10,14 +10,4 @@ import ru.skillbox.socnetwork.logging.InfoLogs;
 @InfoLogs
 public class DefaultController {
 
-    @GetMapping("/")
-    public String mainPage() {
-        return "index";
-    }
-
-    @RequestMapping(method = {RequestMethod.OPTIONS, RequestMethod.GET}, value = "*")
-    public String redirectToIndex() {
-        return "forward:/";
-    }
-
 }

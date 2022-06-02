@@ -83,7 +83,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
             return null;
         }
-        //TODO вынести создание персона из RegisterDto в Person?
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));

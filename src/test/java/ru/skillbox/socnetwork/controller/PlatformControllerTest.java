@@ -23,10 +23,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class PlatformControllerTest {
 
-    private final String CITIES_DATA =
+    private final static String CITIES_DATA =
             "{\"data\":[\"Perm\",\"Tbilisi\",\"Tver\",\"Saratov\",\"Alma-Ata\",\"Kaliningrad\"]}";
 
-    private final String COUNTRIES_DATA = "{\"data\":[\"Russia\",\"Georgia\",\"Kazakhstan\"]}";
+    private final static String COUNTRIES_DATA = "{\"data\":[\"Russia\",\"Georgia\",\"Kazakhstan\"]}";
 
     @Autowired
     private MockMvc mockMvc;

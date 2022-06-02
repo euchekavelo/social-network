@@ -45,7 +45,7 @@ public class PostController {
     public ResponseEntity<GeneralResponse<PostDto>> editPostById(
             @PathVariable int id, @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
 
-            return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
+        return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,28 +56,33 @@ public class PostController {
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
-                                                                         @RequestBody CommentDto comment) {
+                                                                        @RequestBody CommentDto comment) {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.addCommentToPost(comment, id)));
     }
 
     @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable int id,
-                                                                         @PathVariable int commentId,
-                                                                         @RequestBody CommentDto comment) {
+    public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(
+            @PathVariable int id,
+            @PathVariable int commentId,
+            @RequestBody CommentDto comment) throws InvalidRequestException {
 
         comment.setId(commentId);
         return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable int id,
-                                                                         @PathVariable int commentId) {
+    public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(
+            @PathVariable int id,
+            @PathVariable int commentId) throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
     }
 
 
+    /*
+    TODO логику перенести в сервис. Возможно перенести весь функционал по поиску в SearchService.
+     */
     @GetMapping()
     public ResponseEntity<GeneralResponse<List<PostDto>>> searchPostByText(
             @RequestParam(value = "text") String text,
@@ -90,7 +95,7 @@ public class PostController {
 
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
                 (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, tags, perPage,
-                        PostService.getSecurityUser().getId()));
+                        postService.getPersonId()));
 
         return ResponseEntity.ok(response);
     }

@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**", "/api/v1/account/register").permitAll()
                 .antMatchers("/static/**", "/api/v1/platform/**", "/*").permitAll()
-                .antMatchers("/api/v1/account/password/**").permitAll()
+                .antMatchers("/api/v1/account/password/**", "/actuator/prometheus").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -86,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> links = new ArrayList<>();
         String http = "http://";
         String[] hosts = new String[]{getLocalhost(), getServer()};
-        String[] ports = new String[]{":8080", ":8086", ""};
+        String[] ports = new String[]{":8080", ":8086", "", ":9091"};
         for (String host : hosts) {
             for (String port : ports) {
                 links.add(http + host + port);

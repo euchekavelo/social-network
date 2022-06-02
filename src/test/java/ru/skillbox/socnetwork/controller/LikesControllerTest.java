@@ -103,6 +103,21 @@ class LikesControllerTest {
     }
 
     @Test
+    @WithUserDetails("petrov@mail.ru")
+    void putLikeToUnknown() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders
+                        .put("/api/v1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"item_id\":1,\"type\":\"Unknown\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"error\":\"invalid_request\"," +
+                                "\"error_description\":\"Bad like type. Required 'Post' or 'Comment' types\"}"));
+    }
+
+    @Test
     @WithUserDetails("test@mail.ru")
     void deleteLikeFromLikedPost() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -111,6 +126,17 @@ class LikesControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
                         .json("{\"data\":{\"likes\":1,\"users\":[2]}}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deleteLikeFromLikedComment() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/v1/likes?item_id=1&type=Comment"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"data\":{\"likes\":0,\"users\":[]}}"));
     }
 
     @Test
@@ -160,5 +186,4 @@ class LikesControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .json("{\"error\":\"string\",\"data\":{\"likes\":1,\"users\":[1]}}"));
     }
-
 }
