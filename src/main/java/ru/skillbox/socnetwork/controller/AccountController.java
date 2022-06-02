@@ -49,17 +49,12 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                 )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) {
-        Person person = personService.getPersonAfterRegistration(request);
-        if (person == null) {
-            return ResponseEntity
-                .badRequest()
-                .body(new GeneralResponse<>("invalid_request", "string"));
-        }
-        return ResponseEntity.ok(new GeneralResponse<>(
+    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
+
+      return ResponseEntity.ok(new GeneralResponse<>(
             "string",
-            person.getRegDate(),
-            new DialogsResponse("ok")));
+              System.currentTimeMillis(),
+            new DialogsResponse(personService.getPersonAfterRegistration(request))));
     }
 
     @PutMapping(value = "/password/recovery")
@@ -82,7 +77,7 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody() Map<String, String> body) throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(
             "string",

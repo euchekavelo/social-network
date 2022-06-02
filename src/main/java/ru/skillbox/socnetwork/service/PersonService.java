@@ -1,9 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
-import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -63,18 +61,20 @@ public class PersonService {
         return personRepository.getById(id);
     }
 
-    public Person getPersonAfterRegistration(RegisterDto registerDto) {
+    public String getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
         if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
             return null;
         }
-        //TODO вынести создание персона из RegisterDto в Person?
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
         person.setPhoto(storageService.getDefaultProfileImage());
-        return saveFromRegistration(person);
+        if(saveFromRegistration(person) == null){
+            throw new InvalidRequestException("Error");
+        }
+        return "ok";
     }
 
     public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
@@ -86,11 +86,8 @@ public class PersonService {
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public Person updatePerson(UpdatePersonDto changedPerson){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        String email = securityUser.getUsername();
-        Person updatablePerson = getByEmail(email);
+    public Person updatePerson(UpdatePersonDto changedPerson) throws ParseException {
+        Person updatablePerson = getAuthenticatedPerson();
 
         if(changedPerson.getFirstName() != null &&
             !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
@@ -104,14 +101,9 @@ public class PersonService {
         if(changedPerson.getBirthDate() != null){
             date = changedPerson.getBirthDate().substring(0, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            long dateTime;
-            try {
-                dateTime = format.parse(date).getTime();
-                if (dateTime != updatablePerson.getBirthDate()) {
-                    updatablePerson.setBirthDate(dateTime);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            long dateTime = format.parse(date).getTime();
+            if (dateTime != updatablePerson.getBirthDate()) {
+                updatablePerson.setBirthDate(dateTime);
             }
         }
         if (!changedPerson.getPhone().isEmpty()) {
@@ -214,11 +206,10 @@ public class PersonService {
     }
 
     public String setBlockPerson() throws InvalidRequestException{
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        Person person = getByEmail(securityUser.getUsername());
+        Person person = getAuthenticatedPerson();
+
         if(person == null){
-            throw new InvalidRequestException("User with email " + securityUser.getUsername() + " not registered");
+            throw new InvalidRequestException("User with email " + person.getEmail() + " not registered");
         }
         deletedUserService.add(person);
         person.setIsDeleted(true);
@@ -232,9 +223,7 @@ public class PersonService {
     }
 
     public Person returnProfile(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        Person person = getByEmail(securityUser.getUsername());
+        Person person = getAuthenticatedPerson();
 
         DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
 
@@ -248,5 +237,11 @@ public class PersonService {
         deletedUserService.delete(deletedUser.getId());
         mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");
         return person;
+    }
+
+    private Person getAuthenticatedPerson(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        return getByEmail(securityUser.getUsername());
     }
 }

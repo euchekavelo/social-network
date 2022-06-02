@@ -29,6 +29,7 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -83,7 +84,7 @@ public class ProfileController {
                     )))
         })
     public ResponseEntity<GeneralResponse<Person>> updateProfile(
-        @RequestBody UpdatePersonDto updatePersonDto){
+        @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
         return ResponseEntity.ok(new GeneralResponse<>(
             "string",

@@ -17,9 +17,8 @@ import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,48 +34,48 @@ public class StorageService {
   private final StorageCache cache;
 
   public String getDefaultProfileImage(){
-    return cache.getLink(StorageCache.DEFAULT);
+    return cache.getLink(StorageConstants.PHOTO_DEFAULT);
   }
 
   public String getDeletedProfileImage() {
-    return cache.getLink(StorageCache.DELETED);
+    return cache.getLink(StorageConstants.PHOTO_DELETED);
   }
 
-  public FileUploadDTO uploadFile(MultipartFile file) {
+  public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
     Person person = null;
     FileMetadata fileMetadata = null;
-    try {
-      InputStream stream = new BufferedInputStream(file.getInputStream());
 
-      //Generate new random file name
-      String fileName = "/" + generateName(file.getOriginalFilename());
+    //Generate new random file name
+    String fileName = "/".concat(generateName(file.getOriginalFilename()));
 
-      //Get current user
-      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-      person = personRepository.getByEmail(securityUser.getUsername());
+    File resizedImage = ImageScale.resize(file.getInputStream(), fileName);
+    InputStream stream = new FileInputStream(resizedImage);
+    fileMetadata = client.files().uploadBuilder(fileName).withMode(WriteMode.ADD).uploadAndFinish(stream);
+    stream.close();
 
-      deleteFile(getRelativePath(person.getPhoto()));
+    Files.delete(resizedImage.toPath());
 
-      fileMetadata = client.files().uploadBuilder(fileName)
-              .withMode(WriteMode.ADD).uploadAndFinish(stream);
-
-      //Share image if not shared yet
-      if (client.sharing().listSharedLinksBuilder().withPath(fileName).start()
-              .getLinks().isEmpty()) {
+    //Share image if not shared yet
+    if(client.sharing().listSharedLinksBuilder().withPath(fileName).start().getLinks().isEmpty()) {
         client.sharing().createSharedLinkWithSettings(fileMetadata.getPathDisplay());
-      }
-
-      person.setPhoto(getAbsolutePath(fileName));
-      personRepository.updatePhoto(person);
-    } catch (DbxException | IOException e) {
-      e.printStackTrace();
     }
+
+    //Get current user
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+    person = personRepository.getByEmail(securityUser.getUsername());
+
+    deleteFile(getRelativePath(person.getPhoto()));
+
+    cache.addLink(fileName, getAbsolutePath(fileName));
+    person.setPhoto(getAbsolutePath(fileName));
+    personRepository.updatePhoto(person);
+
     return new FileUploadDTO(person, fileMetadata);
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(StorageCache.DEFAULT)) {
+    if (!path.equals(StorageConstants.PHOTO_DEFAULT)) {
       client.files().deleteV2(path);
     }
   }
@@ -93,13 +92,16 @@ public class StorageService {
   }
 
   private String getAbsolutePath(String path) throws DbxException {
+    if(cache.isLinkExists(path)){
+      return cache.getLink(path);
+    }
     return client.sharing().listSharedLinksBuilder().withPath(path).start()
             .getLinks().get(0).getUrl().replace("dl=0", "raw=1");
   }
 
   private String generateName(String name) {
     RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(65, 90).build();
-    Pattern pattern = Pattern.compile(".*(\\.[A-z]*)$");
+    Pattern pattern = Pattern.compile(".{1,10}(\\.[A-z]{3,5})$");
     Matcher matcher = pattern.matcher(name);
     String format = (matcher.find()) ? matcher.group(1) : "";
     return generator.generate(10) + format;

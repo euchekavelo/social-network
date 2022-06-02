@@ -36,7 +36,7 @@ public class FileUploadDTO {
   }
 
   private String getFileFormat(String name) {
-    Pattern pattern = Pattern.compile(".*\\.([A-z]*)$");
+    Pattern pattern = Pattern.compile(".{1,10}\\.([A-z]{3,5})$");
     Matcher matcher = pattern.matcher(name);
     return (matcher.find()) ? matcher.group(1) : "";
   }

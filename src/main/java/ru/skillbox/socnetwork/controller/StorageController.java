@@ -1,7 +1,7 @@
 package ru.skillbox.socnetwork.controller;
 
+import com.dropbox.core.DbxException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +18,8 @@ import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.service.storage.StorageService;
+
+import java.io.IOException;
 
 @Log
 @RequiredArgsConstructor
@@ -49,7 +51,7 @@ public class StorageController {
                       schema = @Schema(implementation = GeneralResponse.class)
                   )))
       })
-  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file) {
+  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file) throws IOException, DbxException {
 
     return ResponseEntity.ok(new GeneralResponse<>(
         "string",
