@@ -1,12 +1,14 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
+import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,12 @@ public class NotificationService {
     }
 
     public List<NotificationDtoToView> getAllNotificationsForFriends() {
+
+        /*
+        Alexander Luzyanin add person to onlinePersonMap<Integer, Long>
+         */
+        personService.addOnlinePerson(getPersonId());
+
         List<PersonDto> friends = friendsService.getUserFriends();
         List<Notification> notifications = new ArrayList<>();
 
@@ -60,5 +68,10 @@ public class NotificationService {
             ));
         }
         return notificationDtoToView;
+    }
+
+    public Integer getPersonId() {
+        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return auth.getId();
     }
 }

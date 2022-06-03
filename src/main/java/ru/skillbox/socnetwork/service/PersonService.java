@@ -4,6 +4,7 @@ import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.apache.commons.text.RandomStringGenerator;
+import org.apache.logging.log4j.util.BiConsumer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -33,10 +34,7 @@ import ru.skillbox.socnetwork.service.storage.StorageService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -50,6 +48,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     private final MailService mailService;
     private final FriendshipRepository friendshipRepository;
     private final DeletedUserService deletedUserService;
+    private static final HashMap<Integer, Long> lastOnlineTimeMap = new HashMap<>();
+    public static final Long DELAY = 50_000L;
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
@@ -66,7 +66,11 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public Person getByEmail(String email) {
-        return personRepository.getByEmail(email);
+        Person person = personRepository.getByEmail(email);
+        if (isPersonOnline(person.getId())) {
+            person.setLastOnlineTime(System.currentTimeMillis());
+        }
+        return person;
     }
 
     public boolean isEmptyEmail(String email) {
@@ -78,7 +82,11 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public Person getById(int id) {
-        return personRepository.getById(id);
+        Person person = personRepository.getById(id);
+        if (isPersonOnline(id)) {
+            person.setLastOnlineTime(System.currentTimeMillis());
+        }
+        return person;
     }
 
     public Person getPersonAfterRegistration(RegisterDto registerDto) {
@@ -93,11 +101,14 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(storageService.getDefaultProfileImage());
         return saveFromRegistration(person);
     }
+
     public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
         Person person = personRepository.getPersonAfterLogin(loginDto);
         if (person == null || person.getIsBlocked()) {
             return null;
         } else {
+            addOnlinePerson(person.getId());
+            person.setLastOnlineTime(System.currentTimeMillis());
             return new PersonDto(person,
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
@@ -174,6 +185,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
 
         List<PersonDto> personsDto = new ArrayList<>();
         for (Person person : persons) {
+            if (isPersonOnline(person.getId())) {
+                person.setLastOnlineTime(System.currentTimeMillis());
+            }
             personsDto.add(new PersonDto(person));
         }
         return personsDto;
@@ -333,5 +347,43 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
 
     public Person getPersonByNotification (NotificationDto notificationDto){
         return personRepository.getById(notificationDto.getPersonId());
+    }
+
+    public boolean isPersonOnline(Integer id) {
+        if (lastOnlineTimeMap.isEmpty()) {
+            return false;
+        }
+        return lastOnlineTimeMap.containsKey(id);
+    }
+
+    public void addOnlinePerson(Integer personId) {
+        lastOnlineTimeMap.put(personId, System.currentTimeMillis());
+        if (isTimeToChekOnlineMap()) {
+            removeOnlinePerson();
+        }
+    }
+
+    public void removeOnlinePerson() {
+        HashMap<Integer, Long> onlineMap = new HashMap<>();
+        List<Integer> offlineMap = new ArrayList<>();
+        lastOnlineTimeMap.forEach((id, time) -> {
+            if (time < System.currentTimeMillis() - DELAY) {
+                offlineMap.add(id);
+            } else {
+                onlineMap.put(id, time);
+            }
+        });
+        lastOnlineTimeMap.clear();
+        lastOnlineTimeMap.putAll(onlineMap);
+        if (!offlineMap.isEmpty()) {
+        personRepository.updateLastOnlineTimeFromMap(offlineMap);
+        }
+    }
+
+    private boolean isTimeToChekOnlineMap() {
+        long l = Math.floorDiv(System.currentTimeMillis(), 1000);
+        int i = Math.round((float) Math.sin(l) * 10);
+
+        return i == 1;
     }
 }
