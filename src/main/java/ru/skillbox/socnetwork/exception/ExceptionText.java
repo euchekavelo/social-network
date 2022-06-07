@@ -10,7 +10,11 @@ public enum ExceptionText {
     COMMENT_INCORRECT_AUTHOR_TO_DELETE("You cannot delete this comment, you are not the author. Author ID is "),
     COMMENT_INCORRECT_AUTHOR_TO_EDIT("You cannot edit this comment, you are not the author. Author ID is "),
     LIKE_WRONG_TYPE("Bad like type. Required 'Post' or 'Comment' types"),
-    TAG_MAX_LENGTH(" symbol's is MAX tag length, current length is ");
+    TAG_MAX_LENGTH(" symbol's is MAX tag length, current length is "),
+    INCORRECT_CAPTCHA("Incorrect captcha, please try again"),
+    INCORRECT_PASSWORD("Passwords do not match"),
+    INCORRECT_EMAIL("Incorrect email, please try again");
+
 
     private final String message;
 

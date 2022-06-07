@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Friendship;
@@ -30,24 +31,32 @@ import ru.skillbox.socnetwork.repository.FriendshipRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
 import ru.skillbox.socnetwork.service.storage.StorageService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
 @DebugLogs
 public class PersonService implements ApplicationListener<AuthenticationSuccessEvent> {
 
+
+    private final FriendshipRepository friendshipRepository;
     private final PersonRepository personRepository;
-    private final JwtTokenProvider tokenProvider;
+
     private final StorageService storageService;
     private final TempTokenService tempTokenService;
     private final MailService mailService;
-    private final FriendshipRepository friendshipRepository;
     private final DeletedUserService deletedUserService;
+    private final CaptchaService captchaService;
+
+    private final JwtTokenProvider tokenProvider;
+
     private static final HashMap<Integer, Long> lastOnlineTimeMap = new HashMap<>();
     public static final Long DELAY = 50_000L;
 
@@ -89,9 +98,18 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return person;
     }
 
-    public Person getPersonAfterRegistration(RegisterDto registerDto) {
-        if (!registerDto.passwordsEqual() || !isEmptyEmail(registerDto.getEmail())) {
-            return null;
+    public Person getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
+        if (!captchaService.isCorrectCode(registerDto)) {
+            throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
+        }
+        if (!isEmptyEmail(registerDto.getEmail())) {
+            throw new InvalidRequestException(ExceptionText.INCORRECT_EMAIL.getMessage());
+        }
+        if (!isCorrectEmail(registerDto.getEmail())) {
+            throw new InvalidRequestException(ExceptionText.INCORRECT_EMAIL.getMessage());
+        }
+        if (!registerDto.passwordsEqual()) {
+            throw new InvalidRequestException(ExceptionText.INCORRECT_PASSWORD.getMessage());
         }
         Person person = new Person();
         person.setEmail(registerDto.getEmail());
@@ -99,6 +117,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
         person.setPhoto(storageService.getDefaultProfileImage());
+        captchaService.removeCaptcha(registerDto.getCodeId());
         return saveFromRegistration(person);
     }
 
@@ -385,5 +404,12 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         int i = Math.round((float) Math.sin(l) * 10);
 
         return i == 1;
+    }
+
+    private boolean isCorrectEmail(String email) {
+        Pattern p = Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
+        Matcher m = p.matcher(email);
+        return m.matches();
     }
 }
