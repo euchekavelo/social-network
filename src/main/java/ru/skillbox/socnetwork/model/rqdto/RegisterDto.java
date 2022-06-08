@@ -13,7 +13,7 @@ public class RegisterDto {
     private String firstName;
     private String lastName;
     @JsonProperty("captcha_id")
-    private Integer codeId;
+    private Long codeId;
     private String code;
 
     public boolean passwordsEqual() {

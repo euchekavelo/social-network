@@ -58,7 +58,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     private final JwtTokenProvider tokenProvider;
 
     private static final HashMap<Integer, Long> lastOnlineTimeMap = new HashMap<>();
-    public static final Long DELAY = 50_000L;
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
@@ -386,7 +385,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         HashMap<Integer, Long> onlineMap = new HashMap<>();
         List<Integer> offlineMap = new ArrayList<>();
         lastOnlineTimeMap.forEach((id, time) -> {
-            if (time < System.currentTimeMillis() - DELAY) {
+            if (time < System.currentTimeMillis() - Constants.FIFTY_SECONDS_IN_MILLIS) {
                 offlineMap.add(id);
             } else {
                 onlineMap.put(id, time);

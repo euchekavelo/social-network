@@ -11,6 +11,7 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.service.Constants;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
@@ -192,6 +193,6 @@ public class PersonRepository {
                  sql.append(" or");
              }
         }
-        jdbc.update(sql.toString(), System.currentTimeMillis() - PersonService.DELAY);
+        jdbc.update(sql.toString(), System.currentTimeMillis() - Constants.FIFTY_SECONDS_IN_MILLIS);
     }
 }

@@ -32,9 +32,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
-    private final PersonService personService;
     private final PostLikeRepository likeRepository;
     private final NotificationRepository notificationRepository;
+
+    private final PersonService personService;
     private final TagService tagService;
 
     public List<PostDto> getAll(int offset, int perPage) {
