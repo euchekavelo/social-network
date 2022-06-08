@@ -28,7 +28,7 @@ public class CaptchaService {
         if (captchaDtoHashMap.size() > 50) {
             this.clearCaptchaMap();
         }
-        return captchaDto.getHidden().equals(registerDto.getEmail());
+        return captchaDto.getHidden().equals(registerDto.getCode());
     }
 
     private void clearCaptchaMap() {
