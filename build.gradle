@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'ru.skillbox'
-version = '0.0.5_07.06.2022_last_online_time'
+version = '0.0.5_08.06.2022_subcomment'
 sourceCompatibility = '11'
 
 configurations {
