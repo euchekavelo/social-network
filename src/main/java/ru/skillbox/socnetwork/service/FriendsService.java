@@ -8,9 +8,12 @@ import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
 import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
@@ -28,6 +31,7 @@ public class FriendsService {
 
     private final PersonRepository personRepository;
     private final FriendshipRepository friendshipRepository;
+    private final NotificationAddService notificationAddService;
 
     private SecurityUser getAuthorizedUser() {
         return (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -92,13 +96,19 @@ public class FriendsService {
                         "as it has already been submitted earlier.");
 
             } else if (friendshipInitiator == null && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
-                    friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
-                            TypeCode.FRIEND.toString());
+                friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
+                        TypeCode.FRIEND.toString());
             }
-        } else
-            friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+        } else {
+            Friendship friendship = friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
                     TypeCode.REQUEST.toString());
 
+            NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.FRIEND_REQUEST,
+                    System.currentTimeMillis(), authorizedUserId, friendship.getId(), focusPersonId,
+                    TypeReadStatus.SENT, "Давай по пивасику?!");
+
+            notificationAddService.addNotificationForOnePerson(notificationDto);
+        }
         return new DialogsResponse("ok");
     }
 

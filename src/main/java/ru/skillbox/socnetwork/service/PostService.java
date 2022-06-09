@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
@@ -10,6 +11,8 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
+import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
@@ -19,6 +22,7 @@ import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
+import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,15 +128,20 @@ public class PostService {
         newPostDto.setTime(currentTime);
         Post post = postRepository.addPost(newPostDto);
 
-        notificationService.addNotification(post.getAuthor(), post.getId(), currentTime,
-                TypeNotificationCode.POST, post.getTitle());
+        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST, currentTime,
+                post.getAuthor(), post.getId(), getShortString(post.getTitle()));
+
+        notificationService.addNotificationForFriends(notificationDto);
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(
                 personService.getById(newPostDto.getAuthorId())),
                 new ArrayList<>(),
                 tagService.getPostTags(post.getId()));
+    }
 
+    private String getShortString(String title) {
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
@@ -154,16 +163,29 @@ public class PostService {
         commentRepository.updateLikeCount(likes, postId);
     }
 
-    public CommentDto addCommentToPost(CommentDto comment, int id) {
-        comment.setAuthor(new PersonDto(personService.getById(getPersonId())));
+    public CommentDto addCommentToPost(CommentDto comment, int id) throws InvalidRequestException {
+        Integer currentUserId = getPersonId();
+        comment.setAuthor(new PersonDto(personService.getById(currentUserId)));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
         comment.setIsBlocked(false);
         commentRepository.add(comment);
-        notificationService.addNotification(comment.getAuthor().getId(), comment.getId(), comment.getTime(),
-                TypeNotificationCode.POST_COMMENT, getShortString(comment.getCommentText()));
+
+        int postAuthorId = getById(id).getAuthor().getId();
+        addNotificationToPostComment(postAuthorId, comment);
         return comment;
     }
+
+    private void addNotificationToPostComment(Integer postAuthorId, CommentDto comment) {
+        Integer currentUserId = comment.getAuthor().getId();
+
+        if (!currentUserId.equals(postAuthorId)) {
+            NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST_COMMENT, comment.getTime(),
+                    currentUserId, comment.getId(), getShortString(comment.getCommentText()));
+            notificationService.addNotificationForOnePerson(notificationDto, postAuthorId);
+        }
+    }
+
 
     public CommentDto editCommentToPost(CommentDto comment) throws InvalidRequestException {
         Integer authorId = this.getPostCommentById(comment.getId()).getAuthorId();
@@ -172,10 +194,6 @@ public class PostService {
         }
         commentRepository.edit(comment);
         return comment;
-    }
-
-    private String getShortString(String title) {
-        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
 

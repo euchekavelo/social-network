@@ -41,6 +41,16 @@ public class NotificationDto {
         this.title = title;
     }
 
+    public NotificationDto(TypeNotificationCode notificationType, Long sentTime, Integer personId,
+                           Integer entityId, String title) {
+        this.notificationType = notificationType;
+        this.sentTime = sentTime;
+        this.personId = personId;
+        this.entityId = entityId;
+        this.status = TypeReadStatus.SENT;
+        this.title = title;
+    }
+
     public NotificationDto(Notification notification) {
         this.id = notification.getId();
         this.notificationType = notification.getNotificationType();

@@ -31,10 +31,10 @@ public class FriendshipRepository {
                 "AND f.code = CAST(? AS code_type)", srcPersonId, dstPersonId, typeCode);
     }
 
-    public void createFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
-        jdbc.update("INSERT INTO friendship (src_person_id, dst_person_id, time, code) " +
-                "VALUES (?, ?, ?, CAST(? AS code_type))",
-                srcPersonId, dstPersonId, System.currentTimeMillis(), typeCode);
+    public Friendship createFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId, String typeCode) {
+       return jdbc.queryForObject("INSERT INTO friendship (src_person_id, dst_person_id, time, code) " +
+                "VALUES (?, ?, ?, CAST(? AS code_type)) returning *",
+               new FriendshipMapper(),srcPersonId, dstPersonId, System.currentTimeMillis(), typeCode);
     }
 
     public Optional<Friendship> getFriendlyStatusByPersonIdsAndCode(Integer srcPersonId, Integer dstPersonId,

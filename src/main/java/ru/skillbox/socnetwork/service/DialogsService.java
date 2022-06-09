@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
+import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
@@ -13,6 +15,7 @@ import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +27,18 @@ public class DialogsService {
 
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
+    private final NotificationService notificationService;
 
-    public GeneralResponse<DialogDto> deleteDialogByById (Integer id) {
+
+    public GeneralResponse<DialogDto> deleteDialogByById(Integer id) {
         DialogDto dto = new DialogDto();
 
         dto.setId(dialogRepository.deleteDialog(id, getSecurityUser().getId()));
 
         return new GeneralResponse<>("string", System.currentTimeMillis(), dto);
     }
-    public GeneralResponse<DialogDto> createDialog (List<Integer> userList) {
+
+    public GeneralResponse<DialogDto> createDialog(List<Integer> userList) {
         SecurityUser securityUser = getSecurityUser();
         Integer dialogId = 0;
         Integer dialogCount = 0;
@@ -48,20 +54,32 @@ public class DialogsService {
         dialogDto.setId(dialogId);
         return new GeneralResponse<>("string", System.currentTimeMillis(), dialogDto);
     }
-    public GeneralResponse<MessageDto> sendMessage (MessageRequest messageRequest, Integer dialogId) {
+
+    public GeneralResponse<MessageDto> sendMessage(MessageRequest messageRequest, Integer dialogId) {
+
         SecurityUser securityUser = getSecurityUser();
-        DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, securityUser.getId());
-        Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), securityUser.getId()).getDialogId();
+        Integer currentUser = securityUser.getId();
+        DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, currentUser);
+        Integer recipientId = recipient.getId();
+        Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipientId, currentUser).getDialogId();
         Long time = System.currentTimeMillis();
         if (recipientDialogId == 0) {
-            dialogRepository.createDialogForMessage(recipient.getId(), securityUser.getId(), dialogId);
+            dialogRepository.createDialogForMessage(recipientId, currentUser, dialogId);
         }
-        Integer messageId = messageRepository.sendMessage (time, securityUser.getId(),
-                recipient.getId(),
-                messageRequest.getMessageText(), dialogId);
+        Integer messageId = messageRepository.sendMessage(time, currentUser,
+                recipientId, messageRequest.getMessageText(), dialogId);
+
+        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.MESSAGE, time, currentUser,
+                messageId, getShortString(messageRequest.getMessageText()));
+        notificationService.addNotificationForOnePerson(notificationDto, recipientId);
+
         return new GeneralResponse<>("String", time,
                 new MessageDto(messageId, time, securityUser.getId(), recipient.getRecipientId(),
                         messageRequest.getMessageText(), "SENT"));
+    }
+
+    private String getShortString(String title) {
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
     public GeneralResponse<List<DialogsResponse>> getDialogs() {
@@ -91,6 +109,7 @@ public class DialogsService {
         return new GeneralResponse<>("string", System.currentTimeMillis(),
                 dialogList.size(), 0, 0, dialogsResponseList);
     }
+
     public GeneralResponse<List<MessageDto>> getMessageById(Integer id) {
         SecurityUser securityUser = getSecurityUser();
         List<MessageDto> messageList = messageRepository.getMessageList(id);
@@ -125,6 +144,7 @@ public class DialogsService {
         return new GeneralResponse<>("string", System.currentTimeMillis(),
                 messageList.size(), 0, 10, messageDtoList);
     }
+
     public GeneralResponse<DialogsResponse> getUnreadMessageCount() {
         SecurityUser securityUser = getSecurityUser();
         return new GeneralResponse<>("string", System.currentTimeMillis(),

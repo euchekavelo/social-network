@@ -55,8 +55,10 @@ public class PostController {
     }
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
-                                                                        @RequestBody CommentDto comment) {
+    public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(
+            @PathVariable int id,
+            @RequestBody CommentDto comment)
+            throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.addCommentToPost(comment, id)));
     }
@@ -79,10 +81,6 @@ public class PostController {
         return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
     }
 
-
-    /*
-    TODO логику перенести в сервис. Возможно перенести весь функционал по поиску в SearchService.
-     */
     @GetMapping()
     public ResponseEntity<GeneralResponse<List<PostDto>>> searchPostByText(
             @RequestParam(value = "text") String text,
