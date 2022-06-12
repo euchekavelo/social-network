@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-//@DebugLogs
+@DebugLogs
 public class PostService {
 
     private final PostRepository postRepository;
