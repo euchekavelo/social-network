@@ -96,15 +96,9 @@ public class PostService {
     private CommentDto getCommentDtoWithSubComments(List<PostComment> postSubComments, PostComment comment) {
         CommentDto commentDto = new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId())));
         if (!postSubComments.isEmpty()) {
-            List<CommentDto> subComments = postSubComments
-                    .stream()
-                    .filter(c -> Objects.equals(c.getParentId(), commentDto.getPostId()))
-                    .map(subComment -> new CommentDto())
-                    .collect(Collectors.toList());
-
             commentDto.setSubComments(postSubComments
                     .stream()
-                    .filter(c -> Objects.equals(c.getParentId(), commentDto.getPostId()))
+                    .filter(c -> Objects.equals(c.getParentId(), commentDto.getId()))
                     .map(subComment -> new CommentDto())
                     .collect(Collectors.toList()));
         } else {
