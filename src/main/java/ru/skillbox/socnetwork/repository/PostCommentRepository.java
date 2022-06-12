@@ -21,7 +21,7 @@ public class PostCommentRepository {
         String sql = "select pc.*, (cl.person_id = ?) as is_liked " +
                 "from post_comment pc " +
                 "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.post_id = ? and pc.parent_id is null order by time";
+                "where pc.post_id = ? and pc.parent_id is null order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
@@ -29,7 +29,7 @@ public class PostCommentRepository {
         String sql = "select pc.*, (cl.person_id = ?) as is_liked " +
                 "from post_comment pc " +
                 "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.post_id = ? and pc.parent_id > 0 order by time";
+                "where pc.post_id = ? and pc.parent_id > 0 order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+//@DebugLogs
 public class PostService {
 
     private final PostRepository postRepository;
@@ -96,11 +96,12 @@ public class PostService {
     private CommentDto getCommentDtoWithSubComments(List<PostComment> postSubComments, PostComment comment) {
         CommentDto commentDto = new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId())));
         if (!postSubComments.isEmpty()) {
-            commentDto.setSubComments(postSubComments
-                    .stream()
-                    .filter(c -> Objects.equals(c.getParentId(), commentDto.getId()))
-                    .map(subComment -> new CommentDto())
-                    .collect(Collectors.toList()));
+            List<CommentDto> subComments = postSubComments.stream()
+                    .filter(c -> Objects.equals(c.getParentId(), comment.getId()))
+                    .map(c -> new CommentDto(c, new PersonDto(personService.getById(c.getAuthorId()))))
+                    .collect(Collectors.toList());
+            commentDto.setSubComments(subComments);
+            System.out.println("\n!!!!!!!!!!!!!!!!" + commentDto + "!!!!!!!!!!!!!!!!\n");
         } else {
             commentDto.setSubComments(new ArrayList<>());
         }
