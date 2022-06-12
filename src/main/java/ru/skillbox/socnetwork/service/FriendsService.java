@@ -67,6 +67,8 @@ public class FriendsService {
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
             throw new InvalidRequestException("You can't send a request to yourself.");
+        } else if (personRepository.getById(focusPersonId) == null) {
+            throw new InvalidRequestException("Request denied. The specified user was not found in the database.");
         }
 
         Optional<Friendship> friendshipFromInitiator = friendshipRepository
@@ -115,10 +117,15 @@ public class FriendsService {
         return friendshipRepository.getInformationAboutFriendships(email, userIds);
     }
 
-    public DialogsResponse deleteFriendRequestById(Integer id) throws InvalidRequestException {
+    public DialogsResponse deleteFriendRequestByPersonId(Integer srcPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
-        int count = friendshipRepository.deleteFriendRequestById(id, authorizedUserId);
+        if (srcPersonId.equals(authorizedUserId)) {
+            throw new InvalidRequestException("Cannot apply this operation to itself.");
+        }
+
+        int count = friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(srcPersonId, authorizedUserId,
+                TypeCode.REQUEST.toString());
         if (count == 0) {
             throw new InvalidRequestException("Deletion failed. The specified friend request was not found.");
         }
