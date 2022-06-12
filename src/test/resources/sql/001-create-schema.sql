@@ -24,11 +24,18 @@ drop type if exists code_type;
 drop type if exists read_status_type;
 drop type if exists notification_code_type;
 
+DO $$
+BEGIN
+create type permission_type as enum ('ALL', 'FRIENDS');
 create type permission_type as enum ('ALL', 'FRIENDS');
 create type action_type as enum ('BLOCK', 'UNBLOCK');
 create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
 create type read_status_type as enum ('SENT', 'READ');
 create type notification_code_type as enum ('POST', 'POST_COMMENT', 'COMMENT_COMMENT', 'FRIEND_REQUEST', 'MESSAGE');
+EXCEPTION WHEN DUPLICATE_OBJECT THEN
+		RAISE NOTICE 'enums  exists, skipping...';
+		END
+$$;
 
 create table if not exists person (
     id serial,
