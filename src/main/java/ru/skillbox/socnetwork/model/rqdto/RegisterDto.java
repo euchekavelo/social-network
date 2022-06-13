@@ -12,6 +12,8 @@ public class RegisterDto {
     private String secondPassword;
     private String firstName;
     private String lastName;
+    @JsonProperty("captcha_id")
+    private Long codeId;
     private String code;
 
     public boolean passwordsEqual() {

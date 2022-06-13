@@ -19,12 +19,12 @@ public class FriendsController {
 
     private final FriendsService friendsService;
 
-    @DeleteMapping("/friends/request/{id}")
+    @DeleteMapping("/friends/request/person/{id}")
     public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriendRequest(@PathVariable Integer id)
             throws InvalidRequestException {
 
         GeneralResponse<DialogsResponse> generalResponse = new GeneralResponse<>("string",
-                System.currentTimeMillis(), friendsService.deleteFriendRequestById(id));
+                System.currentTimeMillis(), friendsService.deleteFriendRequestByPersonId(id));
 
         return ResponseEntity.ok(generalResponse);
     }

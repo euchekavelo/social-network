@@ -25,6 +25,7 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,8 +35,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
-    private final PersonService personService;
     private final PostLikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
+
+    private final PersonService personService;
     private final TagService tagService;
     private final NotificationService notificationService;
 
@@ -82,13 +85,30 @@ public class PostService {
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getCommentsByPostId(getPersonId(), postId);
+        List<PostComment> postComments = commentRepository.getLikedParentCommentsByPostId(getPersonId(), postId);
         if (postComments.isEmpty()) {
             return new ArrayList<>();
         }
+        List<PostComment> postSubComments = commentRepository.getLikedSubCommentsByPostId(getPersonId(), postId);
+
         return postComments.stream()
-                .map(comment -> new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId()))))
+                .map(comment -> getCommentDtoWithSubComments(postSubComments, comment))
                 .collect(Collectors.toList());
+    }
+
+    private CommentDto getCommentDtoWithSubComments(List<PostComment> postSubComments, PostComment comment) {
+        CommentDto commentDto = new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId())));
+        if (!postSubComments.isEmpty()) {
+            List<CommentDto> subComments = postSubComments.stream()
+                    .filter(c -> Objects.equals(c.getParentId(), comment.getId()))
+                    .map(c -> new CommentDto(c, new PersonDto(personService.getById(c.getAuthorId()))))
+                    .collect(Collectors.toList());
+            commentDto.setSubComments(subComments);
+            System.out.println("\n!!!!!!!!!!!!!!!!" + commentDto + "!!!!!!!!!!!!!!!!\n");
+        } else {
+            commentDto.setSubComments(new ArrayList<>());
+        }
+        return commentDto;
     }
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {

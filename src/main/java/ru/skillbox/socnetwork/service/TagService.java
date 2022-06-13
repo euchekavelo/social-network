@@ -19,10 +19,8 @@ import java.util.stream.Collectors;
 @DebugLogs
 public class TagService {
 
-    private static final int MAX_TAG_LENGTH = 15;
     private final TagRepository tagRepository;
     private final Post2TagRepository post2TagRepository;
-
 
     public List<String> getPostTags(int postId) {
         return tagRepository
@@ -33,9 +31,9 @@ public class TagService {
     }
 
     public void addTag(String tag) throws InvalidRequestException {
-        if (tag.length() > MAX_TAG_LENGTH) {
+        if (tag.length() > Constants.MAX_TAG_LENGTH) {
             throw new InvalidRequestException(
-                    MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.getMessage() + tag.length());
+                    Constants.MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.getMessage() + tag.length());
         } else {
         tagRepository.addTag(tag);
         }

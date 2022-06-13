@@ -24,12 +24,12 @@ public class PostRepository {
     }
 
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE time < ? ORDER BY time DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM post WHERE time < ? ORDER BY id DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
     }
 
     public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE author = ? ORDER BY time DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
         return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
     }
 
@@ -43,7 +43,7 @@ public class PostRepository {
         jdbc.update(sql, id);
     }
 
-    public Post getLastPersonPost(int personId) throws EmptyResultDataAccessException {
+    public Post getPersonLastPost(int personId) throws EmptyResultDataAccessException {
         String sql = "select * from post where author = ? order by time desc limit 1";
         return jdbc.queryForObject(sql, new PostMapper(), personId);
     }
@@ -51,7 +51,7 @@ public class PostRepository {
     public Post addPost(NewPostDto newPostDto) {
         String sql = "insert into post (time, author, title, post_text, is_blocked) values (?, ?, ?, ?, ?)";
         jdbc.update(sql, newPostDto.getTime(), newPostDto.getAuthorId(), newPostDto.getTitle(), newPostDto.getPostText(), false);
-        return getLastPersonPost(newPostDto.getAuthorId());
+        return getPersonLastPost(newPostDto.getAuthorId());
     }
 
     public void editPost(int id, NewPostDto newPostDto) {

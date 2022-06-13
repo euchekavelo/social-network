@@ -6,11 +6,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
+import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
+import ru.skillbox.socnetwork.service.Constants;
+import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
 
@@ -181,5 +183,17 @@ public class PersonRepository {
     public void setDeleted(Integer id, Boolean b){
         String sql = "update person set is_deleted = ? where person.id = ?";
         jdbc.update(sql, b, id);
+    }
+
+    public void updateLastOnlineTimeFromMap(List<Integer> offlineMap) {
+        StringBuilder sql = new StringBuilder("UPDATE person SET last_online_time = ? WHERE");
+        for (int i = 0; i < offlineMap.size(); i++) {
+             int id = offlineMap.get(i);
+             sql.append(" id = ").append(id);
+             if (i < offlineMap.size() - 1) {
+                 sql.append(" or");
+             }
+        }
+        jdbc.update(sql.toString(), System.currentTimeMillis() - Constants.FIFTY_SECONDS_IN_MILLIS);
     }
 }
