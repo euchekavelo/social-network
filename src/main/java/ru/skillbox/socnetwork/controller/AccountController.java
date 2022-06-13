@@ -25,6 +25,7 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
 import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -36,6 +37,7 @@ public class AccountController {
 
     private final PersonService personService;
     private final CaptchaService captchaService;
+    private NotificationSettingsService notificationSettingsService;
 
     @GetMapping("/register")
     public CaptchaDto captcha() {
