@@ -32,7 +32,7 @@ build:
       - build/libs/*.jar
   tags:
     - java_pro_team_linux_ubuntu
-#sdsd
+
 deploy to server:
   stage: deploy
   only:
