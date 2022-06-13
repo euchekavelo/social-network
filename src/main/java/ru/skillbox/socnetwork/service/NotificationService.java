@@ -9,6 +9,7 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
+import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class NotificationService {
     private final NotificationAddService notificationAddService;
     private final PersonService personService;
     private final FriendsService friendsService;
+    private final NotificationSettingsRepository notificationSettingsRepository;
 
     public void addNotificationForFriends(NotificationDto notificationDto) {
 
@@ -32,8 +34,14 @@ public class NotificationService {
 
     public void addNotificationForOnePerson(NotificationDto notificationDto,
                                             Integer destinationId) {
-        notificationDto.setDistUserId(destinationId);
-        notificationAddService.addNotificationForOnePerson(notificationDto);
+
+        boolean settingsEnable = notificationSettingsRepository.checkSettingsForNotification
+                (notificationDto.getNotificationType(),destinationId);
+        if (settingsEnable){
+            notificationDto.setDistUserId(destinationId);
+            notificationAddService.addNotificationForOnePerson(notificationDto);
+        }
+
     }
 
     public List<NotificationDtoToView> getAllNotifications() {

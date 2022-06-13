@@ -22,10 +22,7 @@ import java.util.List;
 @InfoLogs
 public class NotificationController {
 
-    private final JwtTokenProvider tokenProvider;
     private final NotificationService notificationService;
-    private final PersonService personService;
-
 
     @GetMapping()
     public ResponseEntity<GeneralResponse<List<NotificationDtoToView>>> getNotificationsByUser(
@@ -44,7 +41,6 @@ public class NotificationController {
             @RequestParam(value = "all", defaultValue = "true", required = false) boolean all) {
 
         notificationService.readAllNotifications(id, all);
-//return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)))
         return ResponseEntity.ok(new GeneralResponse<Object>());
     }
 

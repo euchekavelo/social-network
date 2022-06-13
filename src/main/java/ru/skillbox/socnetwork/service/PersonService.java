@@ -23,6 +23,7 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
+import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
@@ -48,6 +49,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     private final MailService mailService;
     private final FriendshipRepository friendshipRepository;
     private final DeletedUserService deletedUserService;
+    private final NotificationSettingsRepository notificationSettingsRepository;
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
@@ -72,7 +74,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public Person saveFromRegistration(Person person) {
-        return personRepository.saveFromRegistration(person);
+        Person newPerson = personRepository.saveFromRegistration(person);
+        notificationSettingsRepository.addNotificationSettingsForNewUser(newPerson.getId());
+        return newPerson;
     }
 
     public Person getById(int id) {

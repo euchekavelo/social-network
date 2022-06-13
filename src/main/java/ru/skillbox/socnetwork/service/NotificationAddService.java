@@ -15,7 +15,6 @@ public class NotificationAddService {
 
     public void addNotificationForOnePerson(NotificationDto notificationDto) {
         notificationRepository.addNotification(notificationDto);
-
     }
 
     public List<Notification> getAllNotifications(Integer currentUserId) {

@@ -6,10 +6,8 @@ import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 
 import ru.skillbox.socnetwork.model.entity.Notification;
-import ru.skillbox.socnetwork.model.entity.NotificationType;
 import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.mapper.NotificationMapper;
-import ru.skillbox.socnetwork.model.mapper.NotificationTypeMapper;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 
 import java.util.List;
@@ -47,12 +45,12 @@ public class NotificationRepository {
         return jdbc.query(sql, new NotificationMapper(), personId, TypeReadStatus.SENT.toString());
     }
 
-    public void readAllNotificationByUser(int personId ){
+    public void readAllNotificationByUser(int personId) {
         String sql = "UPDATE notification SET status = CAST(? AS read_status_type) WHERE dist_user_id = ?";
         jdbc.update(sql, TypeReadStatus.READ.toString(), personId);
     }
 
-    public void readUsersNotificationById(int notificationId){
+    public void readUsersNotificationById(int notificationId) {
         String sql = "UPDATE notification SET status = CAST(? AS read_status_type) WHERE id = ?";
         jdbc.update(sql, TypeReadStatus.READ.toString(), notificationId);
     }
