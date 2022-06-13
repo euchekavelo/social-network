@@ -1,11 +1,13 @@
 package ru.skillbox.socnetwork.controller;
 
+import com.dropbox.core.DbxException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
@@ -48,7 +50,8 @@ public class StorageController {
                       schema = @Schema(implementation = GeneralResponse.class)
                   )))
       })
-  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file) { //TODO: сделать разметку requestBody
+  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file)
+      throws IOException, DbxException { //TODO: сделать разметку requestBody
 
     return ResponseEntity.ok(new GeneralResponse<>(
         "string",

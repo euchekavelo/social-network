@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
+import cn.apiclub.captcha.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -7,14 +8,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import cn.apiclub.captcha.Captcha;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
@@ -46,9 +45,6 @@ public class AccountController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> register(
-            @RequestBody RegisterDto request) throws InvalidRequestException {
-
     @Operation(summary = "Регистрация пользователя",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -67,18 +63,15 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                 )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) {
-        Person person = personService.getPersonAfterRegistration(request);
+    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(
+      return ResponseEntity.ok(new GeneralResponse<>(
             "string",
-            person.getRegDate(),
-            new DialogsResponse("ok")));
+            System.currentTimeMillis(),
+            new DialogsResponse(personService.getPersonAfterRegistration(request))));
     }
 
     @PutMapping(value = "/password/recovery")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(
-            @RequestBody Map<String, String> body) throws InvalidRequestException {
     @Operation(summary = "Восстановление пароля", description = "Отправляет на email ссылку для восстановления пароля",
         parameters = @Parameter(name = "email", example = "some@mail.ru"),
         responses = {
@@ -108,8 +101,6 @@ public class AccountController {
     }
 
     @PutMapping(value = "/password/set")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(
-            @RequestBody Map<String, String> body) throws InvalidRequestException {
     @Operation(summary = "Изменение пароля",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(mediaType = "application/json",

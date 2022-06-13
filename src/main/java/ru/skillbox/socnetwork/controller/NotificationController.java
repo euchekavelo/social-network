@@ -14,7 +14,6 @@ import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.NotificationService;
@@ -54,7 +53,6 @@ public class NotificationController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<List<NotificationDTONew>>> getNotificationsByUser(
     public ResponseEntity<GeneralResponse<List<NotificationDtoToView>>> getNotificationsByUser(
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage) {
@@ -101,7 +99,6 @@ public class NotificationController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<List<NotificationDTONew>>> getNotifications(
     public ResponseEntity<GeneralResponse<List<NotificationDtoToView>>> getNotifications(
             @RequestParam(value = "id", defaultValue = "1", required = false) int id,
             @RequestParam(value = "all", defaultValue = "true", required = false) boolean all) {

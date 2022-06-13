@@ -5,6 +5,7 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
+import java.nio.file.Files;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +67,6 @@ public class StorageService {
     deleteFile("/" + localRootPath);
   }
 
-  public FileUploadDTO uploadFile(MultipartFile file) {
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
     Person person = null;
     FileMetadata fileMetadata = null;

@@ -83,7 +83,6 @@ public class ProfileController {
                     )))
         })
     public ResponseEntity<GeneralResponse<Person>> updateProfile(
-            @RequestBody UpdatePersonDto updatePersonDto) {
         @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
         return ResponseEntity.ok(new GeneralResponse<>(
@@ -118,7 +117,6 @@ public class ProfileController {
     }
 
     @PutMapping(path = "me/return")
-    public ResponseEntity<GeneralResponse<PersonDto>> returnProfile() {
     @Operation(summary = "Восстановление пользователя",
         responses = {
             @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -164,12 +162,6 @@ public class ProfileController {
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getWallByProfileId
-            (@PathVariable int id,
-             @RequestParam(value = "offset", defaultValue = "0") int offset,
-             @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
-                postService.getPostCount(), offset, perPage);
     @Operation(summary = "Получение записей пользователя",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -188,18 +180,17 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<Object> getWallByProfileId(@PathVariable @Parameter(description = "Идентификатор пользователя") int id,
-                                                     @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                     @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Object> getWallByProfileId
+            (@PathVariable int id,
+             @RequestParam(value = "offset", defaultValue = "0") int offset,
+             @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
+        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
+                postService.getPostCount(), offset, perPage);
+
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getWall(id, offset, perPage)));
     }
 
     @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GeneralResponse<PostDto>> addNewPost
-            (@PathVariable int id,
-             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
-             @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
     @Operation(summary = "Добавление записи на стену пользователя",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -218,13 +209,13 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<Object> addNewPost(@PathVariable @Parameter(description = "Идентификатор пользователя") int id,
-                                             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
-                                             @RequestBody NewPostDto newPostDto) {
-        newPostDto.setAuthorId(id);
+    public ResponseEntity<GeneralResponse<PostDto>> addNewPost
+            (@PathVariable int id,
+             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
+             @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
 
-        GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));
-        return ResponseEntity.ok(response);
+        newPostDto.setAuthorId(id);
+        return ResponseEntity.ok(new GeneralResponse<>(postService.addPost(newPostDto, publishDate)));
     }
 
     @PutMapping("block/{id}")

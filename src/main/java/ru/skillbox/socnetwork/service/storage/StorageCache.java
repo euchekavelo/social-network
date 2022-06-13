@@ -26,6 +26,7 @@ public class StorageCache {
   @PostConstruct
   private void initCache(){
     RedissonClient redissonClient = connect();
+    System.err.println(redissonClient);
     cache = redissonClient.getMap("image-cache");
     cache.clear();
     cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);

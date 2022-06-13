@@ -46,8 +46,6 @@ public class FeedsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<List<PostDto>>> getFeeds(@RequestParam(value = "offset", defaultValue = "0") int offset,
-                                                     @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
     public ResponseEntity<GeneralResponse<List<PostDto>>> getFeeds
             (@RequestParam(value = "offset", defaultValue = "0") int offset,
              @RequestParam(value = "perPage", defaultValue = "20") int perPage) {

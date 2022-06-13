@@ -17,8 +17,6 @@ import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.security.SecurityUser;
-import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 
@@ -134,88 +132,81 @@ public class PostController {
         return ResponseEntity.ok(new GeneralResponse<>(postService.getCommentDtoList(id)));
     }
 
+    @Operation(summary = "Добавление комментария к посту",
+      responses = {
+          @ApiResponse(responseCode = "400", description = "Bad request",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "401", description = "Unauthorized",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "200", description = "Успешное добавление комментария к посту",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = GeneralResponse.class)
+                  )))
+      })
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
                                                                         @RequestBody CommentDto comment) {
-    @Operation(summary = "Добавление комментария к посту",
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Успешное добавление комментария к посту",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
-    public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable @Parameter(description = "Идентификатор поста") int id,
-                                                                         @RequestBody CommentDto comment) {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.addCommentToPost(comment, id)));
     }
 
+    @Operation(summary = "Редактирование комментария к посту",
+      responses = {
+          @ApiResponse(responseCode = "400", description = "Bad request",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "401", description = "Unauthorized",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "200", description = "Успешное редактирование комментария к посту",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = GeneralResponse.class)
+                  )))
+      })
     @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(
             @PathVariable int id,
             @PathVariable int commentId,
             @RequestBody CommentDto comment) throws InvalidRequestException {
-    @Operation(summary = "Редактирование комментария к посту",
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Успешное редактирование комментария к посту",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
-    public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(@PathVariable @Parameter(description = "Идентификатор поста") int id,
-                                                                         @PathVariable @Parameter(description = "Идентификатор комментария") int commentId,
-                                                                         @RequestBody CommentDto comment) {
 
         comment.setId(commentId);
         return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 
+    @Operation(summary = "Удаление комментария к посту",
+      responses = {
+          @ApiResponse(responseCode = "400", description = "Bad request",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "401", description = "Unauthorized",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = ErrorResponseDto.class)
+                  ))),
+          @ApiResponse(responseCode = "200", description = "Успешное удаление комментария к посту",
+              content = @Content(mediaType = "application/json",
+                  array = @ArraySchema(
+                      schema = @Schema(implementation = GeneralResponse.class)
+                  )))
+      })
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(
             @PathVariable int id,
             @PathVariable int commentId) throws InvalidRequestException {
-    @Operation(summary = "Удаление комментария к посту",
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Успешное удаление комментария к посту",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
-    public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(@PathVariable @Parameter(description = "Идентификатор поста") int id,
-                                                                         @PathVariable @Parameter(description = "Идентификатор комментария") int commentId) {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
     }

@@ -99,7 +99,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return person;
     }
 
-    public Person getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
+    public String getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
         if (!captchaService.isCorrectCode(registerDto)) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
@@ -119,7 +119,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setLastName(registerDto.getLastName());
         person.setPhoto(storageService.getDefaultProfileImage());
         captchaService.removeCaptcha(registerDto.getCodeId());
-        return saveFromRegistration(person);
+        return "ok";
     }
 
     public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {

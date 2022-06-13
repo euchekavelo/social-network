@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,14 +10,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.*;
-import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.DialogsService;
 
 import java.util.List;
@@ -92,12 +89,10 @@ public class DialogsController {
             @ApiResponse(responseCode = "200", description = "Успешное получение списка сообщений в диалоге")
         })
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
-        return dialogsService.getMessageById(id);
-    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable Integer id) {
+
         return ResponseEntity.ok(dialogsService.getMessageById(id));
     }
 
-    @GetMapping("/unreaded")
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение количества непрочитанных сообщений",
         responses = {
@@ -136,12 +131,6 @@ public class DialogsController {
         @RequestBody MessageRequest messageRequest,
         @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
-        return dialogsService.sendMessage(messageRequest, id);
-    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
-            @RequestBody MessageRequest messageRequest, @PathVariable Integer id) {
-        if (!messageRequest.getMessageText().equals("")) {
-            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
     }
 }
