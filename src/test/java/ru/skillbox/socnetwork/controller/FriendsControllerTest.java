@@ -28,14 +28,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class FriendsControllerTest {
+class FriendsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getFriendsTest() throws Exception {
+    void getFriendsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -44,14 +44,14 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessGetFriendsTest() throws Exception {
+    void unauthorizedAccessGetFriendsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void deleteFriendRequestTest() throws Exception {
+    void deleteFriendRequestTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/request/person/3"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -61,7 +61,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void deleteFriendRequestFromYourselfTest() throws Exception {
+    void deleteFriendRequestFromYourselfTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/request/person/1"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -72,7 +72,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void deleteFriendRequestNonExistentTest() throws Exception {
+    void deleteFriendRequestNonExistentTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/request/person/27"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -82,14 +82,14 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessDeleteFriendRequestTest() throws Exception {
+    void unauthorizedAccessDeleteFriendRequestTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/request/person/3"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getListFriendRequestsTest() throws Exception {
+    void getListFriendRequestsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends/request"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -98,14 +98,14 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessGetListFriendRequestsTest() throws Exception {
+    void unauthorizedAccessGetListFriendRequestsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends/request"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getListRecommendedFriendsTest() throws Exception {
+    void getListRecommendedFriendsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends/recommendations"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -114,14 +114,14 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessGetListRecommendedFriendsTest() throws Exception {
+    void unauthorizedAccessGetListRecommendedFriendsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/friends/recommendations"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void getInformationAboutFriendshipsTest() throws Exception {
+    void getInformationAboutFriendshipsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/is/friends")
                         .contentType(MediaType.APPLICATION_JSON).content(Files.readString(Path.of("src/test" +
                                 "/resources/json/friends_controller_test/friendships_with_specified_users.json"))))
@@ -132,7 +132,7 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessGetInformationAboutFriendshipsTest() throws Exception {
+    void unauthorizedAccessGetInformationAboutFriendshipsTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/is/friends")
                         .contentType(MediaType.APPLICATION_JSON).content(Files.readString(Path.of("src/test" +
                                 "/resources/json/friends_controller_test/friendships_with_specified_users.json"))))
@@ -141,7 +141,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendTest() throws Exception {
+    void addFriendTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/4"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -151,7 +151,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendYourselfTest() throws Exception {
+    void addFriendYourselfTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -162,7 +162,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendAgainTest() throws Exception {
+    void addFriendAgainTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -173,7 +173,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void sendFriendRequestAgainTest() throws Exception {
+    void sendFriendRequestAgainTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/8"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -184,7 +184,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendBlockedUserTest() throws Exception {
+    void addFriendBlockedUserTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/7"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -195,7 +195,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void addFriendNonExistentUserTest() throws Exception {
+    void addFriendNonExistentUserTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1232133"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -204,14 +204,14 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessAddFriendTest() throws Exception {
+    void unauthorizedAccessAddFriendTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void deleteFriendTest() throws Exception {
+    void deleteFriendTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/5"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -221,7 +221,7 @@ public class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    public void deleteNonExistentFriendTest() throws Exception {
+    void deleteNonExistentFriendTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/112398"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -231,7 +231,7 @@ public class FriendsControllerTest {
     }
 
     @Test
-    public void unauthorizedAccessDeleteFriendTest() throws Exception {
+    void unauthorizedAccessDeleteFriendTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/2"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
