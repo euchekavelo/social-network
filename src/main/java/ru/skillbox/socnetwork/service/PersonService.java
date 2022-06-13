@@ -1,10 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
-import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import org.apache.commons.text.RandomStringGenerator;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -31,6 +28,7 @@ import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
 import ru.skillbox.socnetwork.service.storage.StorageService;
 
 

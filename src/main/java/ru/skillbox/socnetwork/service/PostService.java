@@ -11,7 +11,6 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
@@ -22,7 +21,6 @@ import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
-import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,8 +34,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
     private final PostLikeRepository likeRepository;
-    private final NotificationRepository notificationRepository;
-
     private final PersonService personService;
     private final TagService tagService;
     private final NotificationService notificationService;
