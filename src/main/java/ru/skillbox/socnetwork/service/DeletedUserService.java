@@ -29,17 +29,16 @@ public class DeletedUserService {
   private final Post2TagRepository post2TagRepository;
   private final PostRepository postRepository;
   private final StorageService storageService;
+  private final MailService mailService;
 
   @Scheduled(fixedRateString = "PT01H")
   public void checkExpiredUsers() throws DbxException {
-    List<DeletedUser> users = deletedUsersRepository.getAll();
     List<DeletedUser> expiredUsers = deletedUsersRepository.getAllExpired();
     if(!expiredUsers.isEmpty()){
       for(DeletedUser user : expiredUsers){
         deletePersonData(user.getPersonId());
         storageService.deleteFile(user.getPhoto());
         deletedUsersRepository.delete(user.getId());
-        personRepository.setDeleted(user.getPersonId(), false);
       }
     }
   }
@@ -50,7 +49,7 @@ public class DeletedUserService {
   }
 
   @Transactional
-  private void deletePersonData(Integer personId) throws DbxException {
+  public void deletePersonData(Integer personId) throws DbxException {
     commentLikeRepository.deleteAllPersonLikes(personId);
     commentLikeRepository.deleteAllPersonPostsLikes(personId);
 
@@ -76,7 +75,9 @@ public class DeletedUserService {
 
     postRepository.deleteAllPersonPosts(personId);
 
+    String email = personRepository.getById(personId).getEmail();
     personRepository.delete(personId);
+    mailService.send(email, "Your account deleted!", "Your account and all your data was completely deleted!");
   }
 
   public DeletedUser getDeletedUser(Integer personId){

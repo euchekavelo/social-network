@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.service;
 
-import com.dropbox.core.DbxException;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.apache.commons.text.RandomStringGenerator;
@@ -69,6 +68,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+//    @Value("${skillbox.app.address}")
+    private final String HOST = "195.133.201.227";
+
     public List<Person> getAll() {
         return personRepository.getAll();
     }
@@ -97,7 +99,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return person;
     }
 
-    public Person getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
+    public String getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
         if (!captchaService.isCorrectCode(registerDto)) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
@@ -117,7 +119,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setLastName(registerDto.getLastName());
         person.setPhoto(storageService.getDefaultProfileImage());
         captchaService.removeCaptcha(registerDto.getCodeId());
-        return saveFromRegistration(person);
+        return "ok";
     }
 
     public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
@@ -131,9 +133,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
+    public Person updatePerson(UpdatePersonDto changedPerson) throws ParseException {
+        Person updatablePerson = getAuthenticatedPerson();
 
-    public Person updatePerson(UpdatePersonDto changedPerson){
-        Person updatablePerson = getByEmail(getSecurityUser().getUsername());
         if(changedPerson.getFirstName() != null &&
             !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
             updatablePerson.setFirstName(changedPerson.getFirstName());
@@ -146,14 +148,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         if(changedPerson.getBirthDate() != null){
             date = changedPerson.getBirthDate().substring(0, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            long dateTime;
-            try {
-                dateTime = format.parse(date).getTime();
-                if (dateTime != updatablePerson.getBirthDate()) {
-                    updatablePerson.setBirthDate(dateTime);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            long dateTime = format.parse(date).getTime();
+            if (dateTime != updatablePerson.getBirthDate()) {
+                updatablePerson.setBirthDate(dateTime);
             }
         }
         if (!changedPerson.getPhone().isEmpty()) {
@@ -191,6 +188,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         personRepository.updateEmail(person, body.get("email"));
         tempTokenService.deleteToken(body.get("token"));
+        mailService.send(email, "Your email has been changed", "Your email changed successfully!");
+        mailService.send(person.getEmail(), "Your email has been changed", "Your email changed successfully!");
         return "ok";
     }
 
@@ -218,7 +217,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "195.133.201.227/shift-email?token=" + token.getToken();
+        String link = HOST + "/shift-email?token=" + token.getToken();
         mailService.send(email, "Your SocNetwork Email change link", link);
         return "ok";
     }
@@ -230,7 +229,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = "195.133.201.227/change-password?token=" + token.getToken();
+        String link = HOST + "/change-password?token=" + token.getToken();
         mailService.send(person.getEmail(), "SocNetwork Password recovery", link);
 
         return "ok";
@@ -249,6 +248,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePassword(person);
         tempTokenService.deleteToken(body.get("token"));
 
+        mailService.send(person.getEmail(), "Your password has been changed", "Your password changed successfully! You can now log in with new password!");
         return "ok";
     }
 
@@ -331,12 +331,10 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public String setBlockPerson() throws InvalidRequestException{
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        Person person = getByEmail(securityUser.getUsername());
+        Person person = getAuthenticatedPerson();
 
         if(person == null){
-            throw new InvalidRequestException("User with email " + securityUser.getUsername() + " not registered");
+            throw new InvalidRequestException("User with email " + person.getEmail() + " not registered");
         }
         deletedUserService.add(person);
         person.setIsDeleted(true);
@@ -346,11 +344,13 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(storageService.getDeletedProfileImage());
         personRepository.updatePhoto(person);
 
+        mailService.send(person.getEmail(), "Your account will be deleted in 3 days!", "You requested to delete your account, it will be completely deleted in 3 days!");
         return "ok";
     }
 
     public Person returnProfile(){
-        Person person = getByEmail(getSecurityUser().getUsername());
+        Person person = getAuthenticatedPerson();
+
         DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
 
         person.setPhoto(deletedUser.getPhoto());
@@ -360,6 +360,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePhoto(person);
         deletedUserService.delete(deletedUser.getId());
 
+        mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");
         return person;
     }
 
@@ -410,5 +411,11 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
         Matcher m = p.matcher(email);
         return m.matches();
+    }
+
+    private Person getAuthenticatedPerson(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        return getByEmail(securityUser.getUsername());
     }
 }
