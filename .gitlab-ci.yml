@@ -23,8 +23,6 @@ build:
     - dev
   except:
     - tags
-  before_script:
-    - gradle clean
   script:
     - gradle bootJar
   artifacts:
