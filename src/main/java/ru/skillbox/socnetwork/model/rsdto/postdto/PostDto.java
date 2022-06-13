@@ -19,7 +19,6 @@ public class PostDto {
     Integer id;
     Long time;
     PersonDto author;
-    Integer authorId;
     String title;
     @JsonProperty("post_text")
     String postText;

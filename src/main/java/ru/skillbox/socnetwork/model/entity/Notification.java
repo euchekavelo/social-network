@@ -3,14 +3,16 @@ package ru.skillbox.socnetwork.model.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 
 @Data
 @Schema(description = "Оповещение")
 public class Notification {
     private Integer id;
-    @JsonProperty("type_id")
-    @Schema(description = "Идентификатор типа", example = "3")
-    private Integer typeId;
+    //    @JsonProperty("type_id")
+//    private Integer typeId;
+    @JsonProperty("notification_type")
+    private TypeNotificationCode notificationType;
     @JsonProperty("sent_time")
     @Schema(example = "1630627200000")
     private Long sentTime;

@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.controller;
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,16 +14,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource("/properties/application-test-alexandr.properties")
+@TestPropertySource("/application-test.properties")
+@AutoConfigureEmbeddedDatabase
+        (provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.OPENTABLE,
+                refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_CLASS)
 @Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/sql/005-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class PlatformControllerTest {
 
-    private final String CITIES_DATA =
+    private final static String CITIES_DATA =
             "{\"data\":[\"Perm\",\"Tbilisi\",\"Tver\",\"Saratov\",\"Alma-Ata\",\"Kaliningrad\"]}";
 
-    private final String COUNTRIES_DATA = "{\"data\":[\"Russia\",\"Georgia\",\"Kazakhstan\"]}";
+    private final static String COUNTRIES_DATA = "{\"data\":[\"Russia\",\"Georgia\",\"Kazakhstan\"]}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,5 +45,13 @@ class PlatformControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(CITIES_DATA));
+    }
+
+    @Test
+    void getLanguages() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/platform/languages"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("{\"data\":[\"Русский\"]}"));
     }
 }

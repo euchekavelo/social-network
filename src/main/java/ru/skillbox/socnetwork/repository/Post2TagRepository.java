@@ -20,11 +20,6 @@ public class Post2TagRepository {
         jdbc.update(sql, postId, tagId);
     }
 
-    public List<Post2Tag> getPostTags(int postId) {
-        String sql = "SELECT * FROM post2tag WHERE post_id = ?";
-        return jdbc.query(sql, new Post2TagMapper(), postId);
-    }
-
     public void deletePostTags(int postId) {
         String sql = "delete from post2tag where post_id = ?";
         jdbc.update(sql, postId);

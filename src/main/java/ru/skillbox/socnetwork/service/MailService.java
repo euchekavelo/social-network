@@ -14,6 +14,11 @@ import java.util.Properties;
 @DebugLogs
 public class MailService {
 
+  /**
+  Нашел причину, почему не работает вызов функции таким образом. Нужно вызывать её геттером, до этого она не успевает
+   пройти инициализацию
+   **/
+
 //  @Value("${skillbox.app.mail.user}")
 //  private String username;
 //  @Value("${skillbox.app.mail.password}")

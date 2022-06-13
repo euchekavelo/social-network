@@ -18,8 +18,7 @@ import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.Person;
-import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -64,9 +63,9 @@ public class ProfileController {
         String email = securityUser.getUsername();
         PersonDto personDto = new PersonDto(personService.getByEmail(email));
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            personDto));
+                "string",
+                System.currentTimeMillis(),
+                personDto));
     }
 
     @PutMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,12 +83,13 @@ public class ProfileController {
                     )))
         })
     public ResponseEntity<GeneralResponse<Person>> updateProfile(
+            @RequestBody UpdatePersonDto updatePersonDto) {
         @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            personService.updatePerson(updatePersonDto)
+                "string",
+                System.currentTimeMillis(),
+                personService.updatePerson(updatePersonDto)
         ));
     }
 
@@ -118,6 +118,7 @@ public class ProfileController {
     }
 
     @PutMapping(path = "me/return")
+    public ResponseEntity<GeneralResponse<PersonDto>> returnProfile() {
     @Operation(summary = "Восстановление пользователя",
         responses = {
             @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -163,6 +164,12 @@ public class ProfileController {
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getWallByProfileId
+            (@PathVariable int id,
+             @RequestParam(value = "offset", defaultValue = "0") int offset,
+             @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
+        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
+                postService.getPostCount(), offset, perPage);
     @Operation(summary = "Получение записей пользователя",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -189,6 +196,10 @@ public class ProfileController {
     }
 
     @PostMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<PostDto>> addNewPost
+            (@PathVariable int id,
+             @RequestParam(value = "publish_date", defaultValue = "-1") long publishDate,
+             @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
     @Operation(summary = "Добавление записи на стену пользователя",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -214,6 +225,26 @@ public class ProfileController {
 
         GeneralResponse<PostDto> response = new GeneralResponse<>(postService.addPost(newPostDto, publishDate));
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> blockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.blockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @DeleteMapping("block/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> unblockUser(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse =
+                new GeneralResponse<>("string", System.currentTimeMillis(), personService.unblockUser(id));
+
+        return ResponseEntity.ok(generalResponse);
     }
 
     @GetMapping("search")
@@ -243,11 +274,11 @@ public class ProfileController {
             @RequestParam(value = "country_id", defaultValue = "1", required = false) int countryId,
             @RequestParam(value = "city_id", defaultValue = "1", required = false) int cityId,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
-            @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage) {
+            @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage){
 
-        GeneralResponse<List<PersonDto>> response = new GeneralResponse<>
-                (personService.getPersonsBySearchParameters(firstName, lastName, ageFrom, ageTo,
-                        countryId, cityId, perPage));
-        return ResponseEntity.ok(response);
-    }
+            GeneralResponse<List<PersonDto>> response = new GeneralResponse<>
+                    (personService.getPersonsBySearchParameters(firstName, lastName, ageFrom, ageTo,
+                            countryId, cityId, perPage));
+            return ResponseEntity.ok(response);
+        }
 }

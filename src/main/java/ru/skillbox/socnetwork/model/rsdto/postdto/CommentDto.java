@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import ru.skillbox.socnetwork.model.entity.PostComment;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 
+import java.util.List;
+
 @Data
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,9 +30,11 @@ public class CommentDto {
     PersonDto author;
     @JsonProperty("is_blocked")
     Boolean isBlocked;
+    @JsonProperty("sub_comments")
+    List<CommentDto> subComments;
 
     public CommentDto(PostComment comment, PersonDto personDto) {
-        this.id = comment.getId() + 1000;
+        this.id = comment.getId();
         this.parentId = comment.getParentId();
         this.postId = comment.getPostId();
         this.commentText = comment.getCommentText();
@@ -40,20 +44,4 @@ public class CommentDto {
         this.isLiked = comment.getIsLiked();
         this.likes = comment.getLikes();
     }
-
-    public void setIdMinusThousand(int id) {
-        this.id = id - 1000;
-    }
-
-//    public CommentDto(NewCommentDto comment) {
-//        this.id = comment.getId() + 1000;
-//        this.parentId = comment.getParentId();
-//        this.postId = comment.getPostId();
-//        this.commentText = comment.getCommentText();
-//        this.time = comment.getTime();
-//        this.author = comment.getAuthor();
-//        this.isBlocked = comment.getIsBlocked();
-//        this.isLiked = comment.getIsLiked();
-//        this.likes = comment.getLikes();
-//    }
 }

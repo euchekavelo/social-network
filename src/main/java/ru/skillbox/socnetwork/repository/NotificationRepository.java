@@ -6,7 +6,9 @@ import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 
 import ru.skillbox.socnetwork.model.entity.Notification;
+import ru.skillbox.socnetwork.model.entity.NotificationType;
 import ru.skillbox.socnetwork.model.mapper.NotificationMapper;
+import ru.skillbox.socnetwork.model.mapper.NotificationTypeMapper;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
 
-    public void deleteAllPersonNotifications(Integer personId){
+    public void deleteAllPersonNotifications(Integer personId) {
         String sql = "delete from notification where person_id = ?";
         jdbc.update(sql, personId);
     }
@@ -29,17 +31,18 @@ public class NotificationRepository {
         return not;
     }
 
-    public Notification addNotification(NotificationDto notificationDto) {
-        String sql = "insert into notification (type_id, sent_time, person_id, entity_id, contact)" +
-                " values (?, ?, ?, ?, ?)";
+    public void addNotification(NotificationDto notificationDto) {
+        String sql = "insert into notification (notification_type, sent_time, person_id, entity_id, contact)" +
+                " values (CAST(? AS notification_code_type), ?, ?, ?, ?)";
 
-        jdbc.update(sql, notificationDto.getTypeId(), notificationDto.getSentTime(),
+        jdbc.update(sql, notificationDto.getNotificationType().toString(), notificationDto.getSentTime(),
                 notificationDto.getPersonId(), notificationDto.getEntityId(), notificationDto.getContact());
-        return getLastNotification();
+        System.out.println("OK");
     }
 
-    public Notification getLastNotification() {
-        String sql = "select * from notification where id = 6";
-        return jdbc.queryForObject(sql, new NotificationMapper());
+    public List<Notification> getAllNotificationsForPerson(int personId) {
+
+        String sql = "select * from notification n join person p on n.person_id = p.id where p.id = ?";
+        return jdbc.query(sql, new NotificationMapper(), personId);
     }
 }

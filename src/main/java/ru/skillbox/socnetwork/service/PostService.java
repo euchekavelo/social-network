@@ -4,14 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.Post;
 import ru.skillbox.socnetwork.model.entity.PostComment;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
@@ -21,6 +23,7 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +33,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
-    private final PersonService personService;
     private final PostLikeRepository likeRepository;
     private final NotificationRepository notificationRepository;
+
+    private final PersonService personService;
     private final TagService tagService;
 
     public List<PostDto> getAll(int offset, int perPage) {
@@ -53,24 +57,55 @@ public class PostService {
             List<String> tags = tagService.getPostTags(postId);
             return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
         } catch (EmptyResultDataAccessException e) {
-            throw new InvalidRequestException("Incorrect post data, can't find this id " + postId);
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_CANT_FIND_ID.getMessage() + postId);
+        }
+    }
+
+    private PostComment getPostCommentById(int commentId) throws InvalidRequestException {
+        try {
+            return commentRepository.getById(commentId);
+        } catch (EmptyResultDataAccessException exception) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_CANT_FIND_ID.getMessage() + commentId);
         }
     }
 
     public void deletePostById(int postId) throws InvalidRequestException {
-        if (postRepository.deleteById(postId) == 0) {
-            throw new InvalidRequestException("No post id found to delete");
+        PostDto oldPost = this.getById(postId);
+        Integer authorId = oldPost.getAuthor().getId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
+        } else {
+            postRepository.deleteById(postId);
+            commentRepository.deleteCommentsByPostId(postId);
+            tagService.deletePostTags(postId);
         }
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getCommentsByPostId(getPersonId(), postId);
-        if (postComments == null) {
+        List<PostComment> postComments = commentRepository.getLikedParentCommentsByPostId(getPersonId(), postId);
+        if (postComments.isEmpty()) {
             return new ArrayList<>();
         }
+        List<PostComment> postSubComments = commentRepository.getLikedSubCommentsByPostId(getPersonId(), postId);
+
         return postComments.stream()
-                .map(comment -> new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId()))))
+                .map(comment -> getCommentDtoWithSubComments(postSubComments, comment))
                 .collect(Collectors.toList());
+    }
+
+    private CommentDto getCommentDtoWithSubComments(List<PostComment> postSubComments, PostComment comment) {
+        CommentDto commentDto = new CommentDto(comment, new PersonDto(personService.getById(comment.getAuthorId())));
+        if (!postSubComments.isEmpty()) {
+            List<CommentDto> subComments = postSubComments.stream()
+                    .filter(c -> Objects.equals(c.getParentId(), comment.getId()))
+                    .map(c -> new CommentDto(c, new PersonDto(personService.getById(c.getAuthorId()))))
+                    .collect(Collectors.toList());
+            commentDto.setSubComments(subComments);
+            System.out.println("\n!!!!!!!!!!!!!!!!" + commentDto + "!!!!!!!!!!!!!!!!\n");
+        } else {
+            commentDto.setSubComments(new ArrayList<>());
+        }
+        return commentDto;
     }
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
@@ -100,16 +135,19 @@ public class PostService {
         ).collect(Collectors.toList());
     }
 
-    public PostDto addPost(NewPostDto newPostDto, long publishDate) {
+    public PostDto addPost(NewPostDto newPostDto, long publishDate) throws InvalidRequestException {
+        long currentTime;
         if (publishDate == -1) {
-            newPostDto.setTime(System.currentTimeMillis());
+            currentTime = System.currentTimeMillis();
         } else {
-            newPostDto.setTime(publishDate);
+            currentTime = publishDate;
         }
+        newPostDto.setTime(currentTime);
         Post post = postRepository.addPost(newPostDto);
 
-        NotificationDto notificationDto = new NotificationDto(1, System.currentTimeMillis(),
-                10, post.getId(), "e-mail");
+        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST, currentTime,
+                newPostDto.getAuthorId(), post.getId(), "e-mail");
+
         notificationRepository.addNotification(notificationDto);
 
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
@@ -122,11 +160,12 @@ public class PostService {
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
-        if (getPersonId().equals(newPostDto.getAuthorId())) {
-            throw new InvalidRequestException("You cannot edit a post, you are not the author.");
+        PostDto oldPost = this.getById(postId);
+        Integer authorId = oldPost.getAuthor().getId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
         }
-        tagService.deletePostTags(postId);
-        tagService.addTagsFromNewPost(postId, newPostDto);
+        tagService.editOldTags(postId, newPostDto);
         postRepository.editPost(postId, newPostDto);
         return getById(postId);
     }
@@ -148,33 +187,65 @@ public class PostService {
         return comment;
     }
 
-    public CommentDto editCommentToPost(CommentDto comment) {
+    public CommentDto editCommentToPost(CommentDto comment) throws InvalidRequestException {
+        Integer authorId = this.getPostCommentById(comment.getId()).getAuthorId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
+        }
         commentRepository.edit(comment);
         return comment;
     }
 
-    public CommentDto deleteCommentToPost(int commentId) {
+    public CommentDto deleteCommentToPost(int commentId) throws InvalidRequestException {
+        Integer authorId = this.getPostCommentById(commentId).getAuthorId();
+        if (!getPersonId().equals(authorId)) {
+            throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
+        }
         CommentDto commentDto = new CommentDto();
         commentDto.setId(commentId);
-        commentId-=1000;
         commentRepository.deleteById(commentId);
         return commentDto;
     }
 
     public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author,
-                                                      int perPage, int currentPersonId) {
+                                                      List<String> tags, int perPage, int currentPersonId) {
 
         String[] authorNameSurname = author.split("\\s", 2);
         String authorName = authorNameSurname[0];
         String authorSurname = authorNameSurname.length >= 2 ? authorNameSurname[1] : "";
 
-        List<Post> posts = postRepository.choosePostsWhichContainsText(text, dateFrom, dateTo,
-                authorName, authorSurname, perPage);
+        List<Post> posts = postRepository.choosePostsWhichContainsTextWithTags(text, dateFrom, dateTo,
+                authorName, authorSurname, getSqlString(tags), perPage);
+
         return getPostDtoListOfAllPersons(posts, currentPersonId);
     }
 
-    private Integer getPersonId() {
+    public Integer getPostCount() {
+        return postRepository.getPostCount();
+    }
+
+    public Integer getPersonId() {
         SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getId();
     }
+
+    private String getSqlString(List<String> tags) {
+        StringBuilder tagsString = new StringBuilder();
+        if (tags.size() > 0) {
+            tagsString.append(" and (");
+            for (int i = 0; i < tags.size(); i++) {
+                tagsString.append("t.tag like '").append(tags.get(i)).append("'");
+                if (i != tags.size() - 1) {
+                    tagsString.append(" OR ");
+                } else {
+                    tagsString.append(")");
+                }
+            }
+            tagsString.append(" group by p.id order by count(t.tag) desc");
+        } else {
+            tagsString.append(" group by p.id");
+        }
+        return tagsString.toString();
+    }
+
 }

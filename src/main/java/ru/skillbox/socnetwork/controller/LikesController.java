@@ -116,6 +116,6 @@ public class LikesController {
             @RequestParam(value = "item_id") int itemId,
             @RequestParam(value = "type") String type) throws InvalidRequestException {
 
-            return ResponseEntity.ok(new GeneralResponse<>(likeService.deletePostLike(itemId, type)));
+            return ResponseEntity.ok(new GeneralResponse<>(likeService.deleteLike(itemId, type)));
     }
 }

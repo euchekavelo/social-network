@@ -17,11 +17,19 @@ import java.util.List;
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
 
-    public List<PostComment> getCommentsByPostId(int currentPersonId, int postId) {
+    public List<PostComment> getLikedParentCommentsByPostId(int currentPersonId, int postId) {
         String sql = "select pc.*, (cl.person_id = ?) as is_liked " +
                 "from post_comment pc " +
                 "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.post_id = ? order by time";
+                "where pc.post_id = ? and pc.parent_id is null order by id";
+        return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
+    }
+
+    public List<PostComment> getLikedSubCommentsByPostId(int currentPersonId, int postId) {
+        String sql = "select pc.*, (cl.person_id = ?) as is_liked " +
+                "from post_comment pc " +
+                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
+                "where pc.post_id = ? and pc.parent_id > 0 order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
@@ -63,5 +71,10 @@ public class PostCommentRepository {
                 "FROM post " +
                 "WHERE author = ?)";
         jdbc.update(sql, personId);
+    }
+
+    public void deleteCommentsByPostId(int postId) {
+        String sql = "DELETE FROM post_comment WHERE post_id = ?";
+        jdbc.update(sql, postId);
     }
 }

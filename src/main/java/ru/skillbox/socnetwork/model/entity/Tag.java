@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Schema(description = "Теги")
 public class Tag {
-    private Integer id;
+    private Integer id = -1;
     @Schema(example = "статья")
     private String tag;
 }

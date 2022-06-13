@@ -14,9 +14,6 @@ public class LoginDto {
     @Schema(example = "12345678")
     private String password;
 
-    /**
-     *      TODO chek method checkPassword
-     */
     public boolean checkPassword (String inDBPassword) {
         return new BCryptPasswordEncoder().matches(this.password, inDBPassword);
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.model.entity.CommentLike;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
 @DebugLogs
 public class LikeService {
 
-    private final String POST = "Post";
-    private final String COMMENT = "Comment";
+    private static final String POST = "Post";
+    private static final String COMMENT = "Comment";
 
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
@@ -43,7 +44,7 @@ public class LikeService {
             likesDto.setUsers(likeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
             return likesDto;
         }
-        throw new InvalidRequestException("Bad like type. Required 'Post' or 'Comment' types");
+        throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
     }
 
     public LikesDto putAndGetAllLikes(Integer itemId, String type) throws InvalidRequestException {
@@ -58,11 +59,6 @@ public class LikeService {
             }
             return getLikes(itemId, POST);
         } else if (type.equals(COMMENT)) {
-            /**
-             * itemId-=1000;
-             * fix front bag with incorrect likes. When you like comment, and this like put to post
-             */
-            itemId-=1000;
             Optional<CommentLike> optionalLikeDto = Optional
                     .ofNullable(commentLikeRepository.getPersonLike(getPersonId(), itemId));
             if (optionalLikeDto.isEmpty()) {
@@ -72,7 +68,7 @@ public class LikeService {
             }
             return getLikes(itemId, COMMENT);
         }
-        throw new InvalidRequestException("Bad like type to get likes. Required 'Post' or 'Comment' types");
+        throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
 
     }
 
@@ -81,48 +77,34 @@ public class LikeService {
         if (type.equals(POST)) {
             return new LikedDto(postLikeRepository.getIsLiked(personId, itemId));
         } else if (type.equals(COMMENT)) {
-            return new LikedDto(isCommentLiked(personId, itemId));
+            return new LikedDto(commentLikeRepository.getIsLiked(personId, itemId));
         }
-        throw new InvalidRequestException("Bad like type for get liked. Required 'Post' or 'Comment' types");
+        throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
     }
 
-    public boolean isPostLiked(Integer personId, Integer itemId) {
-        return postLikeRepository.getIsLiked(personId, itemId);
-    }
-
-    public boolean isCommentLiked(Integer personId, Integer itemId) {
-        return commentLikeRepository.getIsLiked(personId, itemId);
-    }
-
-    public LikesDto deletePostLike(int itemId, String type) throws InvalidRequestException {
+    public LikesDto deleteLike(int itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
         if (type.equals(POST)) {
             postLikeRepository.deleteLike(getPersonId(), itemId);
             List<PostLike> likeList = postLikeRepository.getPostLikes(itemId);
             likesDto.setLikes(likeList.size());
+            likesDto.setUsers(likeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
             postService.updatePostLikeCount(likesDto.getLikes(), itemId);
             return likesDto;
         } else if (type.equals(COMMENT)) {
-            /**
-             * itemId-=1000;
-             * fix front bag with incorrect likes. When you like comment, and this like put to post
-             */
-            itemId-=1000;
             commentLikeRepository.deleteLike(getPersonId(), itemId);
             List<CommentLike> likeList = commentLikeRepository.getLikes(itemId);
             likesDto.setLikes(likeList.size());
+            likesDto.setUsers(likeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
             postService.updateCommentLikeCount(likesDto.getLikes(), itemId);
             return likesDto;
         }
-        throw new InvalidRequestException("Bad like type for get liked. Required 'Post' or 'Comment' types");
-    }
-
-    private SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
+        throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
     }
 
     private int getPersonId() {
-        return getSecurityUser().getId();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser user = (SecurityUser) auth.getPrincipal();
+        return user.getId();
     }
 }

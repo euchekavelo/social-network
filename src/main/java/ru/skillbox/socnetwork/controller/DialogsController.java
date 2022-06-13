@@ -48,7 +48,7 @@ public class DialogsController {
             @ApiResponse(responseCode = "200", description = "Успешное получение списка диалогов")
         })
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
-        return dialogsService.getDialogs();
+        return ResponseEntity.ok(dialogsService.getDialogs());
     }
 
     @PostMapping
@@ -68,7 +68,12 @@ public class DialogsController {
     })
     public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return dialogsService.createDialog(request.getUserIds());
+        return ResponseEntity.ok(dialogsService.createDialog(request.getUserIds()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
+        return ResponseEntity.ok(dialogsService.deleteDialogByById (id));
     }
 
     @GetMapping("/{id}/messages")
@@ -88,8 +93,11 @@ public class DialogsController {
         })
     public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
         return dialogsService.getMessageById(id);
+    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable Integer id) {
+        return ResponseEntity.ok(dialogsService.getMessageById(id));
     }
 
+    @GetMapping("/unreaded")
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение количества непрочитанных сообщений",
         responses = {
@@ -106,7 +114,7 @@ public class DialogsController {
             @ApiResponse(responseCode = "200", description = "Успешное получение количества непрочитанных сообщений")
         })
     public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
-        return dialogsService.getUnreadMessageCount();
+        return ResponseEntity.ok(dialogsService.getUnreadMessageCount());
     }
 
     @PostMapping("/{id}/messages")
@@ -129,5 +137,11 @@ public class DialogsController {
         @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
         return dialogsService.sendMessage(messageRequest, id);
+    public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
+            @RequestBody MessageRequest messageRequest, @PathVariable Integer id) {
+        if (!messageRequest.getMessageText().equals("")) {
+            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        }
+        return ResponseEntity.ok().build();
     }
 }

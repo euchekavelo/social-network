@@ -24,11 +24,18 @@ drop type if exists code_type;
 drop type if exists read_status_type;
 drop type if exists notification_code_type;
 
+DO $$
+BEGIN
+create type permission_type as enum ('ALL', 'FRIENDS');
 create type permission_type as enum ('ALL', 'FRIENDS');
 create type action_type as enum ('BLOCK', 'UNBLOCK');
 create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
 create type read_status_type as enum ('SENT', 'READ');
 create type notification_code_type as enum ('POST', 'POST_COMMENT', 'COMMENT_COMMENT', 'FRIEND_REQUEST', 'MESSAGE');
+EXCEPTION WHEN DUPLICATE_OBJECT THEN
+		RAISE NOTICE 'enums  exists, skipping...';
+		END
+$$;
 
 create table if not exists person (
     id serial,
@@ -50,6 +57,15 @@ create table if not exists person (
     is_blocked boolean,
     is_deleted boolean,
     primary key (id)
+);
+
+create table if not exists deleted_users(
+  id serial,
+  person_id int4,
+  photo varchar(255),
+  first_name varchar(50),
+  last_name varchar(50),
+  expire bigint
 );
 
 create table if not exists block_history (
@@ -96,6 +112,9 @@ create table if not exists message (
 
 create table if not exists dialog (
     id serial,
+    author_id int4,
+    recipient_id int4,
+    dialog_id int4,
     primary key (id)
 );
 
@@ -162,18 +181,11 @@ create table if not exists comment_like (
 
 create table if not exists notification (
     id serial,
-    type_id int4,
+    notification_type notification_code_type,
     sent_time bigint,
     person_id int4,
     entity_id int4,
     contact varchar(50),
-    primary key (id)
-);
-
-create table if not exists notification_type (
-    id serial,
-    code notification_code_type,
-    name varchar(50),
     primary key (id)
 );
 

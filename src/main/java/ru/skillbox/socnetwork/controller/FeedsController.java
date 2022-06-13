@@ -48,7 +48,11 @@ public class FeedsController {
         })
     public ResponseEntity<GeneralResponse<List<PostDto>>> getFeeds(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                                      @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+    public ResponseEntity<GeneralResponse<List<PostDto>>> getFeeds
+            (@RequestParam(value = "offset", defaultValue = "0") int offset,
+             @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
 
-        return ResponseEntity.ok(new GeneralResponse<>(postService.getAll(offset, perPage)));
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getAll(offset, perPage),
+                postService.getPostCount(), offset, perPage));
     }
 }

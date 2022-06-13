@@ -28,6 +28,16 @@ public class FriendsController {
 
     private final FriendsService friendsService;
 
+    @DeleteMapping("/friends/request/person/{id}")
+    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriendRequest(@PathVariable Integer id)
+            throws InvalidRequestException {
+
+        GeneralResponse<DialogsResponse> generalResponse = new GeneralResponse<>("string",
+                System.currentTimeMillis(), friendsService.deleteFriendRequestByPersonId(id));
+
+        return ResponseEntity.ok(generalResponse);
+    }
+
     @GetMapping("/friends/request")
     @Operation(summary = "Получение списка заявок на добавление в друзья",
         responses = {
@@ -158,7 +168,7 @@ public class FriendsController {
         return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage));
     }
 
-    @PostMapping("is/friends")
+    @PostMapping("/is/friends")
     @Operation(summary = "Получить информацию является ли пользователь другом указанных пользователей",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",

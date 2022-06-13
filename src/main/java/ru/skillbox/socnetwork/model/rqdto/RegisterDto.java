@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Data
 @Schema(description = "Сущность для регистрации")
@@ -25,9 +24,10 @@ public class RegisterDto {
     private String firstName;
     @Schema(example = "Иванов")
     private String lastName;
+    @JsonProperty("captcha_id")
+    private Long codeId;
     @Schema(hidden = true)
     private String code;
-
 
     public boolean passwordsEqual() {
         return firstPassword.equals(secondPassword);

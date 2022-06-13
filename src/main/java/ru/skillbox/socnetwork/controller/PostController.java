@@ -10,18 +10,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rqdto.NewPostDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
+import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
+
 
 import java.util.List;
 
@@ -107,7 +107,7 @@ public class PostController {
     public ResponseEntity<GeneralResponse<PostDto>> editPostById(
             @PathVariable @Parameter(description = "Идентификатор поста") int id, @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
 
-            return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
+        return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -135,6 +135,8 @@ public class PostController {
     }
 
     @PostMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> addCommentToPost(@PathVariable int id,
+                                                                        @RequestBody CommentDto comment) {
     @Operation(summary = "Добавление комментария к посту",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -160,6 +162,10 @@ public class PostController {
     }
 
     @PutMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> editCommentToPost(
+            @PathVariable int id,
+            @PathVariable int commentId,
+            @RequestBody CommentDto comment) throws InvalidRequestException {
     @Operation(summary = "Редактирование комментария к посту",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -182,11 +188,14 @@ public class PostController {
                                                                          @PathVariable @Parameter(description = "Идентификатор комментария") int commentId,
                                                                          @RequestBody CommentDto comment) {
 
-        comment.setId(commentId - 1000);
+        comment.setId(commentId);
         return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
     }
 
     @DeleteMapping(path = "/{id}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeneralResponse<CommentDto>> deleteCommentToPost(
+            @PathVariable int id,
+            @PathVariable int commentId) throws InvalidRequestException {
     @Operation(summary = "Удаление комментария к посту",
         responses = {
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -212,6 +221,9 @@ public class PostController {
     }
 
 
+    /*
+    TODO логику перенести в сервис. Возможно перенести весь функционал по поиску в SearchService.
+     */
     @GetMapping()
     @Operation(summary = "Поиск поста",
         responses = {
@@ -237,17 +249,13 @@ public class PostController {
             @RequestParam(value = "date_to", defaultValue = "0", required = false) long dateTo,
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "author", defaultValue = "", required = false) String author,
+            @RequestParam(value = "tags", defaultValue = "", required = false) List<String> tags,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
 
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, perPage,
-                        getSecurityUser().getId()));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, tags, perPage,
+                        postService.getPersonId()));
 
         return ResponseEntity.ok(response);
-    }
-
-    private SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
     }
 }
