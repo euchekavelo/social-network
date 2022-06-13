@@ -1,20 +1,37 @@
 package ru.skillbox.socnetwork.service.storage;
 
+import lombok.AllArgsConstructor;
+import org.redisson.Redisson;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.stereotype.Component;
+import ru.skillbox.socnetwork.model.entity.Person;
+import ru.skillbox.socnetwork.repository.PersonRepository;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
+@AllArgsConstructor
 public class StorageCache {
-  public static final String DEFAULT = "/default.jpg";
-  private static final String DEFAULT_LINK = "https://www.dropbox.com/s/ekczqxzi1jw8b0y/default.jpg?raw=1";
-  public static final String DELETED = "/deleted.jpg";
-  private static final String DELETED_LINK = "https://www.dropbox.com/s/3l8tr9rii4sq30y/deleted.jpg?raw=1";
 
-  private static final Map<String, String> cache = Map.of(
-          DEFAULT, DEFAULT_LINK,
-          DELETED, DELETED_LINK
-  );
+  private final PersonRepository personRepository;
+  private static RMap<String, String> cache;
+
+  @PostConstruct
+  private void initCache(){
+    RedissonClient redissonClient = connect();
+    cache = redissonClient.getMap("image-cache");
+    cache.clear();
+    cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);
+    cache.put(StorageConstants.PHOTO_DELETED, StorageConstants.PHOTO_DELETED_LINK);
+    cache.putAll(getPhotos());
+  }
 
   public String addLink(String fileName, String link){
     cache.put(fileName, link);
@@ -31,5 +48,26 @@ public class StorageCache {
 
   public void deleteLink(String fileName){
     cache.remove(fileName);
+  }
+
+  private static RedissonClient connect(){
+    Config config = new Config();
+    config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+    return Redisson.create(config);
+  }
+
+  private Map<String, String> getPhotos(){
+    Map<String, String> photos = new HashMap<>();
+    List<Person> personList = personRepository.getAll();
+    for(Person person : personList){
+      photos.put(getRelativePath(person.getPhoto()), person.getPhoto());
+    }
+    return photos;
+  }
+
+  private String getRelativePath(String path) {
+    Pattern pattern = Pattern.compile(".*(/\\w*\\.[A-z]*)\\?raw=1");
+    Matcher matcher = pattern.matcher(path);
+    return (matcher.find()) ? matcher.group(1) : "";
   }
 }

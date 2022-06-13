@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.mapper.*;
-import ru.skillbox.socnetwork.model.rsdto.DialogDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonForDialogsDto;

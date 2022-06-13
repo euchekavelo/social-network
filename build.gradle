@@ -41,6 +41,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.13.RELEASE'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+	implementation group: 'org.redisson', name: 'redisson', version: '3.17.3'
 }
 
 sonarqube {

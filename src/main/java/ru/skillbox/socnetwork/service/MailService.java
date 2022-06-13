@@ -23,8 +23,6 @@ public class MailService {
   private final String password = "newpassword123";
 
   private JavaMailSender getMailSender(){
-    System.out.println("username: " + username);
-    System.out.println("password: " + password);
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
     mailSender.setHost("smtp.gmail.com");
     mailSender.setPort(587);
