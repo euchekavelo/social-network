@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(hidden = true)
+@Schema(description = "Добавление лайка по идентификатору")
 public class PutLikeDto {
     @JsonProperty("item_id")
     Integer itemId;

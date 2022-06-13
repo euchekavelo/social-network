@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(hidden = true)
+@Schema(description = "Список пользователей")
 public class UserIdsDto {
 
     @JsonProperty("user_ids")

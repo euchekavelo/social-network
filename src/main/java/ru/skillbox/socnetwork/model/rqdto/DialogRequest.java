@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(hidden = true)
+@Schema(description = "Список пользователей в диалоге")
 public class DialogRequest {
     @JsonProperty("users_ids")
     private List<Integer> userIds;

@@ -82,7 +82,7 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
             "string",
@@ -115,7 +115,7 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
             "string",
@@ -145,7 +145,7 @@ public class AccountController {
                     )))
         })
     public ResponseEntity<GeneralResponse<DialogsResponse>> recoverEmail(
-        @RequestBody Map<String, String> body) throws InvalidRequestException {
+        @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         return ResponseEntity.ok(
             new GeneralResponse<>(
@@ -180,7 +180,7 @@ public class AccountController {
                     )))
         })
     public ResponseEntity<GeneralResponse<DialogsResponse>> changeEmail(
-        @RequestBody Map<String, String> body) throws InvalidRequestException {
+        @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
             "string",

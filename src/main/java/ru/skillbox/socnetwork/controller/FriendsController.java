@@ -52,10 +52,7 @@ public class FriendsController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        GeneralListResponse<PersonDto> generalListResponse =
-                new GeneralListResponse<>(friendsService.getListIncomingFriendRequests(), offset, itemPerPage);
-
-        return ResponseEntity.ok(generalListResponse);
+        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getListIncomingFriendRequests(), offset, itemPerPage));
     }
 
     @PostMapping("/friends/{id}")
@@ -80,10 +77,7 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> addFriend(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsResponse> generalResponse =
-                new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id));
-
-        return ResponseEntity.ok(generalResponse);
+        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id)));
     }
 
     @DeleteMapping("/friends/{id}")
@@ -108,10 +102,7 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriend(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsResponse> generalResponse =
-                new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id));
-
-        return ResponseEntity.ok(generalResponse);
+        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id)));
     }
 
     @GetMapping("/friends")
@@ -138,10 +129,7 @@ public class FriendsController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        GeneralListResponse<PersonDto> generalListResponse =
-                new GeneralListResponse<>(friendsService.getUserFriends(), offset, itemPerPage);
-
-        return ResponseEntity.ok(generalListResponse);
+        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getUserFriends(), offset, itemPerPage));
     }
 
     @GetMapping("/friends/recommendations")
@@ -167,10 +155,7 @@ public class FriendsController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        GeneralListResponse<PersonDto> generalListResponse =
-                new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage);
-
-        return ResponseEntity.ok(generalListResponse);
+        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage));
     }
 
     @PostMapping("is/friends")
@@ -195,9 +180,6 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<List<FriendshipPersonDto>>> getInformationAboutFriendships(
             @RequestBody UserIdsDto userIdsDto) {
 
-        GeneralResponse<List<FriendshipPersonDto>> generalResponse =
-                new GeneralResponse<>(friendsService.getInformationAboutFriendships(userIdsDto));
-
-        return ResponseEntity.ok(generalResponse);
+        return ResponseEntity.ok(new GeneralResponse<>(friendsService.getInformationAboutFriendships(userIdsDto)));
     }
 }

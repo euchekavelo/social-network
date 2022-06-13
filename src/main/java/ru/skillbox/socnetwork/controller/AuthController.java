@@ -39,7 +39,7 @@ public class AuthController {
                         schema = @Schema(implementation = ErrorResponseDto.class)
                     ))),
             @ApiResponse(responseCode = "500", description = "Server error"),
-            @ApiResponse(responseCode = "200", description = "Успешный выход",
+            @ApiResponse(responseCode = "200", description = "Успешный вход",
                 content = @Content(mediaType = "application/json",
                     array = @ArraySchema(
                         schema = @Schema(implementation = GeneralResponse.class)
@@ -61,7 +61,7 @@ public class AuthController {
                     array = @ArraySchema(
                         schema = @Schema(implementation = ErrorResponseDto.class)
                     ))),
-            @ApiResponse(responseCode = "200", description = "Успешный вход")
+            @ApiResponse(responseCode = "200", description = "Успешный выход")
         })
     public ResponseEntity<GeneralResponse<DialogsResponse>> logout() {
 

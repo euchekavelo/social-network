@@ -49,7 +49,7 @@ public class StorageController {
                       schema = @Schema(implementation = GeneralResponse.class)
                   )))
       })
-  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file) {
+  public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file) { //TODO: сделать разметку requestBody
 
     return ResponseEntity.ok(new GeneralResponse<>(
         "string",

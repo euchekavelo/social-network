@@ -11,7 +11,7 @@ import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 @Data
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(hidden = true)
+@Schema(description = "Комментарий к посту")
 public class CommentDto {
     Integer id;
     @JsonProperty("parent_id")
