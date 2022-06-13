@@ -1,22 +1,19 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import org.apache.commons.text.RandomStringGenerator;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.DebugLogs;
-import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.DeletedUser;
+import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
@@ -27,11 +24,13 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
+import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
 import ru.skillbox.socnetwork.service.storage.StorageService;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +51,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     private final TempTokenService tempTokenService;
     private final MailService mailService;
     private final DeletedUserService deletedUserService;
+    private final NotificationSettingsRepository notificationSettingsRepository;
     private final CaptchaService captchaService;
 
     private final JwtTokenProvider tokenProvider;
@@ -88,7 +88,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public Person saveFromRegistration(Person person) {
-        return personRepository.saveFromRegistration(person);
+        Person newPerson = personRepository.saveFromRegistration(person);
+        notificationSettingsRepository.addNotificationSettingsForNewUser(newPerson.getId());
+        return newPerson;
     }
 
     public Person getById(int id) {

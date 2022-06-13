@@ -67,16 +67,17 @@ public class PersonRepository {
 
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
-        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) values (?, ?, ?, ?, ?, ?)";
-        jdbc.update(sql,
+        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) " +
+                "values (?, ?, ?, ?, ?, ?) RETURNING *";
+
+        return  jdbc.queryForObject(sql, new PersonMapper(),
                 person.getFirstName(),
                 person.getLastName(),
                 System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
                 person.getPhoto());
-        return person;
-    }
+         }
 
     public List<Person> getListRecommendedFriends(String email) {
         StringBuilder sqlQuery = new StringBuilder();

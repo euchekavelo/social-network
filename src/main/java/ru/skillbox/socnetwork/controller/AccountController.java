@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
+import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
 import ru.skillbox.socnetwork.service.Captcha.CaptchaUtils;
+import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
+import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.Map;
@@ -94,9 +97,9 @@ public class AccountController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            new DialogsResponse(personService.recoverPassword(body.get("email")))
+                "string",
+                System.currentTimeMillis(),
+                new DialogsResponse(personService.recoverPassword(body.get("email")))
         ));
     }
 
@@ -127,9 +130,9 @@ public class AccountController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            new DialogsResponse(personService.setPassword(body))
+                "string",
+                System.currentTimeMillis(),
+                new DialogsResponse(personService.setPassword(body))
         ));
     }
 
@@ -157,11 +160,11 @@ public class AccountController {
         @RequestBody Map<String, String> body) throws InvalidRequestException {
 
         return ResponseEntity.ok(
-            new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsResponse(personService.recoverEmail(body.get("email")))
-            ));
+                new GeneralResponse<>(
+                        "string",
+                        System.currentTimeMillis(),
+                        new DialogsResponse(personService.recoverEmail(body.get("email")))
+                ));
     }
 
     @PutMapping(value = "/email")
@@ -192,11 +195,35 @@ public class AccountController {
         @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            new DialogsResponse(personService.updateEmail(body))
+                "string",
+                System.currentTimeMillis(),
+                new DialogsResponse(personService.updateEmail(body))
         ));
     }
+
+    @PutMapping(value = "/notifications")
+    public ResponseEntity<GeneralResponse<Object>> changeNotificationSettings(
+            @RequestBody Map<String, String> body) {
+
+        String notificationType = body.get("notification_type");
+        String enable = body.get("enable");
+
+        System.out.println(notificationType + " " + enable);
+        notificationSettingsService.changeSettingsToNotification(notificationType, enable);
+
+        return ResponseEntity.ok(new GeneralResponse<Object>());
+
+    }
+
+    @GetMapping(value = "/notifications")
+    public ResponseEntity<GeneralResponse<List<NotificationSettingsDto>>> getNotificationSettings() {
+
+        List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
+        GeneralResponse<List<NotificationSettingsDto>> response = new GeneralResponse<>(notificationSettings);
+        return ResponseEntity.ok(response);
+
+    }
+
 
     private void setupCaptcha(CaptchaDto captchaDto) {
         Captcha captcha = CaptchaUtils.createCaptcha(200, 50);

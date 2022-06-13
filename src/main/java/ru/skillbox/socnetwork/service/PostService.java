@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
@@ -15,7 +16,6 @@ import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.CommentDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
@@ -34,10 +34,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCommentRepository commentRepository;
     private final PostLikeRepository likeRepository;
-    private final NotificationRepository notificationRepository;
-
     private final PersonService personService;
     private final TagService tagService;
+    private final NotificationService notificationService;
 
     public List<PostDto> getAll(int offset, int perPage) {
         return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), getPersonId());
@@ -146,17 +145,19 @@ public class PostService {
         Post post = postRepository.addPost(newPostDto);
 
         NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST, currentTime,
-                newPostDto.getAuthorId(), post.getId(), "e-mail");
+                post.getAuthor(), post.getId(), getShortString(post.getTitle()));
 
-        notificationRepository.addNotification(notificationDto);
-
+        notificationService.addNotificationForFriends(notificationDto);
         tagService.addTagsFromNewPost(post.getId(), newPostDto);
 
         return new PostDto(post, new PersonDto(
                 personService.getById(newPostDto.getAuthorId())),
                 new ArrayList<>(),
                 tagService.getPostTags(post.getId()));
+    }
 
+    private String getShortString(String title) {
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
@@ -178,14 +179,29 @@ public class PostService {
         commentRepository.updateLikeCount(likes, postId);
     }
 
-    public CommentDto addCommentToPost(CommentDto comment, int id) {
-        comment.setAuthor(new PersonDto(personService.getById(getPersonId())));
+    public CommentDto addCommentToPost(CommentDto comment, int id) throws InvalidRequestException {
+        Integer currentUserId = getPersonId();
+        comment.setAuthor(new PersonDto(personService.getById(currentUserId)));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
         comment.setIsBlocked(false);
         commentRepository.add(comment);
+
+        int postAuthorId = getById(id).getAuthor().getId();
+        addNotificationToPostComment(postAuthorId, comment);
         return comment;
     }
+
+    private void addNotificationToPostComment(Integer postAuthorId, CommentDto comment) {
+        Integer currentUserId = comment.getAuthor().getId();
+
+        if (!currentUserId.equals(postAuthorId)) {
+            NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.POST_COMMENT, comment.getTime(),
+                    currentUserId, comment.getId(), getShortString(comment.getCommentText()));
+            notificationService.addNotificationForOnePerson(notificationDto, postAuthorId);
+        }
+    }
+
 
     public CommentDto editCommentToPost(CommentDto comment) throws InvalidRequestException {
         Integer authorId = this.getPostCommentById(comment.getId()).getAuthorId();
@@ -195,6 +211,7 @@ public class PostService {
         commentRepository.edit(comment);
         return comment;
     }
+
 
     public CommentDto deleteCommentToPost(int commentId) throws InvalidRequestException {
         Integer authorId = this.getPostCommentById(commentId).getAuthorId();
@@ -227,6 +244,11 @@ public class PostService {
     public Integer getPersonId() {
         SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getId();
+    }
+
+    public static SecurityUser getSecurityUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (SecurityUser) auth.getPrincipal();
     }
 
     private String getSqlString(List<String> tags) {
