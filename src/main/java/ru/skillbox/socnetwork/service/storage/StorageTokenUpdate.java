@@ -18,7 +18,7 @@ public class StorageTokenUpdate {
 
   private static DbxCredential credential;
   private static final String APP_ID = "272m6nu2hx6xsuw";
-  private static final String PATH = "tmp/credentials.json";
+  private static final String PATH = "/tmp/credentials.json";
 
   @Scheduled(fixedRateString = "PT03H", initialDelayString = "PT3M")
   public void refreshToken() throws JsonReader.FileLoadException, DbxException, IOException {
