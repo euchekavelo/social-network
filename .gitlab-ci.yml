@@ -9,8 +9,6 @@ test:
     - dev
   except:
     - tags
-  before_script:
-    - gradle clean
   script:
     - gradle jacocoTestReport
     - gradle sonarqube
