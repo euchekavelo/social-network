@@ -16,7 +16,7 @@ test:
     - gradle sonarqube
   tags:
     - java_pro_team_linux_ubuntu
-
+#sdsd
 build:
   stage: build
   only:
