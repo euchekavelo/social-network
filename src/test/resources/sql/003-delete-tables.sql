@@ -17,9 +17,9 @@ drop table if exists temptoken;
 drop table if exists databasechangelog;
 drop table if exists databasechangeloglock;
 drop table if exists deleted_users;
-
-drop type if exists permission_type;
-drop type if exists action_type;
-drop type if exists code_type;
-drop type if exists read_status_type;
-drop type if exists notification_code_type;
+--
+--drop type if exists permission_type;
+--drop type if exists action_type;
+--drop type if exists code_type;
+--drop type if exists read_status_type;
+--drop type if exists notification_code_type;

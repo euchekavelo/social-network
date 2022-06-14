@@ -18,17 +18,17 @@ drop table if exists databasechangelog;
 drop table if exists databasechangeloglock;
 drop table if exists deleted_users;
 
-drop type if exists permission_type;
-drop type if exists action_type;
-drop type if exists code_type;
-drop type if exists read_status_type;
-drop type if exists notification_code_type;
-
-create type permission_type as enum ('ALL', 'FRIENDS');
-create type action_type as enum ('BLOCK', 'UNBLOCK');
-create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
-create type read_status_type as enum ('SENT', 'READ');
-create type notification_code_type as enum ('POST', 'POST_COMMENT', 'COMMENT_COMMENT', 'FRIEND_REQUEST', 'MESSAGE');
+--drop type if exists permission_type;
+--drop type if exists action_type;
+--drop type if exists code_type;
+--drop type if exists read_status_type;
+--drop type if exists notification_code_type;
+--
+--create type permission_type as enum ('ALL', 'FRIENDS');
+--create type action_type as enum ('BLOCK', 'UNBLOCK');
+--create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
+--create type read_status_type as enum ('SENT', 'READ');
+--create type notification_code_type as enum ('POST', 'POST_COMMENT', 'COMMENT_COMMENT', 'FRIEND_REQUEST', 'MESSAGE');
 
 create table if not exists person (
     id serial,
@@ -178,7 +178,9 @@ create table if not exists notification (
     sent_time bigint,
     person_id int4,
     entity_id int4,
-    contact varchar(50),
+	dist_user_id int4,
+    status read_status_type,
+    title varchar(50),
     primary key (id)
 );
 

@@ -23,16 +23,16 @@ public class StorageCache {
   private final PersonRepository personRepository;
   private static RMap<String, String> cache;
 
-  @PostConstruct
-  private void initCache(){
-    RedissonClient redissonClient = connect();
-    System.err.println(redissonClient);
-    cache = redissonClient.getMap("image-cache");
-    cache.clear();
-    cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);
-    cache.put(StorageConstants.PHOTO_DELETED, StorageConstants.PHOTO_DELETED_LINK);
-    cache.putAll(getPhotos());
-  }
+//  @PostConstruct
+//  private void initCache(){
+//    RedissonClient redissonClient = connect();
+//    System.err.println(redissonClient);
+//    cache = redissonClient.getMap("image-cache");
+//    cache.clear();
+//    cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);
+//    cache.put(StorageConstants.PHOTO_DELETED, StorageConstants.PHOTO_DELETED_LINK);
+//    cache.putAll(getPhotos());
+//  }
 
   public String addLink(String fileName, String link){
     cache.put(fileName, link);
