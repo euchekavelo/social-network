@@ -1,7 +1,9 @@
 package ru.skillbox.socnetwork.service;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -28,9 +30,8 @@ import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
-import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
 import ru.skillbox.socnetwork.service.storage.StorageService;
-
+import ru.skillbox.socnetwork.service.сaptcha.CaptchaService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,10 +40,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @DebugLogs
 public class PersonService implements ApplicationListener<AuthenticationSuccessEvent> {
 
+    @Getter
+    @Value("${skillbox.app.server}")
+    private String host;
 
     private final FriendshipRepository friendshipRepository;
     private final PersonRepository personRepository;
@@ -68,9 +72,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-//    @Value("${skillbox.app.address}")
-    private final String HOST = "195.133.201.227";
-
     public List<Person> getAll() {
         return personRepository.getAll();
     }
@@ -87,10 +88,10 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return personRepository.isEmptyEmail(email);
     }
 
-    public Person saveFromRegistration(Person person) {
+    public PersonDto saveFromRegistration(Person person) {
         Person newPerson = personRepository.saveFromRegistration(person);
         notificationSettingsRepository.addNotificationSettingsForNewUser(newPerson.getId());
-        return newPerson;
+        return new PersonDto(newPerson);
     }
 
     public Person getById(int id) {
@@ -101,7 +102,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return person;
     }
 
-    public String getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
+    public PersonDto getPersonAfterRegistration(RegisterDto registerDto) throws InvalidRequestException {
         if (!captchaService.isCorrectCode(registerDto)) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
@@ -119,9 +120,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
-        person.setPhoto(storageService.getDefaultProfileImage());
+//        person.setPhoto(storageService.getDefaultProfileImage());
         captchaService.removeCaptcha(registerDto.getCodeId());
-        return "ok";
+        return saveFromRegistration(person);
     }
 
     public PersonDto getPersonAfterLogin(LoginDto loginDto) throws InvalidRequestException {
@@ -219,7 +220,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = HOST + "/shift-email?token=" + token.getToken();
+        String link = getHost() + "/shift-email?token=" + token.getToken();
         mailService.send(email, "Your SocNetwork Email change link", link);
         return "ok";
     }
@@ -231,7 +232,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = HOST + "/change-password?token=" + token.getToken();
+        String link = getHost() + "/change-password?token=" + token.getToken();
         mailService.send(person.getEmail(), "SocNetwork Password recovery", link);
 
         return "ok";
@@ -409,8 +410,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     private boolean isCorrectEmail(String email) {
-        Pattern p = Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
+        Pattern p = Pattern.compile("^(?=.{1,64}@?.{1,64})[\\\\.A-Za-z_-]+@[\\\\.A-Za-z_-]+([\\\\.A-z]{2,})");
         Matcher m = p.matcher(email);
         return m.matches();
     }

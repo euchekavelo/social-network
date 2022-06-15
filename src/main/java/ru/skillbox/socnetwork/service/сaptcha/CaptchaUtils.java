@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.service.Captcha;
+package ru.skillbox.socnetwork.service.сaptcha;
 
 import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;

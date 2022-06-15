@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.service.Captcha;
+package ru.skillbox.socnetwork.service.сaptcha;
 
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;

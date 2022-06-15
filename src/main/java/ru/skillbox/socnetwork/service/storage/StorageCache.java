@@ -51,6 +51,9 @@ public class StorageCache {
     cache.remove(fileName);
   }
 
+  /*
+  TODO указать путь в переменной. Лучше ip сервера.
+   */
   private static RedissonClient connect(){
     Config config = new Config();
     config.useSingleServer().setAddress("redis://127.0.0.1:6379");

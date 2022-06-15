@@ -38,13 +38,15 @@ deploy to server:
   except:
     - tags
   script:
-    - (docker stop $IMAGE_AND_CONTAINER_NAME && docker container rm $IMAGE_AND_CONTAINER_NAME) || true
-    - docker rmi $(docker images $IMAGE_AND_CONTAINER_NAME -q) || true
-    - docker build -t $IMAGE_AND_CONTAINER_NAME .
-    - docker run
-      --name $IMAGE_AND_CONTAINER_NAME
-      --link $DATABASE_CONTAINER_NAME
-      -p 8086:8086
-      -e SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL
+    -kill $(lsof -t -i:8086)
+    -nohup java -jar /build/libs/*.jar &
+#    - (docker stop $IMAGE_AND_CONTAINER_NAME && docker container rm $IMAGE_AND_CONTAINER_NAME) || true
+#    - docker rmi $(docker images $IMAGE_AND_CONTAINER_NAME -q) || true
+#    - docker build -t $IMAGE_AND_CONTAINER_NAME .
+#    - docker run
+#      --name $IMAGE_AND_CONTAINER_NAME
+#      --link $DATABASE_CONTAINER_NAME
+#      -p 8086:8086
+#      -e SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL
   tags:
     - java_pro_team_linux_ubuntu

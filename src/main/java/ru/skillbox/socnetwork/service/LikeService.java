@@ -24,21 +24,18 @@ import java.util.stream.Collectors;
 @DebugLogs
 public class LikeService {
 
-    private static final String POST = "Post";
-    private static final String COMMENT = "Comment";
-
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final PostService postService;
 
     public LikesDto getLikes(Integer itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
-        if (type.equals(POST)) {
+        if (type.equals(Constants.POST)) {
             List<PostLike> postLikeList = postLikeRepository.getPostLikes(itemId);
             likesDto.setLikes(postLikeList.size());
             likesDto.setUsers(postLikeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
             return likesDto;
-        } else if (type.equals(COMMENT)) {
+        } else if (type.equals(Constants.COMMENT)) {
             List<CommentLike> likeList = commentLikeRepository.getLikes(itemId);
             likesDto.setLikes(likeList.size());
             likesDto.setUsers(likeList.stream().map(CommentLike::getPersonId).collect(Collectors.toList()));
@@ -48,25 +45,25 @@ public class LikeService {
     }
 
     public LikesDto putAndGetAllLikes(Integer itemId, String type) throws InvalidRequestException {
-        if (type.equals(POST)) {
+        if (type.equals(Constants.POST)) {
             Optional<PostLike> optionalLikeDto = Optional
                     .ofNullable(postLikeRepository.getPersonLike(getPersonId(), itemId));
             if (optionalLikeDto.isEmpty()) {
                 postLikeRepository.addLike(getPersonId(), itemId);
-                LikesDto likesDto = getLikes(itemId, POST);
+                LikesDto likesDto = getLikes(itemId, Constants.POST);
                 postService.updatePostLikeCount(likesDto.getLikes(), itemId);
                 return likesDto;
             }
-            return getLikes(itemId, POST);
-        } else if (type.equals(COMMENT)) {
+            return getLikes(itemId, Constants.POST);
+        } else if (type.equals(Constants.COMMENT)) {
             Optional<CommentLike> optionalLikeDto = Optional
                     .ofNullable(commentLikeRepository.getPersonLike(getPersonId(), itemId));
             if (optionalLikeDto.isEmpty()) {
                 commentLikeRepository.addLike(getPersonId(), itemId);
-                LikesDto likesDto = getLikes(itemId, COMMENT);
+                LikesDto likesDto = getLikes(itemId, Constants.COMMENT);
                 postService.updateCommentLikeCount(likesDto.getLikes(), itemId);
             }
-            return getLikes(itemId, COMMENT);
+            return getLikes(itemId, Constants.COMMENT);
         }
         throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
 
@@ -74,9 +71,9 @@ public class LikeService {
 
     public LikedDto getLiked(Integer itemId, String type) throws InvalidRequestException {
         int personId = getPersonId();
-        if (type.equals(POST)) {
+        if (type.equals(Constants.POST)) {
             return new LikedDto(postLikeRepository.getIsLiked(personId, itemId));
-        } else if (type.equals(COMMENT)) {
+        } else if (type.equals(Constants.COMMENT)) {
             return new LikedDto(commentLikeRepository.getIsLiked(personId, itemId));
         }
         throw new InvalidRequestException(ExceptionText.LIKE_WRONG_TYPE.getMessage());
@@ -84,14 +81,14 @@ public class LikeService {
 
     public LikesDto deleteLike(int itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
-        if (type.equals(POST)) {
+        if (type.equals(Constants.POST)) {
             postLikeRepository.deleteLike(getPersonId(), itemId);
             List<PostLike> likeList = postLikeRepository.getPostLikes(itemId);
             likesDto.setLikes(likeList.size());
             likesDto.setUsers(likeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
             postService.updatePostLikeCount(likesDto.getLikes(), itemId);
             return likesDto;
-        } else if (type.equals(COMMENT)) {
+        } else if (type.equals(Constants.COMMENT)) {
             commentLikeRepository.deleteLike(getPersonId(), itemId);
             List<CommentLike> likeList = commentLikeRepository.getLikes(itemId);
             likesDto.setLikes(likeList.size());

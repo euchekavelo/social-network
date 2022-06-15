@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.service.Captcha.CaptchaService;
-import ru.skillbox.socnetwork.service.Captcha.CaptchaUtils;
 import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
+import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
+import ru.skillbox.socnetwork.service.сaptcha.CaptchaService;
+import ru.skillbox.socnetwork.service.сaptcha.CaptchaUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -68,12 +68,9 @@ public class AccountController {
                         schema = @Schema(implementation = GeneralResponse.class)
                 )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<PersonDto>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
 
-      return ResponseEntity.ok(new GeneralResponse<>(
-            "string",
-            System.currentTimeMillis(),
-            new DialogsResponse(personService.getPersonAfterRegistration(request))));
+      return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonAfterRegistration(request)));
     }
 
     @PutMapping(value = "/password/recovery")
