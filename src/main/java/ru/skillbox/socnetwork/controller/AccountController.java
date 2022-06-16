@@ -32,7 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/account")
 @InfoLogs
-@Tag(name="account", description="Взаимодействие с аккаунтом")
+@Tag(name = "account", description = "Взаимодействие с аккаунтом")
 public class AccountController {
 
     private final PersonService personService;
@@ -51,153 +51,144 @@ public class AccountController {
 
     @PostMapping(value = "/register")
     @Operation(summary = "Регистрация пользователя",
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                ))),
-            @ApiResponse(responseCode = "200", description = "Успешная регистрация",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                )))
-        })
-    public ResponseEntity<GeneralResponse<PersonDto>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
-
-      return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonAfterRegistration(request)));
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "200", description = "Успешная регистрация",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = GeneralResponse.class)
+                                    )))
+            })
+    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
+        personService.registration(request);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/password/recovery")
     @Operation(summary = "Восстановление пароля", description = "Отправляет на email ссылку для восстановления пароля",
-        parameters = @Parameter(name = "email", example = "some@mail.ru"),
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
+            parameters = @Parameter(name = "email", example = "some@mail.ru"),
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = GeneralResponse.class)
+                                    )))
+            })
     public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
 
+        personService.recoverPassword(body.get("email"));
         return ResponseEntity.ok(new GeneralResponse<>(
                 "string",
                 System.currentTimeMillis(),
-                new DialogsResponse(personService.recoverPassword(body.get("email")))
+                new DialogsResponse()
         ));
     }
 
     @PutMapping(value = "/password/set")
     @Operation(summary = "Изменение пароля",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = Map.class),
-                schemaProperties = {}
-            )),
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Успешное изменение пароля",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            schemaProperties = {}
+                    )),
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "200", description = "Успешное изменение пароля",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = GeneralResponse.class)
+                                    )))
+            })
     public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
-
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsResponse(personService.setPassword(body))
-        ));
+        personService.setPassword(body);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/email/recovery")
     @Operation(summary = "Восстановление email", description = "Отправляет на email ссылку для восстановления",
-        parameters = @Parameter(name = "email", example = "some@mail.ru"),
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Ссылка на восстановление отправлена на email",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
+            parameters = @Parameter(name = "email", example = "some@mail.ru"),
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "200", description = "Ссылка на восстановление отправлена на email",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = GeneralResponse.class)
+                                    )))
+            })
     public ResponseEntity<GeneralResponse<DialogsResponse>> recoverEmail(
-        @RequestBody Map<String, String> body) throws InvalidRequestException {
+            @RequestBody Map<String, String> body) throws InvalidRequestException {
 
-        return ResponseEntity.ok(
-                new GeneralResponse<>(
-                        "string",
-                        System.currentTimeMillis(),
-                        new DialogsResponse(personService.recoverEmail(body.get("email")))
-                ));
+        personService.recoverEmail(body.get("email"));
+
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/email")
     @Operation(summary = "Изменение email",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = Map.class),
-                schemaProperties = {}
-            )),
-        responses = {
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
-                    ))),
-            @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                    )))
-        })
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            schemaProperties = {}
+                    )),
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Bad request",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = ErrorResponseDto.class)
+                                    ))),
+                    @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = GeneralResponse.class)
+                                    )))
+            })
     public ResponseEntity<GeneralResponse<DialogsResponse>> changeEmail(
-        @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
+            @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsResponse(personService.updateEmail(body))
-        ));
+        personService.updateEmail(body);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/notifications")
@@ -219,11 +210,8 @@ public class AccountController {
         System.out.println("Ok");
 
         List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
-        GeneralResponse<List<NotificationSettingsDto>> response = new GeneralResponse<>(notificationSettings);
-        return ResponseEntity.ok(response);
-
+        return ResponseEntity.ok(new GeneralResponse<>(notificationSettings));
     }
-
 
     private void setupCaptcha(CaptchaDto captchaDto) {
         Captcha captcha = CaptchaUtils.createCaptcha(200, 50);

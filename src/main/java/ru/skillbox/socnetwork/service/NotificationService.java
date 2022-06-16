@@ -61,9 +61,7 @@ public class NotificationService {
 
     public List<NotificationDtoToView> getAllNotifications() {
 
-        Integer currentId = PostService.getSecurityUser().getId();
-        List<Notification> notifications = notificationAddService.getAllNotifications(currentId);
-        //notificationRepository.getAllNotificationsForPerson(currentId);
+        List<Notification> notifications = notificationAddService.getAllNotifications(getPersonId());
         return notificationsToDto(notifications);
     }
 

@@ -56,9 +56,6 @@ public class NotificationController {
     public ResponseEntity<GeneralResponse<List<NotificationDtoToView>>> getNotificationsByUser(
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage) {
-        Person person1 = personService.getById(1);
-
-
 
         List<NotificationDtoToView> notifications = notificationService.getAllNotifications();
         GeneralResponse<List<NotificationDtoToView>> response = new GeneralResponse<>(notifications);

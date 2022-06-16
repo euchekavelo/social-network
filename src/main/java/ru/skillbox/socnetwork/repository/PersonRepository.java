@@ -29,7 +29,7 @@ public class PersonRepository {
         jdbc.update(sql, time, email);
     }
 
-    public Person getById(int id) {
+    public Person getById(int id)  {
         String sql = "select * from person where id = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), id);
     }
