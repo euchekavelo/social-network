@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.NotificationSettings;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NotificationSettingsService {
-    NotificationSettingsRepository notificationSettingsRepository;
+    private final NotificationSettingsRepository notificationSettingsRepository;
 
     public void changeSettingsToNotification(String notificationTypeString, String enableString) {
         Integer currentId = PostService.getSecurityUser().getId();

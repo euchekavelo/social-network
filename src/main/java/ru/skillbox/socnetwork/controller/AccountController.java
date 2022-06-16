@@ -37,7 +37,7 @@ public class AccountController {
 
     private final PersonService personService;
     private final CaptchaService captchaService;
-    private NotificationSettingsService notificationSettingsService;
+    private final NotificationSettingsService notificationSettingsService;
 
     @GetMapping("/register")
     public CaptchaDto captcha() {
@@ -216,6 +216,7 @@ public class AccountController {
 
     @GetMapping(value = "/notifications")
     public ResponseEntity<GeneralResponse<List<NotificationSettingsDto>>> getNotificationSettings() {
+        System.out.println("Ok");
 
         List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
         GeneralResponse<List<NotificationSettingsDto>> response = new GeneralResponse<>(notificationSettings);
