@@ -71,4 +71,12 @@ public class GeneralResponse<T> {
     public GeneralResponse(T data) {
         this("string", System.currentTimeMillis(), 20, 0, 20, data);
     }
+
+    public GeneralResponse(T data, boolean isShort) {
+        this("string", System.currentTimeMillis(), data);
+    }
+
+    public static GeneralResponse<DialogsResponse> getDefault() {
+        return new GeneralResponse<>("message", System.currentTimeMillis(), new DialogsResponse("ok"));
+    }
 }
