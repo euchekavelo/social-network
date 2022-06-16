@@ -38,7 +38,7 @@ deploy to server:
   except:
     - tags
   script:
-    - kill -9 $(fuser -n tcp 8086)
+    - fuser -n tcp -k 8086
     - nohup java -jar /build/libs/*.jar &
 #    - (docker stop $IMAGE_AND_CONTAINER_NAME && docker container rm $IMAGE_AND_CONTAINER_NAME) || true
 #    - docker rmi $(docker images $IMAGE_AND_CONTAINER_NAME -q) || true
