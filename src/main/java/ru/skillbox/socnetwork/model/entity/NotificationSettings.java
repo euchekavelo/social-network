@@ -9,7 +9,7 @@ public class NotificationSettings {
     private Integer id;
     @JsonProperty("person_id")
     private Integer personId;
-    @JsonProperty("notification_type")
+    @JsonProperty("type")
     private TypeNotificationCode notificationTypeCode;
     private Boolean enable;
 
