@@ -1,5 +1,6 @@
 package ru.skillbox.socnetwork.model.rqdto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
@@ -26,6 +27,7 @@ public class RegisterDto {
     private String lastName;
     @JsonProperty("captcha_id")
     private Long codeId;
+    @JsonIgnore
     @Schema(hidden = true)
     private String code;
 

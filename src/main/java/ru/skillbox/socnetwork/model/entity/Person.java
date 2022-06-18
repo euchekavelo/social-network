@@ -15,16 +15,12 @@ TODO удалить это временное добавление! Только
 @Schema(description = "Пользователь")
 public class Person {
     private Integer id;
-    @JsonProperty("first_name")
     @Schema(example = "Иван")
     private String firstName;
-    @JsonProperty("last_name")
     @Schema(example = "Иванов")
     private String lastName;
-    @JsonProperty("reg_date")
     @Schema(description = "Дата регистрации", example = "1630627200000")
     private Long regDate;
-    @JsonProperty("birth_date")
     @Schema(description = "Дата рождения", example = "1630627200000")
     private Long birthDate;
     @Email
@@ -46,9 +42,7 @@ public class Person {
     private Boolean isApproved;
     private TypePermission messagesPermission;
     private Long lastOnlineTime;
-    @JsonProperty("is_blocked")
     private Boolean isBlocked;
-    @JsonProperty("is_deleted")
     @Schema(description = "Пользователь помечен к удалению")
     private Boolean isDeleted;
 

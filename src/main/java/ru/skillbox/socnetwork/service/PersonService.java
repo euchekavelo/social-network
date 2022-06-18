@@ -18,7 +18,6 @@ import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
@@ -42,6 +41,10 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     @Getter
     @Value("${skillbox.app.server}")
     private String host;
+
+    @Getter
+    @Value("${secretCaptcha}")
+    private String secret;
 
     private final FriendshipRepository friendshipRepository;
     private final PersonRepository personRepository;
@@ -102,7 +105,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public void registration(RegisterDto registerDto) throws InvalidRequestException {
-        if (!captchaService.isCorrectCode(registerDto)) {
+        if (!captchaService.isCorrectCode(registerDto)
+//                || registerDto.getCode().equals(getSecret())
+        ) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
         if (!isEmptyEmail(registerDto.getEmail())) {
@@ -175,11 +180,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             updatablePerson.setCountry(changedPerson.getCountry());
         }
         personRepository.updatePerson(updatablePerson);
-    }
-
-    public void updatePhoto(String photo, Person person) {
-        person.setPhoto(photo);
-        personRepository.updatePhoto(person);
     }
 
     public void updateEmail(Map<String, String> body) throws InvalidRequestException{
@@ -350,10 +350,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
 
         mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");
         return new PersonDto(person);
-    }
-
-    public Person getPersonByNotification (NotificationDto notificationDto){
-        return personRepository.getById(notificationDto.getPersonId());
     }
 
     public boolean isPersonOnline(Integer id) {

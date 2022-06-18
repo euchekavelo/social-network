@@ -13,7 +13,10 @@ public enum ExceptionText {
     TAG_MAX_LENGTH(" symbol's is MAX tag length, current length is "),
     INCORRECT_CAPTCHA("Incorrect captcha, please try again"),
     INCORRECT_PASSWORD("Passwords do not match"),
-    INCORRECT_EMAIL("Incorrect email, please try again");
+    INCORRECT_EMAIL("Incorrect email, please try again"),
+
+    DEFAULT_ERROR_DESCRIPTION ("This request was denied. " +
+            "Please register or use your existing account to get the updated token value and try again.");
 
 
     private final String message;

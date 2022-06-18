@@ -53,11 +53,7 @@ public class StorageController {
   public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file)
       throws IOException, DbxException { //TODO: сделать разметку requestBody
 
-    return ResponseEntity.ok(new GeneralResponse<>(
-        "string",
-        System.currentTimeMillis(),
-        storageService.uploadFile(file)
-    ));
+    return ResponseEntity.ok(new GeneralResponse<>(storageService.uploadFile(file), true));
   }
 
 }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.mapper.*;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonForDialogsDto;
 
@@ -38,7 +38,7 @@ public class MessageRepository {
         String sql = "select id, time, author_id, recipient_id, message_text, read_status FROM message WHERE dialog_id = ?";
         return jdbc.query(sql, new MessageMapper(), id);
     }
-    public DialogsResponse getUnreadCount(Integer id) {
+    public DialogsDto getUnreadCount(Integer id) {
         String sql = "SELECT COUNT(*) AS unread_count FROM message WHERE read_status = 'SENT' AND recipient_id = ?";
 
         return jdbc.queryForObject(sql, new CountMapper(), id);

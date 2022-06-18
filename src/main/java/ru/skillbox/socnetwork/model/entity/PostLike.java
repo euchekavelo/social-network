@@ -13,10 +13,4 @@ public class PostLike {
     private Long time;
     private Integer personId;
     private Integer postId;
-
-    public PostLike(Integer personId, Integer postId) {
-        this.time = System.currentTimeMillis();
-        this.personId = personId;
-        this.postId = postId;
-    }
 }

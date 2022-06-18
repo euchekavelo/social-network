@@ -12,7 +12,7 @@ import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
 import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;
@@ -51,7 +51,7 @@ public class FriendsService {
                 .collect(Collectors.toList());
     }
 
-    public DialogsResponse deleteFriendById(Integer friendId) throws InvalidRequestException {
+    public DialogsDto deleteFriendById(Integer friendId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         int countFrom = friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(authorizedUserId, friendId,
@@ -63,10 +63,10 @@ public class FriendsService {
                     "No friendly relationship found between the specified user.");
         }
 
-        return new DialogsResponse("ok");
+        return new DialogsDto("ok");
     }
 
-    public DialogsResponse addFriendById(Integer focusPersonId) throws InvalidRequestException {
+    public DialogsDto addFriendById(Integer focusPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
@@ -111,7 +111,7 @@ public class FriendsService {
 
             notificationAddService.addNotificationForOnePerson(notificationDto);
         }
-        return new DialogsResponse("ok");
+        return new DialogsDto("ok");
     }
 
     public List<PersonDto> getListIncomingFriendRequests() {
@@ -127,7 +127,7 @@ public class FriendsService {
         return friendshipRepository.getInformationAboutFriendships(email, userIds);
     }
 
-    public DialogsResponse deleteFriendRequestByPersonId(Integer srcPersonId) throws InvalidRequestException {
+    public DialogsDto deleteFriendRequestByPersonId(Integer srcPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (srcPersonId.equals(authorizedUserId)) {
@@ -140,6 +140,6 @@ public class FriendsService {
             throw new InvalidRequestException("Deletion failed. The specified friend request was not found.");
         }
 
-        return new DialogsResponse("ok");
+        return new DialogsDto("ok");
     }
 }

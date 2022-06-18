@@ -20,11 +20,12 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationService {
 
-    //private final NotificationRepository notificationRepository;
     private final NotificationAddService notificationAddService;
     private final PersonService personService;
     private final FriendsService friendsService;
     private final NotificationSettingsRepository notificationSettingsRepository;
+
+    private final SecurityPerson securityPerson = new SecurityPerson();
 
     public void addNotificationForFriends(NotificationDto notificationDto) {
 
@@ -34,21 +35,7 @@ public class NotificationService {
         }
     }
 
-//    public List<NotificationDtoToView> getAllNotificationsForFriends() {
-//
-//        /*
-//        Alexander Luzyanin add person to onlinePersonMap<Integer, Long>
-//         */
-//        personService.addOnlinePerson(getPersonId());
-//
-//        List<PersonDto> friends = friendsService.getUserFriends();
-//        for (PersonDto friend : friends) {
-//            addNotificationForOnePerson(notificationDto, friend.getId());
-//        }
-//    }
-
-    public void addNotificationForOnePerson(NotificationDto notificationDto,
-                                            Integer destinationId) {
+    public void addNotificationForOnePerson(NotificationDto notificationDto, Integer destinationId) {
 
         boolean settingsEnable = notificationSettingsRepository.checkSettingsForNotification
                 (notificationDto.getNotificationType(),destinationId);
@@ -61,7 +48,9 @@ public class NotificationService {
 
     public List<NotificationDtoToView> getAllNotifications() {
 
-        List<Notification> notifications = notificationAddService.getAllNotifications(getPersonId());
+        personService.addOnlinePerson(securityPerson.getPersonId());
+
+        List<Notification> notifications = notificationAddService.getAllNotifications(securityPerson.getPersonId());
         return notificationsToDto(notifications);
     }
 
@@ -88,10 +77,5 @@ public class NotificationService {
 
     public void readAllNotifications(int id, boolean all) {
         notificationAddService.readAllNotifications(id, all);
-    }
-
-    public Integer getPersonId() {
-        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return auth.getId();
     }
 }

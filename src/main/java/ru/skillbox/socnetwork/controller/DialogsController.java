@@ -44,8 +44,10 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение списка диалогов")
         })
-    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
-        return ResponseEntity.ok(dialogsService.getDialogs());
+    public ResponseEntity<GeneralResponse<List<DialogsDto>>> getDialog() {
+
+        List<DialogsDto> list = dialogsService.getDialogs();
+        return ResponseEntity.ok(new GeneralResponse<>(list, list.size()));
     }
 
     @PostMapping
@@ -65,12 +67,12 @@ public class DialogsController {
     })
     public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return ResponseEntity.ok(dialogsService.createDialog(request.getUserIds()));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds()), true));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
-        return ResponseEntity.ok(dialogsService.deleteDialogByById (id));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById(id), true));
     }
 
     @GetMapping("/{id}/messages")
@@ -88,9 +90,11 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение списка сообщений в диалоге")
         })
-    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
+    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(
+            @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
-        return ResponseEntity.ok(dialogsService.getMessageById(id));
+        List<MessageDto> list = dialogsService.getMessageDtoListByDialogId(id);
+        return ResponseEntity.ok(new GeneralResponse<>(list, list.size()));
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -108,8 +112,8 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение количества непрочитанных сообщений")
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
-        return ResponseEntity.ok(dialogsService.getUnreadMessageCount());
+    public ResponseEntity<GeneralResponse<DialogsDto>> getUnread() {
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.getUnreadMessageCount(), true));
     }
 
     @PostMapping("/{id}/messages")
@@ -131,6 +135,6 @@ public class DialogsController {
         @RequestBody MessageRequest messageRequest,
         @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
-        return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id), true));
     }
 }

@@ -13,6 +13,9 @@ import java.util.List;
 public class NotificationAddService {
     private final NotificationRepository notificationRepository;
 
+    private final SecurityPerson securityPerson = new SecurityPerson();
+
+
     public void addNotificationForOnePerson(NotificationDto notificationDto) {
         notificationRepository.addNotification(notificationDto);
     }
@@ -24,7 +27,7 @@ public class NotificationAddService {
     public void readAllNotifications(int id, boolean all) {
 
         if (all) {
-            notificationRepository.readAllNotificationByUser(PostService.getSecurityUser().getId());
+            notificationRepository.readAllNotificationByUser(securityPerson.getPersonId());
         } else {
             notificationRepository.readUsersNotificationById(id);
         }

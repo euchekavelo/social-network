@@ -16,18 +16,20 @@ import java.util.List;
 public class NotificationSettingsService {
     private final NotificationSettingsRepository notificationSettingsRepository;
 
+    private final SecurityPerson securityPerson = new SecurityPerson();
+
     public void changeSettingsToNotification(String notificationTypeString, String enableString) {
-        Integer currentId = PostService.getSecurityUser().getId();
+
         TypeNotificationCode notificationType = TypeNotificationCode.valueOf(notificationTypeString);
         Boolean enable = Boolean.valueOf(enableString);
-        notificationSettingsRepository.changeNotificationSettings(notificationType, enable, currentId);
+        notificationSettingsRepository.changeNotificationSettings(
+                notificationType, enable, securityPerson.getPersonId());
     }
 
     public List<NotificationSettingsDto> getSettingsForUser() {
 
-        Integer currentId = PostService.getSecurityUser().getId();
         List<NotificationSettings> notificationSettings =
-                notificationSettingsRepository.getAllNotificationsSettingsForUser(currentId);
+                notificationSettingsRepository.getAllNotificationsSettingsForUser(securityPerson.getPersonId());
         return notificationSettingsToDto(notificationSettings);
 
     }

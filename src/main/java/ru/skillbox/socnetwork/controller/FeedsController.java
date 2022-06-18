@@ -50,7 +50,7 @@ public class FeedsController {
             (@RequestParam(value = "offset", defaultValue = "0") int offset,
              @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
 
-        return ResponseEntity.ok(new GeneralResponse<>(postService.getAll(offset, perPage),
+        return ResponseEntity.ok(new GeneralResponse<>(postService.getFeeds(offset, perPage),
                 postService.getPostCount(), offset, perPage));
     }
 }

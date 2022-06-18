@@ -7,6 +7,6 @@ import lombok.Data;
 @Schema(description = "Теги")
 public class Tag {
     private Integer id = -1;
-    @Schema(example = "статья")
-    private String tag;
+    @Schema(example = "Имя тега")
+    private String tagName;
 }

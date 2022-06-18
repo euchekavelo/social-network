@@ -2,8 +2,6 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
@@ -19,7 +17,6 @@ import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
 import ru.skillbox.socnetwork.repository.PostCommentRepository;
 import ru.skillbox.socnetwork.repository.PostLikeRepository;
 import ru.skillbox.socnetwork.repository.PostRepository;
-import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,23 +35,26 @@ public class PostService {
     private final TagService tagService;
     private final NotificationService notificationService;
 
-    public List<PostDto> getAll(int offset, int perPage) {
-        return getPostDtoListOfAllPersons(postRepository.getAlreadyPostedWithOffset(offset, perPage), getPersonId());
+    private final SecurityPerson securityPerson = new SecurityPerson();
+
+    public List<PostDto> getFeeds(int offset, int perPage) {
+        return getPostDtoListOfAllPersons(postRepository
+                .getAlreadyPostedWithOffset(offset, perPage, securityPerson.getPersonId()));
     }
 
-    public List<PostDto> getWall(int personId, int offset, int perPage) {
-        List<Post> posts = postRepository.getByAuthorIdWithOffset(personId, offset, perPage);
-        PersonDto personDto = new PersonDto(personService.getById(personId));
+    public List<PostDto> getWall(int authorId, int offset, int perPage) {
+        List<Post> posts = postRepository.getByAuthorIdWithOffset(authorId, offset, perPage, securityPerson.getPersonId());
+        PersonDto personDto = new PersonDto(personService.getById(authorId));
         return getPostDtoListOfOnePerson(posts, personDto);
     }
 
     public PostDto getById(int postId) throws InvalidRequestException {
         try {
-            Post post = postRepository.getById(postId);
+            Post post = postRepository.getById(postId, securityPerson.getPersonId());
             PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
             List<CommentDto> commentDtoList = getCommentDtoList(postId);
             List<String> tags = tagService.getPostTags(postId);
-            return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(getPersonId(), postId));
+            return new PostDto(post, personDto, commentDtoList, tags, likeRepository.getIsLiked(securityPerson.getPersonId(), postId));
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidRequestException(ExceptionText.POST_INCORRECT_CANT_FIND_ID.getMessage() + postId);
         }
@@ -71,7 +71,7 @@ public class PostService {
     public void deletePostById(int postId) throws InvalidRequestException {
         PostDto oldPost = this.getById(postId);
         Integer authorId = oldPost.getAuthor().getId();
-        if (!getPersonId().equals(authorId)) {
+        if (!securityPerson.getPersonId().equals(authorId)) {
             throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
         } else {
             postRepository.deleteById(postId);
@@ -81,11 +81,11 @@ public class PostService {
     }
 
     public List<CommentDto> getCommentDtoList(int postId) {
-        List<PostComment> postComments = commentRepository.getLikedParentCommentsByPostId(getPersonId(), postId);
+        List<PostComment> postComments = commentRepository.getLikedParentCommentsByPostId(securityPerson.getPersonId(), postId);
         if (postComments.isEmpty()) {
             return new ArrayList<>();
         }
-        List<PostComment> postSubComments = commentRepository.getLikedSubCommentsByPostId(getPersonId(), postId);
+        List<PostComment> postSubComments = commentRepository.getLikedSubCommentsByPostId(securityPerson.getPersonId(), postId);
 
         return postComments.stream()
                 .map(comment -> getCommentDtoWithSubComments(postSubComments, comment))
@@ -100,7 +100,6 @@ public class PostService {
                     .map(c -> new CommentDto(c, new PersonDto(personService.getById(c.getAuthorId()))))
                     .collect(Collectors.toList());
             commentDto.setSubComments(subComments);
-            System.out.println("\n!!!!!!!!!!!!!!!!" + commentDto + "!!!!!!!!!!!!!!!!\n");
         } else {
             commentDto.setSubComments(new ArrayList<>());
         }
@@ -121,16 +120,12 @@ public class PostService {
     }
 
 
-    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts, Integer personId) {
-        return posts.stream().map(post -> {
-                    PostDto postDto = new PostDto(
-                            post,
-                            new PersonDto(personService.getById(post.getAuthor())),
-                            getCommentDtoList(post.getId()),
-                            tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(likeRepository.getIsLiked(personId, post.getId()));
-                    return postDto;
-                }
+    private List<PostDto> getPostDtoListOfAllPersons(List<Post> posts) {
+        return posts.stream().map(post -> new PostDto(
+                post,
+                new PersonDto(personService.getById(post.getAuthor())),
+                getCommentDtoList(post.getId()),
+                tagService.getPostTags(post.getId()))
         ).collect(Collectors.toList());
     }
 
@@ -163,7 +158,7 @@ public class PostService {
     public PostDto editPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
         PostDto oldPost = this.getById(postId);
         Integer authorId = oldPost.getAuthor().getId();
-        if (!getPersonId().equals(authorId)) {
+        if (!securityPerson.getPersonId().equals(authorId)) {
             throw new InvalidRequestException(ExceptionText.POST_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
         }
         tagService.editOldTags(postId, newPostDto);
@@ -180,8 +175,8 @@ public class PostService {
     }
 
     public CommentDto addCommentToPost(CommentDto comment, int id) throws InvalidRequestException {
-        Integer currentUserId = getPersonId();
-        comment.setAuthor(new PersonDto(personService.getById(currentUserId)));
+
+        comment.setAuthor(new PersonDto(personService.getById(securityPerson.getPersonId())));
         comment.setTime(System.currentTimeMillis());
         comment.setPostId(id);
         comment.setIsBlocked(false);
@@ -205,7 +200,7 @@ public class PostService {
 
     public CommentDto editCommentToPost(CommentDto comment) throws InvalidRequestException {
         Integer authorId = this.getPostCommentById(comment.getId()).getAuthorId();
-        if (!getPersonId().equals(authorId)) {
+        if (!securityPerson.getPersonId().equals(authorId)) {
             throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_EDIT.getMessage() + authorId);
         }
         commentRepository.edit(comment);
@@ -215,7 +210,7 @@ public class PostService {
 
     public CommentDto deleteCommentToPost(int commentId) throws InvalidRequestException {
         Integer authorId = this.getPostCommentById(commentId).getAuthorId();
-        if (!getPersonId().equals(authorId)) {
+        if (!securityPerson.getPersonId().equals(authorId)) {
             throw new InvalidRequestException(ExceptionText.COMMENT_INCORRECT_AUTHOR_TO_DELETE.getMessage() + authorId);
         }
         CommentDto commentDto = new CommentDto();
@@ -225,7 +220,7 @@ public class PostService {
     }
 
     public List<PostDto> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String author,
-                                                      List<String> tags, int perPage, int currentPersonId) {
+                                                      List<String> tags, int perPage) {
 
         String[] authorNameSurname = author.split("\\s", 2);
         String authorName = authorNameSurname[0];
@@ -234,21 +229,11 @@ public class PostService {
         List<Post> posts = postRepository.choosePostsWhichContainsTextWithTags(text, dateFrom, dateTo,
                 authorName, authorSurname, getSqlString(tags), perPage);
 
-        return getPostDtoListOfAllPersons(posts, currentPersonId);
+        return getPostDtoListOfAllPersons(posts);
     }
 
     public Integer getPostCount() {
         return postRepository.getPostCount();
-    }
-
-    public Integer getPersonId() {
-        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return auth.getId();
-    }
-
-    public static SecurityUser getSecurityUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (SecurityUser) auth.getPrincipal();
     }
 
     private String getSqlString(List<String> tags) {
