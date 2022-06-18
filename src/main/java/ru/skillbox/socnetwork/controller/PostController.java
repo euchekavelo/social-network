@@ -188,7 +188,7 @@ public class PostController {
             @RequestBody CommentDto comment) throws InvalidRequestException {
 
         comment.setId(commentId);
-        return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentToPost(comment)));
+        return ResponseEntity.ok(new GeneralResponse<>(postService.editCommentPost(comment)));
     }
 
     @Operation(summary = "Удаление комментария к посту",
@@ -214,7 +214,7 @@ public class PostController {
             @PathVariable int id,
             @PathVariable int commentId) throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentToPost(commentId)));
+        return ResponseEntity.ok(new GeneralResponse<>(postService.deleteCommentPost(commentId)));
     }
 
     @GetMapping()

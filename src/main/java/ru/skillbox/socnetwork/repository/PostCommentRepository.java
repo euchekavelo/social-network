@@ -43,14 +43,17 @@ public class PostCommentRepository {
         jdbc.update(sql, comment.getCommentText(), System.currentTimeMillis(), comment.getId());
     }
 
-    public void deleteById(int commentId) {
+    public void deleteCommentById(int commentId) {
         String sql = "DELETE FROM post_comment WHERE id = ?";
+
         jdbc.update(sql, commentId);
     }
 
-    public PostComment getById(int id) throws EmptyResultDataAccessException {
-        String sql = "SELECT * FROM post_comment WHERE id = ?";
-        return jdbc.queryForObject(sql, new PostCommentMapper(), id);
+    public PostComment getById(int id, int currentPersonId) throws EmptyResultDataAccessException {
+        String sql = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
+                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
+                "where pc.id = ?";
+        return jdbc.queryForObject(sql, new PostCommentMapper(), currentPersonId, currentPersonId, id);
     }
 
     public void updateLikeCount(Integer likes, Integer postId) {
@@ -76,5 +79,10 @@ public class PostCommentRepository {
     public void deleteCommentsByPostId(int postId) {
         String sql = "DELETE FROM post_comment WHERE post_id = ?";
         jdbc.update(sql, postId);
+    }
+
+    public void deleteCommentAndSubCommentsByParentId(int commentId) {
+        String sql = "DELETE FROM post_comment WHERE parent_id = ? OR id = ?";
+        jdbc.update(sql, commentId, commentId);
     }
 }

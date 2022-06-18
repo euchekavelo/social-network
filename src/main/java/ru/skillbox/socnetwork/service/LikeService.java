@@ -46,9 +46,9 @@ public class LikeService {
     public LikesDto putAndGetAllLikes(Integer itemId, String type) throws InvalidRequestException {
         if (type.equals(Constants.POST)) {
             Optional<PostLike> optionalLikeDto = Optional
-                    .ofNullable(postLikeRepository.getPersonLike(securityPerson.getPersonId(), itemId));
+                    .ofNullable(postLikeRepository.getPersonPostLike(securityPerson.getPersonId(), itemId));
             if (optionalLikeDto.isEmpty()) {
-                postLikeRepository.addLike(securityPerson.getPersonId(), itemId);
+                postLikeRepository.addLikeToPost(securityPerson.getPersonId(), itemId);
                 LikesDto likesDto = getLikes(itemId, Constants.POST);
                 postService.updatePostLikeCount(likesDto.getLikes(), itemId);
                 return likesDto;
@@ -71,7 +71,7 @@ public class LikeService {
     public LikedDto getLiked(Integer itemId, String type) throws InvalidRequestException {
         int personId = securityPerson.getPersonId();
         if (type.equals(Constants.POST)) {
-            return new LikedDto(postLikeRepository.getIsLiked(personId, itemId));
+            return new LikedDto(postLikeRepository.getIsPostLiked(personId, itemId));
         } else if (type.equals(Constants.COMMENT)) {
             return new LikedDto(commentLikeRepository.getIsLiked(personId, itemId));
         }
@@ -81,7 +81,7 @@ public class LikeService {
     public LikesDto deleteLike(int itemId, String type) throws InvalidRequestException {
         LikesDto likesDto = new LikesDto();
         if (type.equals(Constants.POST)) {
-            postLikeRepository.deleteLike(securityPerson.getPersonId(), itemId);
+            postLikeRepository.deleteLikeFromPost(securityPerson.getPersonId(), itemId);
             List<PostLike> likeList = postLikeRepository.getPostLikes(itemId);
             likesDto.setLikes(likeList.size());
             likesDto.setUsers(likeList.stream().map(PostLike::getPersonId).collect(Collectors.toList()));
