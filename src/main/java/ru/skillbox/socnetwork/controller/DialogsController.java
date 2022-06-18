@@ -60,9 +60,10 @@ public class DialogsController {
         return ResponseEntity.ok().build();
     }
 
-    @MessageMapping("/changeMessage")
+    @MessageMapping("/hello")
     @SendTo("/topic/activity")
     public MessageDto message(MessageDto message) {
+        System.out.println("!!!!!!!!");
         if (!message.getMessageText().equals("")) {
             //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
         }
