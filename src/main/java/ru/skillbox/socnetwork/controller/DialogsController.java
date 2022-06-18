@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
@@ -136,5 +139,15 @@ public class DialogsController {
         @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
         return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id), true));
+    }
+
+    @MessageMapping("/hello")
+    @SendTo("/topic/activity")
+    public MessageDto message(MessageDto message) {
+        System.out.println("!!!!!!!!");
+        if (!message.getMessageText().equals("")) {
+            //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        }
+        return message;
     }
 }
