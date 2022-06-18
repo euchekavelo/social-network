@@ -17,6 +17,7 @@ public class PostMapper implements RowMapper<Post> {
         mapper.setTime(rs.getLong("time"));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
         mapper.setLikes(rs.getInt("likes"));
+        mapper.setIsLiked(rs.getBoolean("is_liked"));
         return mapper;
     }
 }

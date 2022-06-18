@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
@@ -72,7 +72,7 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> updateProfile(
+    public ResponseEntity<GeneralResponse<DialogsDto>> updateProfile(
         @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
         personService.updatePerson(updatePersonDto);
@@ -93,7 +93,7 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteProfile()
+    public ResponseEntity<GeneralResponse<DialogsDto>> deleteProfile()
             throws InvalidRequestException {
 
         personService.setBlockPerson();
@@ -116,9 +116,7 @@ public class ProfileController {
         })
     public ResponseEntity<GeneralResponse<PersonDto>> returnProfile(){
 
-        return ResponseEntity.ok(new GeneralResponse<>(
-                personService.restoreProfile(), true
-        ));
+        return ResponseEntity.ok(new GeneralResponse<>(personService.restoreProfile(), true));
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -199,7 +197,7 @@ public class ProfileController {
     }
 
     @PutMapping("block/{id}")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> blockUser(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> blockUser(@PathVariable Integer id)
             throws InvalidRequestException {
 
         personService.blockUser(id);
@@ -207,7 +205,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("block/{id}")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> unblockUser(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> unblockUser(@PathVariable Integer id)
             throws InvalidRequestException {
 
         personService.unblockUser(id);

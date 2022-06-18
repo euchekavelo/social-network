@@ -51,7 +51,8 @@ public class PostController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<PostDto>> getPostById(@PathVariable @Parameter(description = "Идентификатор поста") int id)
+    public ResponseEntity<GeneralResponse<PostDto>> getPostById(
+            @PathVariable @Parameter(description = "Идентификатор поста") int id)
             throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.getById(id)));
@@ -76,7 +77,8 @@ public class PostController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(@PathVariable @Parameter(description = "Идентификатор поста") int id)
+    public ResponseEntity<GeneralResponse<PostDto>> deletePostById(
+            @PathVariable @Parameter(description = "Идентификатор поста") int id)
             throws InvalidRequestException {
 
         postService.deletePostById(id);
@@ -103,7 +105,8 @@ public class PostController {
                     )))
         })
     public ResponseEntity<GeneralResponse<PostDto>> editPostById(
-            @PathVariable @Parameter(description = "Идентификатор поста") int id, @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
+            @PathVariable @Parameter(description = "Идентификатор поста") int id,
+            @RequestBody NewPostDto newPostDto) throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.editPost(id, newPostDto)));
     }
@@ -127,7 +130,8 @@ public class PostController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(@PathVariable @Parameter(description = "Идентификатор поста") int id) {
+    public ResponseEntity<GeneralResponse<List<CommentDto>>> getCommentsByPostId(
+            @PathVariable @Parameter(description = "Идентификатор поста") int id) {
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.getCommentDtoList(id)));
     }
@@ -242,8 +246,7 @@ public class PostController {
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
 
         GeneralResponse<List<PostDto>> response = new GeneralResponse<>
-                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, tags, perPage,
-                        postService.getPersonId()));
+                (postService.choosePostsWhichContainsText(text, dateFrom, dateTo, author, tags, perPage));
 
         return ResponseEntity.ok(response);
     }

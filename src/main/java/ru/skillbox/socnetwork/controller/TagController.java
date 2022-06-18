@@ -53,6 +53,6 @@ public class TagController {
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "perPage", defaultValue = "20", required = false) int perPage) {
 
-        return ResponseEntity.ok(new GeneralResponse<>(tagService.getPostTags(1)));
+        return ResponseEntity.ok(new GeneralResponse<>(tagService.getAllTags()));
     }
 }

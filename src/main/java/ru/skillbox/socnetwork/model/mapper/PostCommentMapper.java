@@ -18,6 +18,7 @@ public class PostCommentMapper implements RowMapper<PostComment> {
         mapper.setCommentText(rs.getString("comment_text"));
         mapper.setIsBlocked(rs.getBoolean("is_blocked"));
         mapper.setLikes(rs.getInt("likes"));
+        mapper.setIsLiked(rs.getBoolean("is_liked"));
         return mapper;
     }
 }
