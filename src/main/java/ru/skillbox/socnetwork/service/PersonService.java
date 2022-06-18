@@ -246,7 +246,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePassword(person);
         tempTokenService.deleteToken(body.get("token"));
 
-        mailService.send(person.getEmail(), "Your password has been changed", "Your password changed successfully! You can now log in with new password!");
+        mailService.send(person.getEmail(), "Your password has been changed",
+                "Your password changed successfully! You can now log in with new password!");
     }
 
     private String generateToken(){
@@ -333,7 +334,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(storageService.getDeletedProfileImage());
         personRepository.updatePhoto(person);
 
-        mailService.send(person.getEmail(), "Your account will be deleted in 3 days!", "You requested to delete your account, it will be completely deleted in 3 days!");
+        mailService.send(person.getEmail(), "Your account will be deleted in 3 days!",
+                "You requested to delete your account, it will be completely deleted in 3 days!");
     }
 
     public PersonDto restoreProfile(){
