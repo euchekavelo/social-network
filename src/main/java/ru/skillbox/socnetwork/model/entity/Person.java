@@ -1,16 +1,11 @@
 package ru.skillbox.socnetwork.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.Email;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.enums.TypePermission;
 
-/*
-TODO удалить это временное добавление! Только ДТО должно на фронте отображаться)
-Временно добавлены аннотации @JsonProperty для правильного отображения сущности на фронте, через запросы
-напрямую через репозиторий
-*/
+import javax.validation.constraints.Email;
+
 @Data
 @Schema(description = "Пользователь")
 public class Person {

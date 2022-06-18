@@ -12,7 +12,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.service.Constants;
-import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
 
@@ -117,8 +116,9 @@ public class PersonRepository {
         return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
-    public Person updatePerson(Person person) {
-        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+    public void updatePersonByEmail(Person person) {
+        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = " +
+                "(?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
@@ -128,10 +128,9 @@ public class PersonRepository {
                 person.getCity(),
                 person.getCountry(),
                 person.getEmail());
-        return person;
     }
 
-    public void updatePhoto(Person person) {
+    public void updatePhotoByEmail(Person person) {
         String sql = "update person set photo = ? where person.e_mail = ?";
         jdbc.update(sql,
                 person.getPhoto(),

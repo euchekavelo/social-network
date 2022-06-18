@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Notification;
-import ru.skillbox.socnetwork.model.entity.NotificationType;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 
@@ -16,8 +15,6 @@ import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 @Schema(hidden = true)
 public class NotificationDto {
     private Integer id;
-    //    @JsonProperty("type_id")
-//    private Integer typeId;
     @JsonProperty("notification_type")
     private TypeNotificationCode notificationType;
     @JsonProperty("sent_time")

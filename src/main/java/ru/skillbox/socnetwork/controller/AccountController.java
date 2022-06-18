@@ -45,8 +45,6 @@ public class AccountController {
         setupCaptcha(captchaDto);
         captchaService.addCaptcha(captchaDto);
 
-        System.out.println(captchaDto);
-
         return captchaDto;
     }
 
@@ -101,11 +99,7 @@ public class AccountController {
             @RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
 
         personService.recoverPassword(body.get("email"));
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsDto()
-        ));
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/password/set")
@@ -214,7 +208,6 @@ public class AccountController {
 
     @GetMapping(value = "/notifications")
     public ResponseEntity<GeneralResponse<List<NotificationSettingsDto>>> getNotificationSettings() {
-        System.out.println("Ok");
 
         List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
         return ResponseEntity.ok(new GeneralResponse<>(notificationSettings));

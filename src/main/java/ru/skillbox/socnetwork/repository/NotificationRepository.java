@@ -19,18 +19,13 @@ public class NotificationRepository {
     private final JdbcTemplate jdbc;
 
     public void deleteAllPersonNotifications(Integer personId) {
+
         String sql = "delete from notification where person_id = ?";
         jdbc.update(sql, personId);
     }
 
-
-    public List<Notification> getNotifications(int offset, int perPage) {
-        String sql = "select * from notification";
-        List<Notification> not = jdbc.query(sql, new NotificationMapper());
-        return not;
-    }
-
     public void addNotification(NotificationDto notificationDto) {
+
         String sql = "insert into notification (notification_type, sent_time, person_id, entity_id, dist_user_id, status, title)" +
                 " values ((CAST(? AS notification_code_type)), ?, ?, ?, ?, (CAST(? AS read_status_type)), ?)";
 
@@ -46,11 +41,13 @@ public class NotificationRepository {
     }
 
     public void readAllNotificationByUser(int personId) {
+
         String sql = "UPDATE notification SET status = CAST(? AS read_status_type) WHERE dist_user_id = ?";
         jdbc.update(sql, TypeReadStatus.READ.toString(), personId);
     }
 
     public void readUsersNotificationById(int notificationId) {
+
         String sql = "UPDATE notification SET status = CAST(? AS read_status_type) WHERE id = ?";
         jdbc.update(sql, TypeReadStatus.READ.toString(), notificationId);
     }

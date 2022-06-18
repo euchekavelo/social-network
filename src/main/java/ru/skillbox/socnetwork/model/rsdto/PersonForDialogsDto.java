@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 @Schema(hidden = true)
 public class PersonForDialogsDto {
     private Integer id;
@@ -19,8 +20,4 @@ public class PersonForDialogsDto {
     private String eMail;
     @JsonProperty("last_online_time")
     private Long lastOnlineTime;
-
-    public PersonForDialogsDto() {
-
-    }
 }

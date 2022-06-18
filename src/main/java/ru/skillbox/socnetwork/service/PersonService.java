@@ -179,7 +179,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 !changedPerson.getCountry().equals(updatablePerson.getCountry())) {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
-        personRepository.updatePerson(updatablePerson);
+        personRepository.updatePersonByEmail(updatablePerson);
     }
 
     public void updateEmail(Map<String, String> body) throws InvalidRequestException{
@@ -330,9 +330,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setIsDeleted(true);
         person.setFirstName("Deleted");
         person.setLastName("");
-        personRepository.updatePerson(person);
+        personRepository.updatePersonByEmail(person);
         person.setPhoto(storageService.getDeletedProfileImage());
-        personRepository.updatePhoto(person);
+        personRepository.updatePhotoByEmail(person);
 
         mailService.send(person.getEmail(), "Your account will be deleted in 3 days!",
                 "You requested to delete your account, it will be completely deleted in 3 days!");
@@ -346,8 +346,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(deletedUser.getPhoto());
         person.setFirstName(deletedUser.getFirstName());
         person.setLastName(deletedUser.getLastName());
-        personRepository.updatePerson(person);
-        personRepository.updatePhoto(person);
+        personRepository.updatePersonByEmail(person);
+        personRepository.updatePhotoByEmail(person);
         deletedUserService.delete(deletedUser.getId());
 
         mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");

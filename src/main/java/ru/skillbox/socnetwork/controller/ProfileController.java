@@ -162,8 +162,6 @@ public class ProfileController {
             (@PathVariable int id,
              @RequestParam(value = "offset", defaultValue = "0") int offset,
              @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
-                postService.getPostCount(), offset, perPage);
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.getWall(id, offset, perPage)));
     }

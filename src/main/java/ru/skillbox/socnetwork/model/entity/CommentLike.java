@@ -1,7 +1,6 @@
 package ru.skillbox.socnetwork.model.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.Min;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +16,4 @@ public class CommentLike {
     private Integer personId;
     @Schema(example = "13")
     private Integer commentId;
-
-    public CommentLike(Integer personId, Integer commentId) {
-        this.time = System.currentTimeMillis();
-        this.personId = personId;
-        this.commentId = commentId;
-    }
 }

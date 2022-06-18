@@ -12,13 +12,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
-import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.model.rsdto.DialogDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
+import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 import ru.skillbox.socnetwork.service.DialogsService;
 
 import java.util.List;

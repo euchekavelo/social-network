@@ -20,7 +20,6 @@ import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.LocalFileService;
-import ru.skillbox.socnetwork.service.storage.StorageCache;
 
 import java.io.*;
 import java.util.List;
@@ -96,7 +95,7 @@ public class StorageService {
 
     cache.addLink(fileName, getAbsolutePath(fileName));
     person.setPhoto(getAbsolutePath(fileName));
-    personRepository.updatePhoto(person);
+    personRepository.updatePhotoByEmail(person);
 
     return new FileUploadDTO(person, fileMetadata);
   }

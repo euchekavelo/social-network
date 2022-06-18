@@ -9,5 +9,7 @@ public class Constants {
 
     public static final String SENT = "SENT";
 
+    public static final String STRING = "string";
+
 
 }

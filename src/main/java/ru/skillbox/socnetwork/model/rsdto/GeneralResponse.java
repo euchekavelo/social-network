@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.skillbox.socnetwork.service.Constants;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -49,7 +50,7 @@ public class GeneralResponse<T> {
     }
 
     public GeneralResponse(T data, int total, int offset, int perPage) {
-        this.error = "string";
+        this.error = Constants.STRING;
         this.timestamp = System.currentTimeMillis();
         this.total = total;
         this.offset = offset;
@@ -69,15 +70,15 @@ public class GeneralResponse<T> {
     }
 
     public GeneralResponse(T data) {
-        this("string", System.currentTimeMillis(), 20, 0, 20, data);
+        this(Constants.STRING, System.currentTimeMillis(), 20, 0, 20, data);
     }
 
     public GeneralResponse(T data, int total) {
-        this("string", System.currentTimeMillis(), total, 0, 20, data);
+        this(Constants.STRING, System.currentTimeMillis(), total, 0, 20, data);
     }
 
     public GeneralResponse(T data, boolean isShort) {
-        this("string", System.currentTimeMillis(), data);
+        this(Constants.STRING, System.currentTimeMillis(), data);
     }
 
     public static GeneralResponse<DialogsDto> getDefault() {
