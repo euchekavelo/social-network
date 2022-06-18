@@ -98,7 +98,7 @@
       "type": "POSTED",
       "post_text": "tihon post text example",
       "is_blocked": false,
-      "my_like": false
+      "my_like": true
     },
     {
       "id": 3,
@@ -240,7 +240,7 @@
       "type": "POSTED",
       "post_text": "petr post text example",
       "is_blocked": false,
-      "my_like": false
+      "my_like": true
     },
     {
       "id": 2,
@@ -266,7 +266,7 @@
       "type": "POSTED",
       "post_text": "ivan post text example",
       "is_blocked": false,
-      "my_like": false
+      "my_like": true
     },
     {
       "id": 1,
@@ -324,7 +324,7 @@
       "type": "POSTED",
       "post_text": "test post text example",
       "is_blocked": false,
-      "my_like": false
+      "my_like": true
     }
   ]
 }

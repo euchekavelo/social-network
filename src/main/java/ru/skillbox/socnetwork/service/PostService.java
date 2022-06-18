@@ -56,7 +56,7 @@ public class PostService {
             PersonDto personDto = new PersonDto(personService.getById(post.getAuthor()));
             List<CommentDto> commentDtoList = getCommentDtoList(postId);
             List<String> tags = tagService.getPostTags(postId);
-            return new PostDto(post, personDto, commentDtoList, tags, postLikeRepository.getIsPostLiked(securityPerson.getPersonId(), postId));
+            return new PostDto(post, personDto, commentDtoList, tags);
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidRequestException(ExceptionText.POST_INCORRECT_CANT_FIND_ID.getMessage() + postId);
         }

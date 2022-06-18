@@ -24,6 +24,7 @@ public class PostRepository {
     }
 
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit, int currentPersonId) {
+
         String sql = "select post.*, (post_like.person_id = ?) as is_liked from post " +
                 "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) " +
                 "WHERE post.time < (extract(epoch from now()) * 1000) order by id desc LIMIT ? OFFSET ?";
@@ -31,6 +32,7 @@ public class PostRepository {
     }
 
     public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit, int currentPersonId) {
+
         String sql = "select post.*, (post_like.person_id = ?) as is_liked from post " +
                 "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) " +
                 "WHERE author = ? order by id desc LIMIT ? OFFSET ?";
@@ -39,15 +41,10 @@ public class PostRepository {
 
     public Post getById(int postId, int currentPersonId) throws EmptyResultDataAccessException {
 
-//        MapSqlParameterSource parameters = new MapSqlParameterSource();
-//        parameters.addValue("postId", postId);
-//        parameters.addValue("personId", currentPersonId);
-
         String sql = "select post.*, (post_like.person_id = ?) as is_liked from post " +
                 "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) " +
                 "WHERE post.id = ?";
         return jdbc.queryForObject(sql, new PostMapper(), currentPersonId, currentPersonId, postId);
-//        return new NamedParameterJdbcTemplate(jdbc).queryForObject(sql, parameters, new PostMapper());
     }
 
     public void deleteById(int id) {
