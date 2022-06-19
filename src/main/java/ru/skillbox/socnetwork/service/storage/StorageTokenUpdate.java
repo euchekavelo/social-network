@@ -1,7 +1,5 @@
 package ru.skillbox.socnetwork.service.storage;
 
-import com.dropbox.core.DbxAppInfo;
-import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.json.JsonReader;
@@ -11,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 
 @Component
 public class StorageTokenUpdate {
@@ -20,35 +17,18 @@ public class StorageTokenUpdate {
   private static final String APP_ID = "272m6nu2hx6xsuw";
   private static final String PATH = "/tmp/credentials.json";
 
+  public StorageTokenUpdate() throws JsonReader.FileLoadException {
+    credential = DbxCredential.Reader.readFromFile(new File(PATH));
+  }
+
   @Scheduled(fixedRateString = "PT03H", initialDelayString = "PT3M")
-  public void refreshToken() throws JsonReader.FileLoadException, DbxException, IOException {
-    File savedCredentials = new File(PATH);
-    if(!savedCredentials.exists()) {
-      //Read app info file
-      DbxAppInfo appInfo;
-      DbxAuthFinish authFinish;
-      appInfo = new DbxAppInfo(APP_ID, "ch18f6015h71dqy");
+  public void refreshToken() throws DbxException {
 
-      //Run authorization process
-      authFinish = new ScopeAuthorize().authorize(appInfo);
-
-      credential = new DbxCredential(authFinish.getAccessToken(), authFinish
-              .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
-
-      DbxCredential.Writer.writeToFile(credential, savedCredentials);
-    }
-
-    credential = DbxCredential.Reader.readFromFile(savedCredentials);
-
-    //Refresh token
     DbxRequestConfig config = new DbxRequestConfig(APP_ID);
     DbxRefreshResult result = credential.refresh(config);
 
-    //Save new credentials
-    DbxCredential newCredential = new DbxCredential(
-              result.getAccessToken(), result.getExpiresAt(),
-              credential.getRefreshToken(), credential.getAppKey(), credential.getAppSecret());
-    DbxCredential.Writer.writeToFile(newCredential, new File(PATH));
+    credential = new DbxCredential(result.getAccessToken(), result.getExpiresAt(), credential.getRefreshToken(),
+            credential.getAppKey(), credential.getAppSecret());
 
     StorageService.updateToken(result.getAccessToken());
   }

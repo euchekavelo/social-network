@@ -60,8 +60,7 @@ public class StorageService {
 
     for (File file : logFiles) {
       try (InputStream in = new FileInputStream(file)) {
-        String abstractFilePath = file.getPath().replaceAll("\\\\", "/");
-        client.files().uploadBuilder("/" + abstractFilePath).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
+        client.files().uploadBuilder(file.getPath()).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
       }
     }
 
