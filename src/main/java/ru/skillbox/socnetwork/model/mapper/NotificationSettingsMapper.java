@@ -11,9 +11,9 @@ public class NotificationSettingsMapper implements RowMapper<NotificationSetting
     @Override
     public NotificationSettings mapRow(ResultSet rs, int rowNun) throws SQLException {
         NotificationSettings mapper = new NotificationSettings();
-        mapper.setId(rs.getInt("id"));
-        mapper.setPersonId(rs.getInt("person_id"));
-        mapper.setNotificationTypeCode(TypeNotificationCode.valueOf(rs.getString("notification_type")));
+        //mapper.setId(rs.getInt("id"));
+        //mapper.setPersonId(rs.getInt("person_id"));
+        mapper.setNotificationTypeCode(TypeNotificationCode.valueOf(rs.getString("type")));
         mapper.setEnable(rs.getBoolean("enable"));
         return mapper;
     }
