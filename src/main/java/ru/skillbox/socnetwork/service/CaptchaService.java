@@ -1,9 +1,8 @@
-package ru.skillbox.socnetwork.service.сaptcha;
+package ru.skillbox.socnetwork.service;
 
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.service.Constants;
 
 import java.util.HashMap;
 

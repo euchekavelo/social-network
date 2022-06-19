@@ -16,7 +16,7 @@ import java.util.List;
 @DebugLogs
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
-    private final String select = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
+    private static final String select = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
             "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? ";
 
     public List<PostComment> getLikedParentCommentsByPostId(int currentPersonId, int postId) {

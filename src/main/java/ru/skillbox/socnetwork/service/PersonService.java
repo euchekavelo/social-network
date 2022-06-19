@@ -25,7 +25,6 @@ import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.storage.StorageService;
-import ru.skillbox.socnetwork.service.сaptcha.CaptchaService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

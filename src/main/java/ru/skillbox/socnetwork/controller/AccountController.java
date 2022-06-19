@@ -21,8 +21,8 @@ import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
 import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
-import ru.skillbox.socnetwork.service.сaptcha.CaptchaService;
-import ru.skillbox.socnetwork.service.сaptcha.CaptchaUtils;
+import ru.skillbox.socnetwork.service.CaptchaService;
+import ru.skillbox.socnetwork.service.CaptchaUtils;
 
 import java.util.List;
 import java.util.Map;

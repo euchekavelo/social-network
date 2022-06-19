@@ -1,4 +1,4 @@
-package ru.skillbox.socnetwork.service.сaptcha;
+package ru.skillbox.socnetwork.service;
 
 import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;
@@ -10,16 +10,17 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+
 public interface CaptchaUtils {
 
-    public static Captcha createCaptcha(int width, int height) {
+    static Captcha createCaptcha(int width, int height) {
         return new Captcha.Builder(width, height)
                 .addBackground(new GradiatedBackgroundProducer())
                 .addText(new DefaultTextProducer(), new DefaultWordRenderer())
                 .addNoise(new CurvedLineNoiseProducer()).build();
     }
 
-    public static String encodeBase64(Captcha captcha) {
+    static String encodeBase64(Captcha captcha) {
         String image= null;
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

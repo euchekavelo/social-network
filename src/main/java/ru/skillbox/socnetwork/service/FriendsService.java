@@ -12,7 +12,6 @@ import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rqdto.UserIdsDto;
 import ru.skillbox.socnetwork.model.rsdto.FriendshipPersonDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.FriendshipRepository;

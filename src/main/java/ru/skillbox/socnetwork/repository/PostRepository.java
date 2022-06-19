@@ -18,7 +18,7 @@ import java.util.List;
 @DebugLogs
 public class PostRepository {
     private final JdbcTemplate jdbc;
-    private final String select = "select post.*, (post_like.person_id = ?) as is_liked from post " +
+    private static final String select = "select post.*, (post_like.person_id = ?) as is_liked from post " +
             "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) ";
 
     public List<Post> getAll() {
