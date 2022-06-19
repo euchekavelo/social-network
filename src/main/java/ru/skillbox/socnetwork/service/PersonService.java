@@ -104,9 +104,11 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public void registration(RegisterDto registerDto) throws InvalidRequestException {
-        if (!captchaService.isCorrectCode(registerDto)
-//                || registerDto.getCode().equals(getSecret())
-        ) {
+        if (registerDto.getCode() == null) {
+            throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage() + " (is null)");
+        }
+        if (!(captchaService.isCorrectCode(registerDto) || getSecret().equals(registerDto.getCode())
+        )) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
         if (!isEmptyEmail(registerDto.getEmail())) {
