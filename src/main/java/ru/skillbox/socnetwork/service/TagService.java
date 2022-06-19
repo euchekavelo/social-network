@@ -23,23 +23,35 @@ public class TagService {
     private final Post2TagRepository post2TagRepository;
 
     public List<String> getPostTags(int postId) {
+
         return tagRepository
                 .getPostTags(postId)
                 .stream()
-                .map(Tag::getTag)
+                .map(Tag::getTagName)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllTags() {
+
+        return tagRepository
+                .getAllTags()
+                .stream()
+                .map(Tag::getTagName)
                 .collect(Collectors.toList());
     }
 
     public void addTag(String tag) throws InvalidRequestException {
+
         if (tag.length() > Constants.MAX_TAG_LENGTH) {
             throw new InvalidRequestException(
                     Constants.MAX_TAG_LENGTH + ExceptionText.TAG_MAX_LENGTH.getMessage() + tag.length());
         } else {
-        tagRepository.addTag(tag);
+            tagRepository.addTag(tag);
         }
     }
 
     public void addTagsFromNewPost(int postId, NewPostDto newPostDto) throws InvalidRequestException {
+
         List<Tag> tagList = tagRepository.getAllTags();
         List<String> postTags = newPostDto.getTags();
         for (String tag : postTags) {
@@ -52,6 +64,7 @@ public class TagService {
     }
 
     public void editOldTags(int postId, NewPostDto newPostDto) throws InvalidRequestException {
+
         List<Tag> allTags = tagRepository.getAllTags();
         List<Tag> oldTags = tagRepository.getPostTags(postId);
         HashSet<String> postTagsSet = new HashSet<>(newPostDto.getTags());
@@ -69,7 +82,8 @@ public class TagService {
     }
 
     private int getTagId(List<Tag> tags, String tag) {
-        return tags.stream().filter(t -> t.getTag().equals(tag)).findFirst().orElse(new Tag()).getId();
+
+        return tags.stream().filter(t -> t.getTagName().equals(tag)).findFirst().orElse(new Tag()).getId();
     }
 
     public void deletePostTags(int postId) {

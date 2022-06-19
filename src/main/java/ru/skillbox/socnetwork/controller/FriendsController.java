@@ -29,13 +29,11 @@ public class FriendsController {
     private final FriendsService friendsService;
 
     @DeleteMapping("/friends/request/person/{id}")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriendRequest(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> deleteFriendRequest(@PathVariable Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsResponse> generalResponse = new GeneralResponse<>("string",
-                System.currentTimeMillis(), friendsService.deleteFriendRequestByPersonId(id));
-
-        return ResponseEntity.ok(generalResponse);
+        friendsService.deleteFriendRequestByPersonId(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @GetMapping("/friends/request")
@@ -57,12 +55,14 @@ public class FriendsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralListResponse<PersonDto>> getListFriendRequests(
+    public ResponseEntity<GeneralResponse<List<PersonDto>>> getListFriendRequests(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getListIncomingFriendRequests(), offset, itemPerPage));
+        List<PersonDto> personDtoList = friendsService.getListIncomingFriendRequests();
+        return ResponseEntity.ok(new GeneralResponse<>(
+                personDtoList, personDtoList.size(), offset, itemPerPage));
     }
 
     @PostMapping("/friends/{id}")
@@ -84,10 +84,12 @@ public class FriendsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> addFriend(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> addFriend(
+            @PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.addFriendById(id)));
+        friendsService.addFriendById(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @DeleteMapping("/friends/{id}")
@@ -109,10 +111,12 @@ public class FriendsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteFriend(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> deleteFriend(
+            @PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>("string", System.currentTimeMillis(), friendsService.deleteFriendById(id)));
+        friendsService.deleteFriendById(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @GetMapping("/friends")
@@ -134,12 +138,13 @@ public class FriendsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralListResponse<PersonDto>> getUserFriends(
+    public ResponseEntity<GeneralResponse<List<PersonDto>>> getUserFriends(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getUserFriends(), offset, itemPerPage));
+        List<PersonDto> personDtos = friendsService.getUserFriends();
+        return ResponseEntity.ok(new GeneralResponse<>(personDtos, personDtos.size(), offset, itemPerPage));
     }
 
     @GetMapping("/friends/recommendations")
@@ -161,11 +166,12 @@ public class FriendsController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralListResponse<PersonDto>> getListRecommendedFriends(
+    public ResponseEntity<GeneralResponse<List<PersonDto>>> getListRecommendedFriends(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        return ResponseEntity.ok(new GeneralListResponse<>(friendsService.getListRecommendedFriends(), offset, itemPerPage));
+        List<PersonDto> personDtos = friendsService.getListRecommendedFriends();
+        return ResponseEntity.ok(new GeneralResponse<>(personDtos, personDtos.size(), offset, itemPerPage));
     }
 
     @PostMapping("/is/friends")

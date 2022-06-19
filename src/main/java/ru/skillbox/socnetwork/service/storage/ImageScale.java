@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 public class ImageScale {
 
+  private ImageScale() {}
+
   public static File resize(InputStream stream, String fileName) throws IOException {
     BufferedImage image = ImageIO.read(stream);
     int size = Math.min(image.getHeight(), image.getWidth());

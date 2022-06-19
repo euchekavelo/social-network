@@ -27,7 +27,7 @@ public class StorageTokenUpdate {
       //Read app info file
       DbxAppInfo appInfo;
       DbxAuthFinish authFinish;
-      appInfo = new DbxAppInfo("272m6nu2hx6xsuw", "ch18f6015h71dqy");
+      appInfo = new DbxAppInfo(APP_ID, "ch18f6015h71dqy");
 
       //Run authorization process
       authFinish = new ScopeAuthorize().authorize(appInfo);

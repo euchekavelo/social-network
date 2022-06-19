@@ -11,23 +11,31 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @DebugLogs
 public class LocalFileService {
 
     public List<File> getAllFilesInADirectory(String path) throws IOException {
-        return Files.walk(Paths.get(path))
-                .filter(Files::isRegularFile)
-                .map(Path::toFile)
-                .collect(Collectors.toList());
+
+        List<File> result;
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
+            result = walk
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+        }
+        return result;
     }
 
     public void deleteLocalFilesInADirectory(String path) throws IOException {
-        Files.walk(Paths.get(path))
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
-    }
 
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
+            walk
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
+    }
 }

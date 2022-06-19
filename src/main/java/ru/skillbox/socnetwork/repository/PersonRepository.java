@@ -12,7 +12,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.service.Constants;
-import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
 
@@ -29,13 +28,13 @@ public class PersonRepository {
         jdbc.update(sql, time, email);
     }
 
-    public Person getById(int id) {
+    public Person getById(int id)  {
         String sql = "select * from person where id = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), id);
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail like ?";
+        String sql = "select * from person where e_mail = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
@@ -117,9 +116,9 @@ public class PersonRepository {
         return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
-    ///Todo change returning of Person
-    public Person updatePerson(Person person) {
-        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+    public void updatePersonByEmail(Person person) {
+        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = " +
+                "(?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
@@ -129,10 +128,9 @@ public class PersonRepository {
                 person.getCity(),
                 person.getCountry(),
                 person.getEmail());
-        return person;
     }
 
-    public void updatePhoto(Person person) {
+    public void updatePhotoByEmail(Person person) {
         String sql = "update person set photo = ? where person.e_mail = ?";
         jdbc.update(sql,
                 person.getPhoto(),
@@ -158,7 +156,7 @@ public class PersonRepository {
                                              int countryId, int cityId,
                                              int perPage) {
 
-        long milliSecInYear = 31718612432L;
+        long milliSecInYear = Constants.MILLISECONDS_IN_YEAR;
         long currentTime = System.currentTimeMillis();
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -177,7 +175,6 @@ public class PersonRepository {
 
     public void delete(Integer id) {
         String sql = "delete from person where id = ?";
-        Object[] args = new Object[]{id};
         jdbc.update(sql, id);
     }
 

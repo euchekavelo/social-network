@@ -11,20 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
-import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
-import ru.skillbox.socnetwork.model.entity.Person;
-import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.logging.InfoLogs;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.model.rsdto.UpdatePersonDto;
+import ru.skillbox.socnetwork.model.rsdto.postdto.NewPostDto;
 import ru.skillbox.socnetwork.model.rsdto.postdto.PostDto;
-import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.PostService;
 
@@ -58,14 +54,8 @@ public class ProfileController {
                     )))
         })
     public ResponseEntity<GeneralResponse<PersonDto>> getMyProfile() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-        String email = securityUser.getUsername();
-        PersonDto personDto = new PersonDto(personService.getByEmail(email));
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                personDto));
+
+        return ResponseEntity.ok(new GeneralResponse<>(personService.getCurrentPerson(), true));
     }
 
     @PutMapping(path = "me", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,14 +72,11 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<Person>> updateProfile(
+    public ResponseEntity<GeneralResponse<DialogsDto>> updateProfile(
         @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                personService.updatePerson(updatePersonDto)
-        ));
+        personService.updatePerson(updatePersonDto);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @DeleteMapping(path = "me")
@@ -106,14 +93,11 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> deleteProfile()
+    public ResponseEntity<GeneralResponse<DialogsDto>> deleteProfile()
             throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsResponse(personService.setBlockPerson())
-        ));
+        personService.setBlockPerson();
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(path = "me/return")
@@ -132,11 +116,7 @@ public class ProfileController {
         })
     public ResponseEntity<GeneralResponse<PersonDto>> returnProfile(){
 
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new PersonDto(personService.returnProfile())
-        ));
+        return ResponseEntity.ok(new GeneralResponse<>(personService.restoreProfile(), true));
     }
 
     @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -153,12 +133,10 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<PersonDto>> getProfileById(@PathVariable @Parameter(description = "Идентификатор пользователя") int id) {
-        PersonDto personDto = new PersonDto(personService.getById(id));
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                personDto));
+    public ResponseEntity<GeneralResponse<PersonDto>> getProfileById(
+            @PathVariable @Parameter(description = "Идентификатор пользователя") int id) {
+
+        return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonDtoById(id), true));
     }
 
     @GetMapping(path = "{id}/wall", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -184,8 +162,6 @@ public class ProfileController {
             (@PathVariable int id,
              @RequestParam(value = "offset", defaultValue = "0") int offset,
              @RequestParam(value = "itemPerPage", defaultValue = "20") int perPage) {
-        GeneralResponse<List<PostDto>> response = new GeneralResponse<>(postService.getWall(id, offset, perPage),
-                postService.getPostCount(), offset, perPage);
 
         return ResponseEntity.ok(new GeneralResponse<>(postService.getWall(id, offset, perPage)));
     }
@@ -219,23 +195,19 @@ public class ProfileController {
     }
 
     @PutMapping("block/{id}")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> blockUser(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> blockUser(@PathVariable Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsResponse> generalResponse =
-                new GeneralResponse<>("string", System.currentTimeMillis(), personService.blockUser(id));
-
-        return ResponseEntity.ok(generalResponse);
+        personService.blockUser(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @DeleteMapping("block/{id}")
-    public ResponseEntity<GeneralResponse<DialogsResponse>> unblockUser(@PathVariable Integer id)
+    public ResponseEntity<GeneralResponse<DialogsDto>> unblockUser(@PathVariable Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsResponse> generalResponse =
-                new GeneralResponse<>("string", System.currentTimeMillis(), personService.unblockUser(id));
-
-        return ResponseEntity.ok(generalResponse);
+        personService.unblockUser(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @GetMapping("search")
@@ -267,9 +239,8 @@ public class ProfileController {
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage){
 
-            GeneralResponse<List<PersonDto>> response = new GeneralResponse<>
-                    (personService.getPersonsBySearchParameters(firstName, lastName, ageFrom, ageTo,
-                            countryId, cityId, perPage));
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new GeneralResponse<>
+                    (personService.getPersonsBySearchParameters(
+                            firstName, lastName, ageFrom, ageTo, countryId, cityId, perPage)));
         }
 }

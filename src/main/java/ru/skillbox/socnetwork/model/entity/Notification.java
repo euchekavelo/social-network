@@ -19,7 +19,8 @@ public class Notification {
     @Schema(description = "Идентификатор пользователя", example = "3")
     private Integer personId;
     @JsonProperty("entity_id")
-    @Schema(description = "Идентификатор сущности, относительно которой отправлено оповещение (комментарий, друг, пост или сообщение)", example = "3")
+    @Schema(description = "Идентификатор сущности, относительно которой отправлено оповещение " +
+            "(комментарий, друг, пост или сообщение)", example = "3")
     private Integer entityId;
     private Integer distUserId;
     private TypeReadStatus status;

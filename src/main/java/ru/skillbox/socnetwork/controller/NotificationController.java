@@ -11,16 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.entity.Person;
-import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
-import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.NotificationService;
 import ru.skillbox.socnetwork.service.PersonService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -57,8 +52,6 @@ public class NotificationController {
             @RequestParam(value = "offset", defaultValue = "0", required = false) int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20", required = false) int perPage) {
 
-
-       // notificationService.checkIfBirthdayOfFriends();
         List<NotificationDtoToView> notifications = notificationService.getAllNotifications();
         GeneralResponse<List<NotificationDtoToView>> response = new GeneralResponse<>(notifications);
 

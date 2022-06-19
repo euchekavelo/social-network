@@ -3,7 +3,6 @@ package ru.skillbox.socnetwork.model.rsdto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.Person;

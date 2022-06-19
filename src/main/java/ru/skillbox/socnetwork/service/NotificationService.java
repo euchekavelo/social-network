@@ -31,10 +31,13 @@ import java.util.Locale;
 @EnableScheduling
 public class NotificationService {
 
+    //private final NotificationRepository notificationRepository;
     private final NotificationAddService notificationAddService;
     private final PersonService personService;
     private final FriendsService friendsService;
     private final NotificationSettingsRepository notificationSettingsRepository;
+
+    private final SecurityPerson securityPerson = new SecurityPerson();
 
     public void addNotificationForFriends(NotificationDto notificationDto) {
 
@@ -58,9 +61,9 @@ public class NotificationService {
 
     public List<NotificationDtoToView> getAllNotifications() {
 
-        Integer currentId = PostService.getSecurityUser().getId();
-        List<Notification> notifications = notificationAddService.getAllNotifications(currentId);
-        //notificationRepository.getAllNotificationsForPerson(currentId);
+        personService.addOnlinePerson(securityPerson.getPersonId());
+
+        List<Notification> notifications = notificationAddService.getAllNotifications(securityPerson.getPersonId());
         return notificationsToDto(notifications);
     }
 

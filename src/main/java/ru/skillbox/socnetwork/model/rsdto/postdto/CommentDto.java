@@ -44,4 +44,15 @@ public class CommentDto {
         this.isLiked = comment.getIsLiked();
         this.likes = comment.getLikes();
     }
+
+    public CommentDto(PostComment comment) {
+        this.id = comment.getId();
+        this.parentId = comment.getParentId();
+        this.postId = comment.getPostId();
+        this.commentText = comment.getCommentText();
+        this.time = comment.getTime();
+        this.isBlocked = comment.getIsBlocked();
+        this.isLiked = comment.getIsLiked();
+        this.likes = comment.getLikes();
+    }
 }
