@@ -156,7 +156,7 @@ public class PersonRepository {
                                              int countryId, int cityId,
                                              int perPage) {
 
-        long milliSecInYear = 31718612432L;
+        long milliSecInYear = Constants.MILLISECONDS_IN_YEAR;
         long currentTime = System.currentTimeMillis();
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -175,7 +175,6 @@ public class PersonRepository {
 
     public void delete(Integer id) {
         String sql = "delete from person where id = ?";
-        Object[] args = new Object[]{id};
         jdbc.update(sql, id);
     }
 

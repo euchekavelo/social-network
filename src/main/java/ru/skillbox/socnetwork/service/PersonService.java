@@ -183,13 +183,13 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public void updateEmail(Map<String, String> body) throws InvalidRequestException{
-        String email = tempTokenService.getToken(body.get("token")).getEmail();
+        String email = tempTokenService.getToken(body.get(Constants.TOKEN)).getEmail();
         Person person = getByEmail(email);
         if(person == null){
-            throw new InvalidRequestException("User with email " + email + " not registered");
+            throw new InvalidRequestException(Constants.USER_WITH_EMAIL + email + Constants.NOT_REGISTERED);
         }
         personRepository.updateEmail(person, body.get("email"));
-        tempTokenService.deleteToken(body.get("token"));
+        tempTokenService.deleteToken(body.get(Constants.TOKEN));
         mailService.send(email, "Your email has been changed", "Your email changed successfully!");
         mailService.send(person.getEmail(), "Your email has been changed", "Your email changed successfully!");
     }
@@ -214,7 +214,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     public void recoverEmail(String email) throws InvalidRequestException {
         Person person = getByEmail(email);
         if(person == null){
-            throw new InvalidRequestException("User with email " + email + " not registered");
+            throw new InvalidRequestException(Constants.USER_WITH_EMAIL + email + Constants.NOT_REGISTERED);
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
@@ -225,7 +225,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     public void recoverPassword(String email) throws InvalidRequestException {
         Person person = getByEmail(email);
         if(person == null){
-            throw new InvalidRequestException("User with email " + email + " not registered");
+            throw new InvalidRequestException(Constants.USER_WITH_EMAIL + email + Constants.NOT_REGISTERED);
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
@@ -234,17 +234,17 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public void setPassword(Map<String, String> body) throws InvalidRequestException{
-        if(body.get("token") == null){
+        if(body.get(Constants.TOKEN) == null){
             throw new InvalidRequestException("wrong recovery link");
         }
-        TempToken token = tempTokenService.getToken(body.get("token"));
+        TempToken token = tempTokenService.getToken(body.get(Constants.TOKEN));
         if(token == null){
             throw new InvalidRequestException("invalid recovery token");
         }
         Person person = getByEmail(token.getEmail());
         person.setPassword(new BCryptPasswordEncoder().encode(body.get("password")));
         personRepository.updatePassword(person);
-        tempTokenService.deleteToken(body.get("token"));
+        tempTokenService.deleteToken(body.get(Constants.TOKEN));
 
         mailService.send(person.getEmail(), "Your password has been changed",
                 "Your password changed successfully! You can now log in with new password!");

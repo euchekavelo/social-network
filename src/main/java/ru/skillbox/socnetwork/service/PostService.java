@@ -245,7 +245,7 @@ public class PostService {
 
     private String getSqlString(List<String> tags) {
         StringBuilder tagsString = new StringBuilder();
-        if (tags.size() > 0) {
+        if (!tags.isEmpty()) {
             tagsString.append(" and (");
             for (int i = 0; i < tags.size(); i++) {
                 tagsString.append("t.tag like '").append(tags.get(i)).append("'");

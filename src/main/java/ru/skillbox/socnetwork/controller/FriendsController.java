@@ -32,10 +32,8 @@ public class FriendsController {
     public ResponseEntity<GeneralResponse<DialogsDto>> deleteFriendRequest(@PathVariable Integer id)
             throws InvalidRequestException {
 
-        GeneralResponse<DialogsDto> generalResponse = new GeneralResponse<>(
-                friendsService.deleteFriendRequestByPersonId(id), true);
-
-        return ResponseEntity.ok(generalResponse);
+        friendsService.deleteFriendRequestByPersonId(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @GetMapping("/friends/request")
@@ -62,9 +60,9 @@ public class FriendsController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "itemPerPage", defaultValue = "20") int itemPerPage) {
 
-        List<PersonDto> personDtos = friendsService.getListIncomingFriendRequests();
+        List<PersonDto> personDtoList = friendsService.getListIncomingFriendRequests();
         return ResponseEntity.ok(new GeneralResponse<>(
-                personDtos, personDtos.size(), offset, itemPerPage));
+                personDtoList, personDtoList.size(), offset, itemPerPage));
     }
 
     @PostMapping("/friends/{id}")
@@ -90,7 +88,8 @@ public class FriendsController {
             @PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(friendsService.addFriendById(id), true));
+        friendsService.addFriendById(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @DeleteMapping("/friends/{id}")
@@ -116,7 +115,8 @@ public class FriendsController {
             @PathVariable @Parameter(description = "Идентификатор пользователя") Integer id)
             throws InvalidRequestException {
 
-        return ResponseEntity.ok(new GeneralResponse<>(friendsService.deleteFriendById(id), true));
+        friendsService.deleteFriendById(id);
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @GetMapping("/friends")

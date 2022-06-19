@@ -1,14 +1,17 @@
 package ru.skillbox.socnetwork.service.storage;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.repository.PersonRepository;
+import ru.skillbox.socnetwork.service.Constants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +25,24 @@ public class StorageCache {
 
   private final PersonRepository personRepository;
   private static RMap<String, String> cache;
+  @Getter
+  @Value("${redisson.server}")
+  private static String redissonServer;
+
 
   @Scheduled(initialDelayString = "PT5M", fixedDelay=Long.MAX_VALUE)
   private void initCache(){
     RedissonClient redissonClient = connect();
-    System.err.println(redissonClient);
     cache = redissonClient.getMap("image-cache");
     cache.clear();
-    cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);
-    cache.put(StorageConstants.PHOTO_DELETED, StorageConstants.PHOTO_DELETED_LINK);
+    cache.put(Constants.PHOTO_DEFAULT, Constants.PHOTO_DEFAULT_LINK);
+    cache.put(Constants.PHOTO_DELETED, Constants.PHOTO_DELETED_LINK);
     cache.putAll(getPhotos());
   }
 
-  public String addLink(String fileName, String link){
+  public void addLink(String fileName, String link){
     cache.put(fileName, link);
-    return cache.get(fileName);
-  }
+    }
 
   public String getLink(String fileName){
     return cache.get(fileName);
@@ -51,12 +56,9 @@ public class StorageCache {
     cache.remove(fileName);
   }
 
-  /*
-  TODO указать путь в переменной. Лучше ip сервера.
-   */
   private static RedissonClient connect(){
     Config config = new Config();
-    config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+    config.useSingleServer().setAddress(getRedissonServer());
     return Redisson.create(config);
   }
 

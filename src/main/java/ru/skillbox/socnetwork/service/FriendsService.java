@@ -51,7 +51,7 @@ public class FriendsService {
                 .collect(Collectors.toList());
     }
 
-    public DialogsDto deleteFriendById(Integer friendId) throws InvalidRequestException {
+    public void deleteFriendById(Integer friendId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         int countFrom = friendshipRepository.removeFriendlyStatusByPersonIdsAndCode(authorizedUserId, friendId,
@@ -62,11 +62,9 @@ public class FriendsService {
             throw new InvalidRequestException("Deletion is not possible. " +
                     "No friendly relationship found between the specified user.");
         }
-
-        return new DialogsDto("ok");
     }
 
-    public DialogsDto addFriendById(Integer focusPersonId) throws InvalidRequestException {
+    public void addFriendById(Integer focusPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (authorizedUserId.equals(focusPersonId)) {
@@ -81,23 +79,23 @@ public class FriendsService {
                 .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
 
         if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
-            Friendship friendshipInitiator = friendshipFromInitiator.orElse(null);
-            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(null);
+            Friendship friendshipInitiator = friendshipFromInitiator.orElse(Friendship.getWithIncorrectId());
+            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(Friendship.getWithIncorrectId());
 
-            if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.FRIEND) ||
-                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.FRIEND)) {
+            if ((friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() == TypeCode.FRIEND) ||
+                    (friendshipFocusPerson.getId() != -1 && friendshipFocusPerson.getCode() == TypeCode.FRIEND)) {
                 throw new InvalidRequestException("It is not possible to apply as a friend, " +
                         "because these users are already friends.");
 
-            } else if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
-                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
+            } else if ((friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
+                    (friendshipFocusPerson.getId() != -1 && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
                 throw new InvalidRequestException("The request is not possible because the specified user is blocked.");
 
-            } else if (friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.REQUEST) {
+            } else if (friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() == TypeCode.REQUEST) {
                 throw new InvalidRequestException("It is not possible to submit a request to add as a friend, " +
                         "as it has already been submitted earlier.");
 
-            } else if (friendshipInitiator == null && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
+            } else if (friendshipInitiator.getId() == -1 && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
                 friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
                         TypeCode.FRIEND.toString());
             }
@@ -111,7 +109,6 @@ public class FriendsService {
 
             notificationAddService.addNotificationForOnePerson(notificationDto);
         }
-        return new DialogsDto("ok");
     }
 
     public List<PersonDto> getListIncomingFriendRequests() {
@@ -127,7 +124,7 @@ public class FriendsService {
         return friendshipRepository.getInformationAboutFriendships(email, userIds);
     }
 
-    public DialogsDto deleteFriendRequestByPersonId(Integer srcPersonId) throws InvalidRequestException {
+    public void deleteFriendRequestByPersonId(Integer srcPersonId) throws InvalidRequestException {
         String email = getAuthorizedUser().getUsername();
         Integer authorizedUserId = personRepository.getByEmail(email).getId();
         if (srcPersonId.equals(authorizedUserId)) {
@@ -139,7 +136,5 @@ public class FriendsService {
         if (count == 0) {
             throw new InvalidRequestException("Deletion failed. The specified friend request was not found.");
         }
-
-        return new DialogsDto("ok");
     }
 }

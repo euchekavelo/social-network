@@ -16,18 +16,16 @@ import java.util.List;
 @DebugLogs
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
+    private final String select = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
+            "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? ";
 
     public List<PostComment> getLikedParentCommentsByPostId(int currentPersonId, int postId) {
-        String sql = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
-                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.post_id = ? and pc.parent_id is null order by id";
+        String sql = select + "where pc.post_id = ? and pc.parent_id is null order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
     public List<PostComment> getLikedSubCommentsByPostId(int currentPersonId, int postId) {
-        String sql = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
-                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.post_id = ? and pc.parent_id > 0 order by id";
+        String sql = select + "where pc.post_id = ? and pc.parent_id > 0 order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
@@ -45,14 +43,11 @@ public class PostCommentRepository {
 
     public void deleteCommentById(int commentId) {
         String sql = "DELETE FROM post_comment WHERE id = ?";
-
         jdbc.update(sql, commentId);
     }
 
     public PostComment getById(int id, int currentPersonId) throws EmptyResultDataAccessException {
-        String sql = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
-                "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? " +
-                "where pc.id = ?";
+        String sql = select + "where pc.id = ?";
         return jdbc.queryForObject(sql, new PostCommentMapper(), currentPersonId, currentPersonId, id);
     }
 
@@ -67,12 +62,7 @@ public class PostCommentRepository {
     }
 
     public void deleteAllPersonPostsComments(Integer personId){
-        String sql = "DELETE " +
-                "FROM post_comment " +
-                "WHERE post_id " +
-                "IN (SELECT id " +
-                "FROM post " +
-                "WHERE author = ?)";
+        String sql = "DELETE FROM post_comment WHERE post_id IN (SELECT id FROM post WHERE author = ?)";
         jdbc.update(sql, personId);
     }
 

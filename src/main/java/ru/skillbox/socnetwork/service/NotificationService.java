@@ -1,17 +1,12 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Notification;
-import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
-import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.util.ArrayList;
 import java.util.List;

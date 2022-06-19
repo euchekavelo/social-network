@@ -5,7 +5,7 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
-import java.nio.file.Files;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +19,14 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.Constants;
 import ru.skillbox.socnetwork.service.LocalFileService;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +36,7 @@ import java.util.regex.Pattern;
 @DebugLogs
 public class StorageService {
 
+  @Getter
   @Value("${skillbox.app.logRootPath}")
   private String localRootPath;
   private static String token = "";
@@ -41,16 +47,16 @@ public class StorageService {
   private final StorageCache cache;
 
   public String getDefaultProfileImage(){
-    return cache.getLink(StorageConstants.PHOTO_DEFAULT);
+    return cache.getLink(Constants.PHOTO_DEFAULT);
   }
 
   public String getDeletedProfileImage() {
-    return cache.getLink(StorageConstants.PHOTO_DELETED);
+    return cache.getLink(Constants.PHOTO_DELETED);
   }
 
   @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
   public void uploadLogFiles() throws IOException, DbxException {
-    List<File> logFiles = localFileService.getAllFilesInADirectory(localRootPath);
+    List<File> logFiles = localFileService.getAllFilesInADirectory(getLocalRootPath());
 
     for (File file : logFiles) {
       try (InputStream in = new FileInputStream(file)) {
@@ -59,12 +65,12 @@ public class StorageService {
       }
     }
 
-    localFileService.deleteLocalFilesInADirectory(localRootPath);
+    localFileService.deleteLocalFilesInADirectory(getLocalRootPath());
   }
 
   @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
   public void deleteLogFolderInRemoteStorage() throws DbxException {
-    deleteFile("/" + localRootPath);
+    deleteFile("/" + getLocalRootPath());
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
@@ -101,7 +107,7 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(StorageConstants.PHOTO_DEFAULT)) {
+    if (!path.equals(Constants.PHOTO_DEFAULT)) {
       client.files().deleteV2(path);
     }
   }
