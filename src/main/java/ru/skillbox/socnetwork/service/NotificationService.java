@@ -1,30 +1,23 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.format.datetime.joda.LocalDateParser;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
-import ru.skillbox.socnetwork.model.entity.enums.TypeReadStatus;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
-import ru.skillbox.socnetwork.repository.NotificationRepository;
 import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @AllArgsConstructor
@@ -97,14 +90,15 @@ public class NotificationService {
         return auth.getId();
     }
 
-@Scheduled
+    //@Scheduled(fixedRate = 10000)
     public void checkIfBirthdayOfFriends() {
+        System.out.println("Running sheduling method...");
 
         List<PersonDto> friends = friendsService.getUserFriends();
         for (PersonDto friend : friends) {
             int friendId = friend.getId();
             if (checkIfBirthDayToday(friendId)) {
-                createNotificationAboutBirthdayFriend(friendId);
+                //createNotificationAboutBirthdayFriend(friendId);
             }
         }
     }
@@ -123,14 +117,13 @@ public class NotificationService {
         int dayOfYear = today.getDayOfMonth();
         String month = today.getMonth().toString();
 
-        return (dayOfBirthday == dayOfYear) && ( month.equals(monthOfBirthday));
+        return (dayOfBirthday == dayOfYear) && (month.equals(monthOfBirthday));
     }
 
     private void createNotificationAboutBirthdayFriend(Integer personId) {
-        Integer currentId = PostService.getSecurityUser().getId();
         NotificationDto notificationDto = new NotificationDto(
                 TypeNotificationCode.FRIEND_BIRTHDAY, System.currentTimeMillis(), personId,
                 "У вашего друга сегодня день рождения!");
-        addNotificationForOnePerson(notificationDto, currentId);
+        addNotificationForOnePerson(notificationDto, securityPerson.getPersonId());
     }
 }

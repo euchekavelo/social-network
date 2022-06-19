@@ -221,7 +221,6 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         tempTokenService.addToken(token);
         String link = getHost() + "/shift-email?token=" + token.getToken();
         mailService.send(email, "Your SocNetwork Email change link", link);
-        return "ok";
     }
 
     public void recoverPassword(String email) throws InvalidRequestException {
