@@ -133,14 +133,15 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             addOnlinePerson(person.getId());
             person.setLastOnlineTime(System.currentTimeMillis());
             return new PersonDto(person,
-                tokenProvider.generateToken(loginDto.getEmail()));
+                    tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
+
     public Person updatePerson(UpdatePersonDto changedPerson) throws ParseException {
         Person updatablePerson = getAuthenticatedPerson();
 
-        if(changedPerson.getFirstName() != null &&
-            !changedPerson.getFirstName().equals(updatablePerson.getFirstName())){
+        if (changedPerson.getFirstName() != null &&
+                !changedPerson.getFirstName().equals(updatablePerson.getFirstName())) {
             updatablePerson.setFirstName(changedPerson.getFirstName());
         }
         if (changedPerson.getLastName() != null &&
@@ -148,7 +149,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             updatablePerson.setLastName(changedPerson.getLastName());
         }
         String date;
-        if(changedPerson.getBirthDate() != null){
+        if (changedPerson.getBirthDate() != null) {
             date = changedPerson.getBirthDate().substring(0, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             long dateTime = format.parse(date).getTime();
@@ -183,10 +184,10 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePhoto(person);
     }
 
-    public String updateEmail(Map<String, String> body) throws InvalidRequestException{
+    public String updateEmail(Map<String, String> body) throws InvalidRequestException {
         String email = tempTokenService.getToken(body.get("token")).getEmail();
         Person person = getByEmail(email);
-        if(person == null){
+        if (person == null) {
             throw new InvalidRequestException("User with email " + email + " not registered");
         }
         personRepository.updateEmail(person, body.get("email"));
@@ -197,9 +198,9 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
     }
 
     public List<PersonDto> getPersonsBySearchParameters(String firstName, String lastName,
-        long ageFrom, long ageTo,
-        int countryId, int cityId,
-        int perPage) {
+                                                        long ageFrom, long ageTo,
+                                                        int countryId, int cityId,
+                                                        int perPage) {
         List<Person> persons = personRepository.getPersonsFromSearch(firstName, lastName, ageFrom, ageTo,
                 countryId, cityId, perPage);
 
@@ -215,7 +216,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
 
     public String recoverEmail(String email) throws InvalidRequestException {
         Person person = getByEmail(email);
-        if(person == null){
+        if (person == null) {
             throw new InvalidRequestException("User with email " + email + " not registered");
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
@@ -227,7 +228,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
 
     public String recoverPassword(String email) throws InvalidRequestException {
         Person person = getByEmail(email);
-        if(person == null){
+        if (person == null) {
             throw new InvalidRequestException("User with email " + email + " not registered");
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
@@ -238,12 +239,12 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return "ok";
     }
 
-    public String setPassword(Map<String, String> body) throws InvalidRequestException{
-        if(body.get("token") == null){
+    public String setPassword(Map<String, String> body) throws InvalidRequestException {
+        if (body.get("token") == null) {
             throw new InvalidRequestException("wrong recovery link");
         }
         TempToken token = tempTokenService.getToken(body.get("token"));
-        if(token == null){
+        if (token == null) {
             throw new InvalidRequestException("invalid recovery token");
         }
         Person person = getByEmail(token.getEmail());
@@ -255,7 +256,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return "ok";
     }
 
-    private String generateToken(){
+    private String generateToken() {
         RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(65, 90).build();
 
         return generator.generate(10);
@@ -290,7 +291,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             } else if (friendshipInitiator != null && friendshipInitiator.getCode() != TypeCode.BLOCKED) {
                 friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
                         TypeCode.BLOCKED.toString());
-            } else if (friendshipFocusPerson != null && friendshipFocusPerson.getCode() != TypeCode.BLOCKED){
+            } else if (friendshipFocusPerson != null && friendshipFocusPerson.getCode() != TypeCode.BLOCKED) {
                 friendshipRepository.fullUpdateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
                         TypeCode.BLOCKED.toString());
             }
@@ -333,10 +334,10 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return new DialogsResponse("ok");
     }
 
-    public String setBlockPerson() throws InvalidRequestException{
+    public String setBlockPerson() throws InvalidRequestException {
         Person person = getAuthenticatedPerson();
 
-        if(person == null){
+        if (person == null) {
             throw new InvalidRequestException("User with email " + person.getEmail() + " not registered");
         }
         deletedUserService.add(person);
@@ -351,7 +352,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return "ok";
     }
 
-    public Person returnProfile(){
+    public Person returnProfile() {
         Person person = getAuthenticatedPerson();
 
         DeletedUser deletedUser = deletedUserService.getDeletedUser(person.getId());
@@ -367,7 +368,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return person;
     }
 
-    public Person getPersonByNotification (NotificationDto notificationDto){
+    public Person getPersonByNotification(NotificationDto notificationDto) {
         return personRepository.getById(notificationDto.getPersonId());
     }
 
@@ -398,7 +399,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         lastOnlineTimeMap.clear();
         lastOnlineTimeMap.putAll(onlineMap);
         if (!offlineMap.isEmpty()) {
-        personRepository.updateLastOnlineTimeFromMap(offlineMap);
+            personRepository.updateLastOnlineTimeFromMap(offlineMap);
         }
     }
 
@@ -415,9 +416,14 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return m.matches();
     }
 
-    private Person getAuthenticatedPerson(){
+    private Person getAuthenticatedPerson() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
         return getByEmail(securityUser.getUsername());
     }
+
+    public Person getPersonBirthDay(Integer personId) {
+        return personRepository.getPersonBirthDay(personId);
+    }
+
 }
