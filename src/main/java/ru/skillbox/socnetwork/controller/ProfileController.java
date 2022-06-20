@@ -96,7 +96,7 @@ public class ProfileController {
     public ResponseEntity<GeneralResponse<DialogsResponse>> deleteProfile()
             throws InvalidRequestException {
 
-        personService.setBlockPerson();
+        personService.markToDelete();
         return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 

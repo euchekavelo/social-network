@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.repository.PersonRepository;
+import ru.skillbox.socnetwork.service.Constants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +30,8 @@ public class StorageCache {
     System.err.println(redissonClient);
     cache = redissonClient.getMap("image-cache");
     cache.clear();
-    cache.put(StorageConstants.PHOTO_DEFAULT, StorageConstants.PHOTO_DEFAULT_LINK);
-    cache.put(StorageConstants.PHOTO_DELETED, StorageConstants.PHOTO_DELETED_LINK);
+    cache.put(Constants.PHOTO_DEFAULT_NAME, Constants.PHOTO_DEFAULT_LINK);
+    cache.put(Constants.PHOTO_DELETED_NAME, Constants.PHOTO_DELETED_LINK);
     cache.putAll(getPhotos());
   }
 

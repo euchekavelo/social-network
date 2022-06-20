@@ -19,8 +19,8 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.rsdto.filedto.FileUploadDTO;
 import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.Constants;
 import ru.skillbox.socnetwork.service.LocalFileService;
-import ru.skillbox.socnetwork.service.storage.StorageCache;
 
 import java.io.*;
 import java.util.List;
@@ -42,11 +42,11 @@ public class StorageService {
   private final StorageCache cache;
 
   public String getDefaultProfileImage(){
-    return cache.getLink(StorageConstants.PHOTO_DEFAULT);
+    return cache.getLink(Constants.PHOTO_DEFAULT_NAME);
   }
 
   public String getDeletedProfileImage() {
-    return cache.getLink(StorageConstants.PHOTO_DELETED);
+    return cache.getLink(Constants.PHOTO_DELETED_NAME);
   }
 
   @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
@@ -102,7 +102,7 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(StorageConstants.PHOTO_DEFAULT)) {
+    if (!path.equals(Constants.PHOTO_DEFAULT_NAME)) {
       client.files().deleteV2(path);
     }
   }

@@ -78,7 +78,7 @@ public class DeletedUserService {
 
     String email = personRepository.getById(personId).getEmail();
     personRepository.delete(personId);
-    mailService.send(email, "Your account deleted!", "Your account and all your data was completely deleted!");
+    mailService.send(email, Constants.MAIL_DELETE_SUBJECT, Constants.MAIL_DELETE_TEXT);
   }
 
   public DeletedUser getDeletedUser(Integer personId){
