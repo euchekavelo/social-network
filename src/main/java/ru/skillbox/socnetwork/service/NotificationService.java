@@ -11,6 +11,7 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
+import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.time.Instant;
@@ -18,17 +19,17 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@EnableScheduling
 public class NotificationService {
 
-    //private final NotificationRepository notificationRepository;
     private final NotificationAddService notificationAddService;
     private final PersonService personService;
     private final FriendsService friendsService;
     private final NotificationSettingsRepository notificationSettingsRepository;
+    private final PersonRepository personRepository;
 
     private final SecurityPerson securityPerson = new SecurityPerson();
 
@@ -90,15 +91,22 @@ public class NotificationService {
         return auth.getId();
     }
 
-    //@Scheduled(fixedRate = 10000)
+
     public void checkIfBirthdayOfFriends() {
         System.out.println("Running sheduling method...");
 
-        List<PersonDto> friends = friendsService.getUserFriends();
+        List<PersonDto> friends = personRepository.getUserFriends("nikita@mail.ru").stream()
+                .map(PersonDto::new)
+                .collect(Collectors.toList());
+//        List<Integer> friends1 = new ArrayList<Integer>();
+//        friends.add(1);
+//        friends.add(2);
+//        friends.add(3);
+
         for (PersonDto friend : friends) {
             int friendId = friend.getId();
             if (checkIfBirthDayToday(friendId)) {
-                //createNotificationAboutBirthdayFriend(friendId);
+                createNotificationAboutBirthdayFriend(friendId);
             }
         }
     }
