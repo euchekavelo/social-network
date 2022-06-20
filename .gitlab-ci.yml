@@ -38,7 +38,7 @@ deploy to server:
   except:
     - tags
   script:
-##    -kill $(lsof -t -i:8086)
+##    -kill $(lsof -t -i:8086)s
 ##    -nohup java -jar /build/libs/*.jar &
     - (docker stop $IMAGE_AND_CONTAINER_NAME && docker container rm $IMAGE_AND_CONTAINER_NAME) || true
     - docker rmi $(docker images $IMAGE_AND_CONTAINER_NAME -q) || true
