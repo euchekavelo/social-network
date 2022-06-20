@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -60,10 +61,11 @@ public class DialogsController {
         return ResponseEntity.ok().build();
     }
 
-    @MessageMapping("/hello")
+    @MessageMapping("/messages")
     @SendTo("/topic/activity")
-    public MessageDto message(MessageDto message) {
+    public MessageDto message(@Payload MessageDto message) {
         System.out.println("!!!!!!!!");
+        System.out.println(message.getMessageText());
         if (!message.getMessageText().equals("")) {
             //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
         }
