@@ -39,11 +39,7 @@ public class AuthController {
                         schema = @Schema(implementation = ErrorResponseDto.class)
                     ))),
             @ApiResponse(responseCode = "500", description = "Server error"),
-            @ApiResponse(responseCode = "200", description = "Успешный вход",
-                content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = GeneralResponse.class)
-                )))
+            @ApiResponse(responseCode = "200", description = "Успешный вход")
         })
     public ResponseEntity<GeneralResponse<PersonDto>> login(
             @RequestBody LoginDto loginDto) throws InvalidRequestException {

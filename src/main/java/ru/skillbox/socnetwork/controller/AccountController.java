@@ -15,6 +15,8 @@ import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
+import ru.skillbox.socnetwork.model.rqdto.EmailOrPasswordDTO;
+import ru.skillbox.socnetwork.model.rqdto.RecoveryDTO;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
@@ -96,9 +98,9 @@ public class AccountController {
                                     )))
             })
     public ResponseEntity<GeneralResponse<DialogsDto>> recoverPassword(
-            @RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
+            @RequestBody RecoveryDTO body) throws InvalidRequestException {
 
-        personService.recoverPassword(body.get("email"));
+        personService.recoverPassword(body.getEmail());
         return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
@@ -127,7 +129,7 @@ public class AccountController {
                                     )))
             })
     public ResponseEntity<GeneralResponse<DialogsDto>> setPassword(
-            @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
+            @RequestBody EmailOrPasswordDTO body) throws InvalidRequestException {
 
         personService.setPassword(body);
         return ResponseEntity.ok(GeneralResponse.getDefault());
@@ -154,9 +156,9 @@ public class AccountController {
                                     )))
             })
     public ResponseEntity<GeneralResponse<DialogsDto>> recoverEmail(
-            @RequestBody Map<String, String> body) throws InvalidRequestException {
+            @RequestBody RecoveryDTO body) throws InvalidRequestException {
 
-        personService.recoverEmail(body.get("email"));
+        personService.recoverEmail(body.getEmail());
 
         return ResponseEntity.ok(GeneralResponse.getDefault());
     }
@@ -187,7 +189,7 @@ public class AccountController {
                                     )))
             })
     public ResponseEntity<GeneralResponse<DialogsDto>> changeEmail(
-            @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
+            @RequestBody EmailOrPasswordDTO body) throws InvalidRequestException {
 
         personService.updateEmail(body);
         return ResponseEntity.ok(GeneralResponse.getDefault());

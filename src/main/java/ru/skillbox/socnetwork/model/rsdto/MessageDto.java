@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Сообщение в диалоге")//TODO: доделать DTO
+@Schema(description = "Сообщение в диалоге")
 public class MessageDto {
     private Integer id;
     private PersonForDialogsDto author;

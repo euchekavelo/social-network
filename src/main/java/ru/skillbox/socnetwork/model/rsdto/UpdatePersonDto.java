@@ -12,7 +12,7 @@ import ru.skillbox.socnetwork.model.entity.Person;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema
-public class UpdatePersonDto {//TODO: оделать DTO
+public class UpdatePersonDto {
   @JsonProperty("first_name")
   private String firstName;
   @JsonProperty("last_name")
