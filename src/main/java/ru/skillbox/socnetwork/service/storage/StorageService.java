@@ -5,7 +5,7 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
-import java.nio.file.Files;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +22,11 @@ import ru.skillbox.socnetwork.security.SecurityUser;
 import ru.skillbox.socnetwork.service.Constants;
 import ru.skillbox.socnetwork.service.LocalFileService;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +36,7 @@ import java.util.regex.Pattern;
 @DebugLogs
 public class StorageService {
 
+  @Getter
   @Value("${skillbox.app.logRootPath}")
   private String localRootPath;
   private static String token = "";
@@ -51,21 +56,20 @@ public class StorageService {
 
   @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
   public void uploadLogFiles() throws IOException, DbxException {
-    List<File> logFiles = localFileService.getAllFilesInADirectory(localRootPath);
+    List<File> logFiles = localFileService.getAllFilesInADirectory(getLocalRootPath());
 
     for (File file : logFiles) {
       try (InputStream in = new FileInputStream(file)) {
-        String abstractFilePath = file.getPath().replaceAll("\\\\", "/");
-        client.files().uploadBuilder("/" + abstractFilePath).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
+        client.files().uploadBuilder(file.getPath()).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
       }
     }
 
-    localFileService.deleteLocalFilesInADirectory(localRootPath);
+    localFileService.deleteLocalFilesInADirectory(getLocalRootPath());
   }
 
   @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
   public void deleteLogFolderInRemoteStorage() throws DbxException {
-    deleteFile("/" + localRootPath);
+    deleteFile("/" + getLocalRootPath());
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
@@ -96,7 +100,7 @@ public class StorageService {
 
     cache.addLink(fileName, getAbsolutePath(fileName));
     person.setPhoto(getAbsolutePath(fileName));
-    personRepository.updatePhoto(person);
+    personRepository.updatePhotoByEmail(person);
 
     return new FileUploadDTO(person, fileMetadata);
   }

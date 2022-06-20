@@ -21,8 +21,4 @@ public class Message {
     private TypeReadStatus readStatus;
     @Schema(description = "Идентификатор диалога", example = "13")
     private Integer dialogId;
-
-    public Message() {
-
-    }
 }

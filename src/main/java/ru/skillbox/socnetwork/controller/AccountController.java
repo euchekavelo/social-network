@@ -16,14 +16,13 @@ import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
-import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
-import ru.skillbox.socnetwork.service.сaptcha.CaptchaService;
-import ru.skillbox.socnetwork.service.сaptcha.CaptchaUtils;
+import ru.skillbox.socnetwork.service.CaptchaService;
+import ru.skillbox.socnetwork.service.CaptchaUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,9 @@ public class AccountController {
                                             schema = @Schema(implementation = GeneralResponse.class)
                                     )))
             })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> register(@RequestBody RegisterDto request) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<DialogsDto>> register(
+            @RequestBody RegisterDto request) throws InvalidRequestException {
+
         personService.registration(request);
         return ResponseEntity.ok(GeneralResponse.getDefault());
     }
@@ -87,20 +88,18 @@ public class AccountController {
                                     array = @ArraySchema(
                                             schema = @Schema(implementation = ErrorResponseDto.class)
                                     ))),
-                    @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
+                    @ApiResponse(responseCode = "200",
+                            description = "Ссылка на восстановление пароля отправлена на email",
                             content = @Content(mediaType = "application/json",
                                     array = @ArraySchema(
                                             schema = @Schema(implementation = GeneralResponse.class)
                                     )))
             })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverPassword(@RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
+    public ResponseEntity<GeneralResponse<DialogsDto>> recoverPassword(
+            @RequestBody Map<String, String> body) throws InvalidRequestException { //TODO: создать DTO
 
         personService.recoverPassword(body.get("email"));
-        return ResponseEntity.ok(new GeneralResponse<>(
-                "string",
-                System.currentTimeMillis(),
-                new DialogsResponse()
-        ));
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 
     @PutMapping(value = "/password/set")
@@ -127,7 +126,9 @@ public class AccountController {
                                             schema = @Schema(implementation = GeneralResponse.class)
                                     )))
             })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> setPassword(@RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
+    public ResponseEntity<GeneralResponse<DialogsDto>> setPassword(
+            @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
+
         personService.setPassword(body);
         return ResponseEntity.ok(GeneralResponse.getDefault());
     }
@@ -152,7 +153,7 @@ public class AccountController {
                                             schema = @Schema(implementation = GeneralResponse.class)
                                     )))
             })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> recoverEmail(
+    public ResponseEntity<GeneralResponse<DialogsDto>> recoverEmail(
             @RequestBody Map<String, String> body) throws InvalidRequestException {
 
         personService.recoverEmail(body.get("email"));
@@ -178,13 +179,14 @@ public class AccountController {
                                     array = @ArraySchema(
                                             schema = @Schema(implementation = ErrorResponseDto.class)
                                     ))),
-                    @ApiResponse(responseCode = "200", description = "Ссылка на восстановление пароля отправлена на email",
+                    @ApiResponse(responseCode = "200",
+                            description = "Ссылка на восстановление пароля отправлена на email",
                             content = @Content(mediaType = "application/json",
                                     array = @ArraySchema(
                                             schema = @Schema(implementation = GeneralResponse.class)
                                     )))
             })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> changeEmail(
+    public ResponseEntity<GeneralResponse<DialogsDto>> changeEmail(
             @RequestBody Map<String, String> body) throws InvalidRequestException {//TODO: создать DTO
 
         personService.updateEmail(body);
@@ -198,7 +200,6 @@ public class AccountController {
         String notificationType = body.get("notification_type");
         String enable = body.get("enable");
 
-        System.out.println(notificationType + " " + enable);
         notificationSettingsService.changeSettingsToNotification(notificationType, enable);
 
         return ResponseEntity.ok(new GeneralResponse<Object>());
@@ -207,7 +208,6 @@ public class AccountController {
 
     @GetMapping(value = "/notifications")
     public ResponseEntity<GeneralResponse<List<NotificationSettingsDto>>> getNotificationSettings() {
-        System.out.println("Ok");
 
         List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
         return ResponseEntity.ok(new GeneralResponse<>(notificationSettings));

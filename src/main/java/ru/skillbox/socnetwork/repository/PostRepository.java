@@ -18,24 +18,29 @@ import java.util.List;
 @DebugLogs
 public class PostRepository {
     private final JdbcTemplate jdbc;
+    private static final String select = "select post.*, (post_like.person_id = ?) as is_liked from post " +
+            "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) ";
 
     public List<Post> getAll() {
         return jdbc.query("select * from post", new PostMapper());
     }
 
-    public List<Post> getAlreadyPostedWithOffset(int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE time < ? ORDER BY id DESC LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(), System.currentTimeMillis(), limit, offset);
+    public List<Post> getAlreadyPostedWithOffset(int offset, int limit, int currentPersonId) {
+
+        String sql = select + "WHERE post.time < (extract(epoch from now()) * 1000) order by id desc LIMIT ? OFFSET ?";
+        return jdbc.query(sql, new PostMapper(), currentPersonId, currentPersonId, limit, offset);
     }
 
-    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit) {
-        String sql = "SELECT * FROM post WHERE author = ? ORDER BY id DESC LIMIT ? OFFSET ?";
-        return jdbc.query(sql, new PostMapper(), authorId, limit, offset);
+    public List<Post> getByAuthorIdWithOffset(int authorId, int offset, int limit, int currentPersonId) {
+
+        String sql = select + "WHERE author = ? order by id desc LIMIT ? OFFSET ?";
+        return jdbc.query(sql, new PostMapper(), currentPersonId, currentPersonId, authorId, limit, offset);
     }
 
-    public Post getById(int id) throws EmptyResultDataAccessException {
-        String sql = "SELECT * FROM post WHERE id = ?";
-        return jdbc.queryForObject(sql, new PostMapper(), id);
+    public Post getById(int postId, int currentPersonId) throws EmptyResultDataAccessException {
+
+        String sql = select + "WHERE post.id = ?";
+        return jdbc.queryForObject(sql, new PostMapper(), currentPersonId, currentPersonId, postId);
     }
 
     public void deleteById(int id) {
@@ -44,8 +49,8 @@ public class PostRepository {
     }
 
     public Post getPersonLastPost(int personId) throws EmptyResultDataAccessException {
-        String sql = "select * from post where author = ? order by time desc limit 1";
-        return jdbc.queryForObject(sql, new PostMapper(), personId);
+        String sql = select + "where author = ? order by id desc limit 1";
+        return jdbc.queryForObject(sql, new PostMapper(), personId, personId, personId);
     }
 
     public Post addPost(NewPostDto newPostDto) {
@@ -102,9 +107,6 @@ public class PostRepository {
 
     public List<Post> choosePostsWhichContainsTextWithTags(String text, long dateFrom, long dateTo, String authorName,
                                                            String authorSurname, String tags, int perPage) {
-//        List<String> tags = new ArrayList<>();
-//        tags.add("good");
-//        tags.add("прекрасный");
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("name", "%" + authorName + "%");

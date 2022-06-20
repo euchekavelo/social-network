@@ -1,11 +1,8 @@
 package ru.skillbox.socnetwork.model.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.Min;
 import lombok.Data;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
-
-import java.time.LocalDateTime;
 
 @Data
 public class FriendStatus {

@@ -12,7 +12,6 @@ import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.mapper.PersonMapper;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.service.Constants;
-import ru.skillbox.socnetwork.service.PersonService;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class PersonRepository {
 
     private final JdbcTemplate jdbc;
 
-    public void updateLastOnlineTimeByEmail (String email, Long time) {
+    public void updateLastOnlineTimeByEmail(String email, Long time) {
         String sql = "UPDATE person SET last_online_time = ? WHERE email = ?";
 
         jdbc.update(sql, time, email);
@@ -35,7 +34,7 @@ public class PersonRepository {
     }
 
     public Person getByEmail(String email) {
-        String sql = "select * from person where e_mail like ?";
+        String sql = "select * from person where e_mail = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), email);
     }
 
@@ -70,14 +69,14 @@ public class PersonRepository {
         String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) " +
                 "values (?, ?, ?, ?, ?, ?) RETURNING *";
 
-        return  jdbc.queryForObject(sql, new PersonMapper(),
+        return jdbc.queryForObject(sql, new PersonMapper(),
                 person.getFirstName(),
                 person.getLastName(),
                 System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
                 person.getPhoto());
-         }
+    }
 
     public List<Person> getListRecommendedFriends(String email) {
         StringBuilder sqlQuery = new StringBuilder();
@@ -117,8 +116,9 @@ public class PersonRepository {
         return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
-    public Person updatePerson(Person person) {
-        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = (?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
+    public void updatePersonByEmail(Person person) {
+        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = " +
+                "(?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
         jdbc.update(sql,
                 person.getFirstName(),
                 person.getLastName(),
@@ -128,10 +128,9 @@ public class PersonRepository {
                 person.getCity(),
                 person.getCountry(),
                 person.getEmail());
-        return person;
     }
 
-    public void updatePhoto(Person person) {
+    public void updatePhotoByEmail(Person person) {
         String sql = "update person set photo = ? where person.e_mail = ?";
         jdbc.update(sql,
                 person.getPhoto(),
@@ -157,7 +156,7 @@ public class PersonRepository {
                                              int countryId, int cityId,
                                              int perPage) {
 
-        long milliSecInYear = 31718612432L;
+        long milliSecInYear = Constants.MILLISECONDS_IN_YEAR;
         long currentTime = System.currentTimeMillis();
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -176,11 +175,10 @@ public class PersonRepository {
 
     public void delete(Integer id) {
         String sql = "delete from person where id = ?";
-        Object[] args = new Object[]{id};
         jdbc.update(sql, id);
     }
 
-    public void setDeleted(Integer id, Boolean b){
+    public void setDeleted(Integer id, Boolean b) {
         String sql = "update person set is_deleted = ? where person.id = ?";
         jdbc.update(sql, b, id);
     }
@@ -188,12 +186,18 @@ public class PersonRepository {
     public void updateLastOnlineTimeFromMap(List<Integer> offlineMap) {
         StringBuilder sql = new StringBuilder("UPDATE person SET last_online_time = ? WHERE");
         for (int i = 0; i < offlineMap.size(); i++) {
-             int id = offlineMap.get(i);
-             sql.append(" id = ").append(id);
-             if (i < offlineMap.size() - 1) {
-                 sql.append(" or");
-             }
+            int id = offlineMap.get(i);
+            sql.append(" id = ").append(id);
+            if (i < offlineMap.size() - 1) {
+                sql.append(" or");
+            }
         }
         jdbc.update(sql.toString(), System.currentTimeMillis() - Constants.FIFTY_SECONDS_IN_MILLIS);
+    }
+
+    public Person getPersonBirthDay(Integer personId) {
+
+        String sql = "Select * from person where id = ?";
+        return jdbc.queryForObject(sql, new PersonMapper(), personId);
     }
 }

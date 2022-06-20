@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,11 +13,10 @@ public class Post {
     private Integer author;
     @Schema(example = "Самый лучший пост")
     private String title;
-    @JsonProperty("post_text")
     @Schema(example = "Самый лучший текст самого лучшего поста")
     private String postText;
-    @JsonProperty("is_blocked")
     private Boolean isBlocked = false;
     @Schema(example = "666")
     private Integer likes;
+    private Boolean isLiked;
 }

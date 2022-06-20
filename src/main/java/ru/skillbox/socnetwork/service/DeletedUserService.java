@@ -51,8 +51,8 @@ public class DeletedUserService {
 
   @Transactional
   public void deletePersonData(Integer personId) throws DbxException {
-    commentLikeRepository.deleteAllPersonLikes(personId);
-    commentLikeRepository.deleteAllPersonPostsLikes(personId);
+    commentLikeRepository.deleteAllPersonCommentLikes(personId);
+    commentLikeRepository.deleteAllCommentLikesFromPersonComments(personId);
 
     messageRepository.deleteAllPersonMessages(personId);
 
@@ -60,8 +60,8 @@ public class DeletedUserService {
 
     friendshipRepository.deleteAllPersonFriendships(personId);
 
-    postLikeRepository.deleteAllPersonLikes(personId);
-    postLikeRepository.deleteAllPersonPostsLikes(personId);
+    postLikeRepository.deleteAllPersonPostLikes(personId);
+    postLikeRepository.deleteAllPostLikesFromPersonPosts(personId);
 
     List<PostFile> postFiles = postFileRepository.getAllPersonFiles(personId);
     for(PostFile file : postFiles){

@@ -10,12 +10,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
-import ru.skillbox.socnetwork.logging.InfoLogs;
-import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.model.rsdto.DialogDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
+import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
+import ru.skillbox.socnetwork.model.rsdto.MessageDto;
 import ru.skillbox.socnetwork.service.DialogsService;
 
 import java.util.List;
@@ -44,8 +49,10 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение списка диалогов")
         })
-    public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
-        return ResponseEntity.ok(dialogsService.getDialogs());
+    public ResponseEntity<GeneralResponse<List<DialogsDto>>> getDialog() {
+
+        List<DialogsDto> list = dialogsService.getDialogs();
+        return ResponseEntity.ok(new GeneralResponse<>(list, list.size()));
     }
 
     @PostMapping
@@ -65,12 +72,12 @@ public class DialogsController {
     })
     public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return ResponseEntity.ok(dialogsService.createDialog(request.getUserIds()));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds()), true));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
-        return ResponseEntity.ok(dialogsService.deleteDialogByById (id));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById(id), true));
     }
 
     @GetMapping("/{id}/messages")
@@ -88,9 +95,11 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение списка сообщений в диалоге")
         })
-    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(@PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
+    public ResponseEntity<GeneralResponse<List<MessageDto>>> getDialogsMessageList(
+            @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
-        return ResponseEntity.ok(dialogsService.getMessageById(id));
+        List<MessageDto> list = dialogsService.getMessageDtoListByDialogId(id);
+        return ResponseEntity.ok(new GeneralResponse<>(list, list.size()));
     }
 
     @GetMapping(path = "/unreaded", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -108,8 +117,8 @@ public class DialogsController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешное получение количества непрочитанных сообщений")
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> getUnread() {
-        return ResponseEntity.ok(dialogsService.getUnreadMessageCount());
+    public ResponseEntity<GeneralResponse<DialogsDto>> getUnread() {
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.getUnreadMessageCount(), true));
     }
 
     @PostMapping("/{id}/messages")
@@ -131,6 +140,16 @@ public class DialogsController {
         @RequestBody MessageRequest messageRequest,
         @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
 
-        return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id), true));
+    }
+
+    @MessageMapping("/hello")
+    @SendTo("/topic/activity")
+    public MessageDto message(MessageDto message) {
+        System.out.println("!!!!!!!!");
+        if (!message.getMessageText().equals("")) {
+            //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+        }
+        return message;
     }
 }

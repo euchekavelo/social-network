@@ -1,33 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: Alexandr Luzyanin
+      author: Igor GAnchenko
       comment: init base tables
       sqlFile:
         encoding: UTF-8
         path: migrations/001-create-schema.sql
-        relativeToChangelogFile: true
-  - changeSet:
-      id: 6
-      author: Igor Ganchenko
-      comment: notification table changes
-      sqlFile:
-        encoding: UTF-8
-        path: migrations/005-notification-table-change.sql
-        relativeToChangelogFile: true
-  - changeSet:
-      id: 7
-      author: Igor Ganchenko
-      comment: notification table changes
-      sqlFile:
-        encoding: UTF-8
-        path: migrations/006-notification-table-change.sql
-        relativeToChangelogFile: true
-  - changeSet:
-      id: 8
-      author: Igor Ganchenko
-      comment: notification table changes
-      sqlFile:
-        encoding: UTF-8
-        path: migrations/007-notification-settings-table-create.sql
         relativeToChangelogFile: true

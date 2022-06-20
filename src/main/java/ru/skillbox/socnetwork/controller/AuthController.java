@@ -16,7 +16,7 @@ import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.exception.InvalidRequestException;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.service.PersonService;
@@ -45,14 +45,12 @@ public class AuthController {
                         schema = @Schema(implementation = GeneralResponse.class)
                 )))
         })
-    public ResponseEntity<GeneralResponse<PersonDto>> login(@RequestBody LoginDto loginDto) throws InvalidRequestException {
+    public ResponseEntity<GeneralResponse<PersonDto>> login(
+            @RequestBody LoginDto loginDto) throws InvalidRequestException {
 
         return ResponseEntity.ok(new GeneralResponse<>(personService.getPersonAfterLogin(loginDto)));
     }
 
-    /**
-     * TODO build correct logout
-     */
     @PostMapping("/logout")
     @Operation(summary = "Выход пользователя",
         responses = {
@@ -63,8 +61,8 @@ public class AuthController {
                     ))),
             @ApiResponse(responseCode = "200", description = "Успешный выход")
         })
-    public ResponseEntity<GeneralResponse<DialogsResponse>> logout() {
+    public ResponseEntity<GeneralResponse<DialogsDto>> logout() {
 
-        return ResponseEntity.ok(new GeneralResponse<>(new DialogsResponse("ok")));
+        return ResponseEntity.ok(GeneralResponse.getDefault());
     }
 }
