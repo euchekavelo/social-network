@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
@@ -25,6 +26,7 @@ import java.util.List;
 public class DialogsController {
 
     private final DialogsService dialogsService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
@@ -64,6 +66,11 @@ public class DialogsController {
     @MessageMapping("/messages")
     @SendTo("/topic/activity")
     public GeneralResponse<MessageDto> message(@Payload MessageDto message) {
-        return dialogsService.sendMessage(new MessageRequest(message.getMessageText()), message.getId());
+
+        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
+                new MessageRequest(message.getMessageText()), message.getId());
+        messagingTemplate.convertAndSend("/topic/activity", generalResponse);
+
+        return generalResponse;
     }
 }
