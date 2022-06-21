@@ -16,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/account")
-@InfoLogs
+
 public class AccountController {
 
     private final PersonService personService;

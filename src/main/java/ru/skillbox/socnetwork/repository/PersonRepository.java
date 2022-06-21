@@ -16,7 +16,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-@DebugLogs
+
 public class PersonRepository {
 
     private final JdbcTemplate jdbc;

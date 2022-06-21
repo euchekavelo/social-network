@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@InfoLogs
+
 public class FriendsController {
 
     private final FriendsService friendsService;

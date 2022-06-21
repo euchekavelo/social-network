@@ -17,7 +17,7 @@ import ru.skillbox.socnetwork.service.PersonService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
-@InfoLogs
+
 public class AuthController {
 
     private final PersonService personService;

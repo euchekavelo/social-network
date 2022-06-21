@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 
 @Controller
-@InfoLogs
+
 public class DefaultController {
 
     @GetMapping("/")

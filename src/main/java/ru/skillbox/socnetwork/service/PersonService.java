@@ -34,7 +34,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-@DebugLogs
+
 public class PersonService implements ApplicationListener<AuthenticationSuccessEvent> {
 
     private final PersonRepository personRepository;

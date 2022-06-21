@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class Post2TagRepository {
     private final JdbcTemplate jdbc;
 

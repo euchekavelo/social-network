@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class PostService {
 
     private final PostRepository postRepository;

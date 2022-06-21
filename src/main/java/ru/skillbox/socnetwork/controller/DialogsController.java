@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/dialogs")
-@InfoLogs
+
 public class DialogsController {
 
     private final DialogsService dialogsService;

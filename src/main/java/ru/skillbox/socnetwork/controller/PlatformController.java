@@ -17,7 +17,7 @@ import ru.skillbox.socnetwork.logging.InfoLogs;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/platform/")
-@InfoLogs
+
 public class PlatformController {
 
     private final SearchService searchService;

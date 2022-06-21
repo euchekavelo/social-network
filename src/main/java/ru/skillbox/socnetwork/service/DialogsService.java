@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class DialogsService {
 
     private final MessageRepository messageRepository;

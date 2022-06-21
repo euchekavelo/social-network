@@ -13,7 +13,7 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class TagRepository {
     private final JdbcTemplate jdbc;
 

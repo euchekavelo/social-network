@@ -11,7 +11,7 @@ import java.util.Properties;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class MailService {
 
 //  @Value("${skillbox.app.mail.user}")

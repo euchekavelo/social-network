@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users/")
-@InfoLogs
+
 public class ProfileController {
 
     private final PersonService personService;

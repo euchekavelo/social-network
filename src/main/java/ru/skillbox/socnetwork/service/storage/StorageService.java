@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class StorageService {
 
   private static String token = "";

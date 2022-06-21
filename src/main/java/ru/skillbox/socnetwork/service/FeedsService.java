@@ -9,7 +9,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class FeedsService {
 
   private static int id = 1;

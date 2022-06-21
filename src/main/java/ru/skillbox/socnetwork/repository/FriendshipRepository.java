@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class FriendshipRepository {
 
     private final JdbcTemplate jdbc;

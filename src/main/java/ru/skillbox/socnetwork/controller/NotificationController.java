@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/notifications")
-@InfoLogs
+
 public class NotificationController {
 
     private final JwtTokenProvider tokenProvider;

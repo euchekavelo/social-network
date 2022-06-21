@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/tags/")
-@InfoLogs
+
 public class TagController {
 
     private final TagService tagService;

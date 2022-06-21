@@ -11,7 +11,7 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class PostFileRepository {
     private final JdbcTemplate jdbc;
 

@@ -16,7 +16,7 @@ import ru.skillbox.socnetwork.service.LikeService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
-@InfoLogs
+
 public class LikesController {
 
 

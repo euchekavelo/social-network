@@ -15,7 +15,7 @@ import ru.skillbox.socnetwork.service.storage.StorageService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/storage")
-@InfoLogs
+
 public class StorageController {
 
   private final StorageService storageService;

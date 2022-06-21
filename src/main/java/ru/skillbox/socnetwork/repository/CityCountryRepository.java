@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class CityCountryRepository {
 
     private final JdbcTemplate jdbc;
