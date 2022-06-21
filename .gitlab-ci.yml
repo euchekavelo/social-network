@@ -9,6 +9,7 @@ test:
     - dev
   except:
     - tags
+  allow_failure: true
   before_script:
     - gradle clean
   script:

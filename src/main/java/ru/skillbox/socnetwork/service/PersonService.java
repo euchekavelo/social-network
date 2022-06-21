@@ -108,8 +108,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         if (registerDto.getCode() == null) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage() + " (is null)");
         }
-        if (!(captchaService.isCorrectCode(registerDto) || getSecret().equals(registerDto.getCode())
-        )) {
+        if (!(captchaService.isCorrectCode(registerDto) || getSecret().equals(registerDto.getCode()))
+        ) {
             throw new InvalidRequestException(ExceptionText.INCORRECT_CAPTCHA.getMessage());
         }
         if (!isEmptyEmail(registerDto.getEmail())) {
