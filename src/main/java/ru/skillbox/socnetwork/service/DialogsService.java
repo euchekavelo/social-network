@@ -48,7 +48,7 @@ public class DialogsService {
         dialogDto.setId(dialogId);
         return new GeneralResponse<>("string", System.currentTimeMillis(), dialogDto);
     }
-    public GeneralResponse<MessageDto> sendMessage (MessageRequest messageRequest, Integer dialogId) {
+    public GeneralResponse<MessageDto> sendMessage (String messageRequest, Integer dialogId) {
         SecurityUser securityUser = getSecurityUser();
         DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, securityUser.getId());
         Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), securityUser.getId()).getDialogId();
@@ -58,10 +58,10 @@ public class DialogsService {
         }
         Integer messageId = messageRepository.sendMessage (time, securityUser.getId(),
                 recipient.getId(),
-                messageRequest.getMessageText(), dialogId);
+                messageRequest, dialogId);
         return new GeneralResponse<>("String", time,
                 new MessageDto(messageId, time, securityUser.getId(), recipient.getRecipientId(),
-                        messageRequest.getMessageText(), "SENT"));
+                        messageRequest, "SENT"));
     }
 
     public GeneralResponse<List<DialogsResponse>> getDialogs() {

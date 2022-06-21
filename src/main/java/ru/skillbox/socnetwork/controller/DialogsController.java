@@ -58,19 +58,15 @@ public class DialogsController {
     public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
             @RequestBody MessageRequest messageRequest, @PathVariable Integer id) {
         if (!messageRequest.getMessageText().equals("")) {
-            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
+            return ResponseEntity.ok(dialogsService.sendMessage(messageRequest.getMessageText(), id));
         }
         return ResponseEntity.ok().build();
     }
 
     @MessageMapping("/messages")
-    @SendTo("/topic/activity")
-    public GeneralResponse<MessageDto> message(@Payload MessageDto message) {
-
+    public void message(@Payload MessageDto message) {
         GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
-                new MessageRequest(message.getMessageText()), message.getId());
-        messagingTemplate.convertAndSend("/topic/activity", generalResponse);
-
-        return generalResponse;
+                message.getMessageText(), message.getId());
+        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", generalResponse);
     }
 }
