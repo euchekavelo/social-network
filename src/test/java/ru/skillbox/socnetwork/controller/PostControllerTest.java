@@ -40,6 +40,25 @@ class PostControllerTest {
     }
 
     @Test
+    @WithUserDetails("ilin@mail.ru")
+    void searchPostByTextTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post?text='title'"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void searchPostByTextWithTagsTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/post?text=title&tags=java,code"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     @WithUserDetails("test@mail.ru")
     void getExistentPostByIdTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/1"))
@@ -296,14 +315,5 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content()
                         .json("{\"error_description\":\"Incorrect comment data, can't find this id -1\"}"));
-    }
-
-    @Test
-    @WithUserDetails("ilin@mail.ru")
-    void searchPostByTextTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post?text='title'"))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(SecurityMockMvcResultMatchers.authenticated())
-                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

@@ -82,8 +82,11 @@ jacocoTestReport {
 
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: [
-					"ru/skillbox/socnetwork/model/**",
+			fileTree(dir: it, excludes: [
+//					"ru/skillbox/socnetwork/controller/**",
+//					"ru/skillbox/socnetwork/service/**"
+					"ru/skillbox/socnetwork/model/**"
+//					"ru/skillbox/socnetwork/repository/**"
 			])
 		}))
 	}
