@@ -125,7 +125,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPassword(new BCryptPasswordEncoder().encode(registerDto.getSecondPassword()));
         person.setFirstName(registerDto.getFirstName());
         person.setLastName(registerDto.getLastName());
-//        person.setPhoto(storageService.getDefaultProfileImage());
+        person.setPhoto(Constants.PHOTO_DEFAULT_LINK);
         captchaService.removeCaptcha(registerDto.getCodeId());
         saveFromRegistration(person);
     }
@@ -191,8 +191,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         personRepository.updateEmail(person, body.get("email"));
         tempTokenService.deleteToken(body.get(Constants.TOKEN));
-        mailService.send(email, "Your email has been changed", "Your email changed successfully!");
-        mailService.send(person.getEmail(), "Your email has been changed", "Your email changed successfully!");
+        mailService.send(email, Constants.MAIL_UPDATE_EMAIL_SUBJECT, Constants.MAIL_UPDATE_EMAIL_TEXT);
+        mailService.send(person.getEmail(), Constants.MAIL_UPDATE_EMAIL_SUBJECT, Constants.MAIL_UPDATE_EMAIL_TEXT);
     }
 
     public List<PersonDto> getPersonsBySearchParameters(String firstName, String lastName,
@@ -219,8 +219,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = getHost() + "/shift-email?token=" + token.getToken();
-        mailService.send(email, "Your SocNetwork Email change link", link);
+        String link = getHost().concat(Constants.MAIL_RECOVER_EMAIL_LINK).concat(token.getToken());
+        mailService.send(email, Constants.MAIL_RECOVER_EMAIL_SUBJECT, link);
     }
 
     public void recoverPassword(String email) throws InvalidRequestException {
@@ -230,8 +230,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
         TempToken token = new TempToken(person.getEmail(), generateToken());
         tempTokenService.addToken(token);
-        String link = getHost() + "/change-password?token=" + token.getToken();
-        mailService.send(person.getEmail(), "SocNetwork Password recovery", link);
+        String link = getHost().concat(Constants.MAIL_RECOVER_PASSWORD_LINK).concat(token.getToken());
+        mailService.send(person.getEmail(), Constants.MAIL_RECOVER_PASSWORD_SUBJECT, link);
     }
 
     public void setPassword(Map<String, String> body) throws InvalidRequestException{
@@ -247,8 +247,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePassword(person);
         tempTokenService.deleteToken(body.get(Constants.TOKEN));
 
-        mailService.send(person.getEmail(), "Your password has been changed",
-                "Your password changed successfully! You can now log in with new password!");
+        mailService.send(person.getEmail(), Constants.MAIL_UPDATE_PASSWORD_SUBJECT, Constants.MAIL_UPDATE_PASSWORD_TEXT);
     }
 
     private String generateToken(){
@@ -321,7 +320,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         }
     }
 
-    public void setBlockPerson() throws InvalidRequestException{
+    public void markToDelete() throws InvalidRequestException{
         Person person = getAuthenticatedPerson();
 
         if(person == null){
@@ -335,8 +334,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(storageService.getDeletedProfileImage());
         personRepository.updatePhotoByEmail(person);
 
-        mailService.send(person.getEmail(), "Your account will be deleted in 3 days!",
-                "You requested to delete your account, it will be completely deleted in 3 days!");
+        mailService.send(person.getEmail(), Constants.MAIL_MARK_DELETE_SUBJECT, Constants.MAIL_MARK_DELETE_TEXT);
     }
 
     public PersonDto restoreProfile(){
@@ -351,7 +349,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePhotoByEmail(person);
         deletedUserService.delete(deletedUser.getId());
 
-        mailService.send(person.getEmail(), "Your account restored!", "Your account was completely restored!");
+        mailService.send(person.getEmail(), Constants.MAIL_RESTORE_SUBJECT, Constants.MAIL_RESTORE_TEXT);
         return new PersonDto(person);
     }
 

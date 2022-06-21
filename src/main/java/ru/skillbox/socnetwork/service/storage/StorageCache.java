@@ -35,8 +35,8 @@ public class StorageCache {
     RedissonClient redissonClient = connect();
     cache = redissonClient.getMap("image-cache");
     cache.clear();
-    cache.put(Constants.PHOTO_DEFAULT, Constants.PHOTO_DEFAULT_LINK);
-    cache.put(Constants.PHOTO_DELETED, Constants.PHOTO_DELETED_LINK);
+    cache.put(Constants.PHOTO_DEFAULT_NAME, Constants.PHOTO_DEFAULT_LINK);
+    cache.put(Constants.PHOTO_DELETED_NAME, Constants.PHOTO_DELETED_LINK);
     cache.putAll(getPhotos());
   }
 

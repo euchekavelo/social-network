@@ -47,11 +47,11 @@ public class StorageService {
   private final StorageCache cache;
 
   public String getDefaultProfileImage(){
-    return cache.getLink(Constants.PHOTO_DEFAULT);
+    return cache.getLink(Constants.PHOTO_DEFAULT_NAME);
   }
 
   public String getDeletedProfileImage() {
-    return cache.getLink(Constants.PHOTO_DELETED);
+    return cache.getLink(Constants.PHOTO_DELETED_NAME);
   }
 
   @Scheduled(cron = "${skillbox.app.cronUploadLogFiles}")
@@ -60,8 +60,7 @@ public class StorageService {
 
     for (File file : logFiles) {
       try (InputStream in = new FileInputStream(file)) {
-        String abstractFilePath = file.getPath().replaceAll("\\\\", "/");
-        client.files().uploadBuilder("/" + abstractFilePath).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
+        client.files().uploadBuilder(file.getPath()).withMode(WriteMode.OVERWRITE).uploadAndFinish(in);
       }
     }
 
@@ -107,7 +106,7 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(Constants.PHOTO_DEFAULT)) {
+    if (!path.equals(Constants.PHOTO_DEFAULT_NAME)) {
       client.files().deleteV2(path);
     }
   }
