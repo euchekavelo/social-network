@@ -16,16 +16,16 @@ import java.util.List;
 @DebugLogs
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
-    private static final String select = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
+    private static final String SELECT = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +
             "left join comment_like cl on cl.comment_id = pc.id and cl.person_id = ? ";
 
     public List<PostComment> getLikedParentCommentsByPostId(int currentPersonId, int postId) {
-        String sql = select + "where pc.post_id = ? and pc.parent_id is null order by id";
+        String sql = SELECT + "where pc.post_id = ? and pc.parent_id is null order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
     public List<PostComment> getLikedSubCommentsByPostId(int currentPersonId, int postId) {
-        String sql = select + "where pc.post_id = ? and pc.parent_id > 0 order by id";
+        String sql = SELECT + "where pc.post_id = ? and pc.parent_id > 0 order by id";
         return jdbc.query(sql, new PostCommentMapper(), currentPersonId, currentPersonId, postId);
     }
 
@@ -47,7 +47,7 @@ public class PostCommentRepository {
     }
 
     public PostComment getById(int id, int currentPersonId) throws EmptyResultDataAccessException {
-        String sql = select + "where pc.id = ?";
+        String sql = SELECT + "where pc.id = ?";
         return jdbc.queryForObject(sql, new PostCommentMapper(), currentPersonId, currentPersonId, id);
     }
 

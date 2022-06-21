@@ -27,6 +27,9 @@ public class CaptchaService {
         if (captchaDtoHashMap.size() > 50) {
             this.clearCaptchaMap();
         }
+        if (captchaDto == null) {
+            return false;
+        }
         return captchaDto.getHidden().equals(registerDto.getCode());
     }
 
