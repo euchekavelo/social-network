@@ -63,12 +63,7 @@ public class DialogsController {
 
     @MessageMapping("/messages")
     @SendTo("/topic/activity")
-    public MessageDto message(@Payload MessageDto message) {
-        System.out.println("!!!!!!!!");
-        System.out.println(message.getMessageText());
-        if (!message.getMessageText().equals("")) {
-            //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
-        }
-        return message;
+    public GeneralResponse<MessageDto> message(@Payload MessageDto message) {
+        return dialogsService.sendMessage(new MessageRequest(message.getMessageText()), message.getId());
     }
 }
