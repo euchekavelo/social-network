@@ -1,6 +1,5 @@
 package ru.skillbox.socnetwork.controller;
 
-import cn.apiclub.captcha.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -22,7 +21,7 @@ import ru.skillbox.socnetwork.model.rsdto.NotificationSettingsDto;
 import ru.skillbox.socnetwork.service.NotificationSettingsService;
 import ru.skillbox.socnetwork.service.PersonService;
 import ru.skillbox.socnetwork.service.CaptchaService;
-import ru.skillbox.socnetwork.service.CaptchaUtils;
+
 
 import java.util.List;
 import java.util.Map;
@@ -41,11 +40,7 @@ public class AccountController {
     @GetMapping("/register")
     public CaptchaDto captcha() {
 
-        CaptchaDto captchaDto = new CaptchaDto();
-        setupCaptcha(captchaDto);
-        captchaService.addCaptcha(captchaDto);
-
-        return captchaDto;
+        return captchaService.returnNewCaptcha();
     }
 
     @PostMapping(value = "/register")
@@ -211,11 +206,5 @@ public class AccountController {
 
         List<NotificationSettingsDto> notificationSettings = notificationSettingsService.getSettingsForUser();
         return ResponseEntity.ok(new GeneralResponse<>(notificationSettings));
-    }
-
-    private void setupCaptcha(CaptchaDto captchaDto) {
-        Captcha captcha = CaptchaUtils.createCaptcha(200, 50);
-        captchaDto.setHidden(captcha.getAnswer());
-        captchaDto.setImage(CaptchaUtils.encodeBase64(captcha));
     }
 }
