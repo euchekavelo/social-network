@@ -254,6 +254,17 @@ class PostControllerTest {
     }
 
     @Test
+    @WithUserDetails("ilin@mail.ru")
+    void addCommentToAnotherPersonPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/post/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"comment_text\": \"another new comment\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated());
+    }
+
+    @Test
     @WithUserDetails("test@mail.ru")
     void editNotPersonCommentToPostTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -305,7 +316,16 @@ class PostControllerTest {
                         .json("{\"data\":{\"id\":1}}"));
     }
 
-
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void deleteSubCommentsTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/post/1/comments/11"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json("{\"data\":{\"id\":11}}"));
+    }
 
     @Test
     @WithUserDetails("test@mail.ru")
