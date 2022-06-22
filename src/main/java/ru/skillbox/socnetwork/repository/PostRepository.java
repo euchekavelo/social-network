@@ -21,10 +21,6 @@ public class PostRepository {
     private static final String SELECT = "select post.*, (post_like.person_id = ?) as is_liked from post " +
             "left join post_like on (post_like.post_id = post.id and post_like.person_id = ?) ";
 
-    public List<Post> getAll() {
-        return jdbc.query("select * from post", new PostMapper());
-    }
-
     public List<Post> getAlreadyPostedWithOffset(int offset, int limit, int currentPersonId) {
 
         String sql = SELECT + "WHERE post.time < (extract(epoch from now()) * 1000) order by id desc LIMIT ? OFFSET ?";
@@ -74,57 +70,32 @@ public class PostRepository {
         return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("count"));
     }
 
-    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
-                                                   String authorSurname, int perPage) {
-
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("name", "%" + authorName + "%");
-        parameters.addValue("surname", "%" + authorSurname + "%");
-        parameters.addValue("text", "%" + text + "%");
-        parameters.addValue("dateFrom", dateFrom);
-        parameters.addValue("dateTo", dateTo);
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("select p.*")
-                .append("from post p")
-                .append(" join person on p.author = person.id")
-                .append(" where ((first_name like :name and last_name like :surname)")
-                .append(" or (first_name like :surname and last_name like :name))")
-                .append(" and (post_text like :text or title like :text)")
-                .append(" and time > :dateFrom")
-                .append(" and time < :dateTo")
-                .append(" and p.is_blocked = 'f'");
-
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        return template.query(sql.toString(), parameters, new PostMapper());
-    }
-
     public void deleteAllPersonPosts(Integer personId) {
         String sql = "DELETE FROM post WHERE author = ?";
         jdbc.update(sql, personId);
     }
 
     public List<Post> choosePostsWhichContainsTextWithTags(String text, long dateFrom, long dateTo, String authorName,
-                                                           String authorSurname, String tags, int perPage) {
+                                                           String authorSurname, String tags, int perPage, int personId) {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("personId", personId);
         parameters.addValue("name", "%" + authorName + "%");
         parameters.addValue("surname", "%" + authorSurname + "%");
         parameters.addValue("text", "%" + text + "%");
         parameters.addValue("dateFrom", dateFrom);
         parameters.addValue("dateTo", dateTo);
         StringBuilder sql = new StringBuilder();
-        sql.append("select p.* ")
-                .append("from post p")
+        sql.append("select p.*, (pl.person_id = :personId) as is_liked ")
+                .append("from post p left join post_like pl on (pl.post_id = p.id and pl.person_id = :personId)")
                 .append(" join person on p.author = person.id")
                 .append(" left join post2tag pt on p.id = pt.post_id")
                 .append(" left join tag t on pt.tag_id = t.id")
                 .append(" where ((first_name like :name and last_name like :surname)")
                 .append(" or (first_name like :surname and last_name like :name))")
                 .append(" and (post_text like :text or title like :text)")
-                .append(" and time > :dateFrom")
-                .append(" and time < :dateTo")
+                .append(" and p.time > :dateFrom")
+                .append(" and p.time < :dateTo")
                 .append(" and p.is_blocked = 'f'")
                 .append(tags);
 
