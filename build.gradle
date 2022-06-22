@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'ru.skillbox'
-version = '0.0.5_19.06.2022'
+version = '0.0.5_22.06.2022'
 sourceCompatibility = '11'
 
 configurations {
@@ -83,10 +83,7 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, excludes: [
-//					"ru/skillbox/socnetwork/controller/**",
-//					"ru/skillbox/socnetwork/service/**"
 					"ru/skillbox/socnetwork/model/**"
-//					"ru/skillbox/socnetwork/repository/**"
 			])
 		}))
 	}
