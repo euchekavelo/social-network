@@ -71,10 +71,6 @@ public class DialogsController {
 
     @MessageMapping("/messages")
     public void message(MessageDto message) {
-        System.out.println(message.getMessageText());
-        System.out.println(message.getToken());
-        System.out.println(jwtTokenProvider.getEmailFromToken(message.getToken()));
-
         GeneralResponse<MessageDto> generalResponse = dialogsServiceWebSocket.sendMessage(
                 message.getMessageText(), message.getId(), jwtTokenProvider.getEmailFromToken(message.getToken()));
 
