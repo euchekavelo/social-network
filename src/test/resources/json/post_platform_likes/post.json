@@ -12,7 +12,6 @@
       "reg_date": 1649367846500,
       "birth_date": 1649367846000,
       "messages_permission": "ALL",
-      "last_online_time": 0,
       "is_blocked": false
     },
     "title": "test title example",
@@ -45,7 +44,6 @@
           "reg_date": 1649367846500,
           "birth_date": 1649367846000,
           "messages_permission": "ALL",
-          "last_online_time": 0,
           "is_blocked": false
         },
         "is_blocked": false,
@@ -68,7 +66,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -91,7 +88,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -114,7 +110,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -137,7 +132,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -160,7 +154,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -183,7 +176,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -206,7 +198,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -229,7 +220,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -252,7 +242,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false
@@ -275,7 +264,6 @@
               "reg_date": 1649367846500,
               "birth_date": 1649367846000,
               "messages_permission": "ALL",
-              "last_online_time": 0,
               "is_blocked": false
             },
             "is_blocked": false

@@ -4,7 +4,6 @@ import cn.apiclub.captcha.Captcha;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.model.rqdto.CaptchaDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
-import ru.skillbox.socnetwork.service.CaptchaUtils;
 
 import java.util.HashMap;
 
