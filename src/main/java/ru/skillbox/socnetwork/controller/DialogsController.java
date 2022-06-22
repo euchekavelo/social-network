@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -64,9 +65,11 @@ public class DialogsController {
     }
 
     @MessageMapping("/messages")
-    public void message(@Payload MessageDto message) {
-//        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
-//                message.getMessageText(), message.getId());
+    public void message(SimpMessageHeaderAccessor headerAccessor, MessageDto message) {
+        System.out.println(headerAccessor.getHeader("t"));
+        System.out.println(message.getMessageText());
+        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
+                message.getMessageText(), message.getId());
         messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", message);
     }
 }
