@@ -15,8 +15,11 @@ import ru.skillbox.socnetwork.model.rqdto.DialogRequest;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.security.UserDetailsServiceImpl;
 import ru.skillbox.socnetwork.service.DialogsService;
+import ru.skillbox.socnetwork.service.websocket.DialogsServiceWebSocket;
 
 import java.util.List;
 
@@ -28,6 +31,8 @@ public class DialogsController {
 
     private final DialogsService dialogsService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final DialogsServiceWebSocket dialogsServiceWebSocket;
 
     @GetMapping
     public ResponseEntity<GeneralResponse<List<DialogsResponse>>> getDialog() {
@@ -65,11 +70,14 @@ public class DialogsController {
     }
 
     @MessageMapping("/messages")
-    public void message(SimpMessageHeaderAccessor headerAccessor, MessageDto message) {
-        System.out.println(headerAccessor.getHeader("t"));
+    public void message(MessageDto message) {
         System.out.println(message.getMessageText());
-        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
-                message.getMessageText(), message.getId());
-        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", message);
+        System.out.println(message.getToken());
+        System.out.println(jwtTokenProvider.getEmailFromToken(message.getToken()));
+
+        GeneralResponse<MessageDto> generalResponse = dialogsServiceWebSocket.sendMessage(
+                message.getMessageText(), message.getId(), jwtTokenProvider.getEmailFromToken(message.getToken()));
+
+        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", generalResponse);
     }
 }
