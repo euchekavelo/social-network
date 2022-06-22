@@ -68,6 +68,18 @@ insert into post_comment (time, post_id, author_id, comment_text, is_blocked) va
     ('1649367846508', 3, 2, 'petr title example 2', false),
     ('1649367846508', 3, 1, 'tihon title example 2', false);
 
+insert into post_comment (time, post_id, author_id, comment_text, is_blocked, parent_id) values
+    ('1649367846508', 1, 5, 'test title example', false, 1),
+    ('1649367846508', 1, 6, 'ivan title example', false, 1),
+    ('1649367846508', 1, 1, 'petr title example', false, 1),
+    ('1649367846508', 1, 5, 'tihon title example', false, 1),
+    ('1649367846508', 1, 2, 'ilya title example', false, 1),
+    ('1649367846508', 1, 3, 'onufriy title example', false, 1),
+    ('1649367846508', 1, 5, 'test title example 2', false, 1),
+    ('1649367846508', 1, 4, 'ivan title example 2', false, 1),
+    ('1649367846508', 1, 2, 'petr title example 2', false, 1),
+    ('1649367846508', 1, 1, 'tihon title example 2', false, 1);
+
 insert into friendship (time, code, src_person_id, dst_person_id) values
    ('1653834211034', 'FRIEND', 1, 5),
    ('1653834026780', 'FRIEND', 1, 2),

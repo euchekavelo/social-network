@@ -1,11 +1,11 @@
 package ru.skillbox.socnetwork.model.rqdto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-import lombok.Data;
 
 @Data
 @Schema(description = "Сущность для регистрации")

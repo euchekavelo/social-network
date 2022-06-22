@@ -40,8 +40,38 @@ class PostControllerTest {
     }
 
     @Test
+    @WithUserDetails("ilin@mail.ru")
+    void searchPostByTextTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post?text='title'"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void searchPostByTextWithTagsTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/post?text=title&tags=java,code"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     @WithUserDetails("test@mail.ru")
     void getExistentPostByIdTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of("src/test/resources/json/post_platform_likes/post.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void getExistentPostByIdWithSubCommentsTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/post/1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -193,6 +223,19 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content()
                         .json("{\"error_description\":\"Incorrect post data, can't find this id -1\"}"));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void getCommentsPostTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/post/1/comments"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path
+                                .of("src/test/resources/json/post_platform_likes/comments_array.json"))));
     }
 
     @Test
