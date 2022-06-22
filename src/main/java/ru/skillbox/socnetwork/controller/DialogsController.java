@@ -65,8 +65,8 @@ public class DialogsController {
 
     @MessageMapping("/messages")
     public void message(@Payload MessageDto message) {
-        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
-                message.getMessageText(), message.getId());
-        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", generalResponse);
+//        GeneralResponse<MessageDto> generalResponse = dialogsService.sendMessage(
+//                message.getMessageText(), message.getId());
+        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", message);
     }
 }
