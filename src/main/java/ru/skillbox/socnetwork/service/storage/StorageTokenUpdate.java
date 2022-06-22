@@ -27,11 +27,12 @@ public class StorageTokenUpdate {
   private String refreshToken;
 
   public StorageTokenUpdate() {
-    credential = new DbxCredential("", 0L, refreshToken, appId);
   }
 
   @Scheduled(fixedRateString = "PT03H", initialDelayString = "PT3M")
   public void refreshToken() throws DbxException {
+
+    credential = new DbxCredential("", System.currentTimeMillis(), refreshToken, appId, appSecret);
 
     DbxRequestConfig config = new DbxRequestConfig(appId);
     DbxRefreshResult result = credential.refresh(config);

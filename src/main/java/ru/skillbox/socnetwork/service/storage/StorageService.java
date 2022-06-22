@@ -75,33 +75,34 @@ public class StorageService {
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
     Person person = null;
     FileMetadata fileMetadata = null;
+    if(file != null) {
 
-    //Generate new random file name
-    String fileName = "/".concat(generateName(file.getOriginalFilename()));
+      //Generate new random file name
+      String fileName = "/".concat(generateName(file.getOriginalFilename()));
 
-    File resizedImage = ImageScale.resize(file.getInputStream(), fileName);
-    InputStream stream = new FileInputStream(resizedImage);
-    fileMetadata = client.files().uploadBuilder(fileName).withMode(WriteMode.ADD).uploadAndFinish(stream);
-    stream.close();
+      File resizedImage = ImageScale.resize(file.getInputStream(), fileName);
+      InputStream stream = new FileInputStream(resizedImage);
+      fileMetadata = client.files().uploadBuilder(fileName).withMode(WriteMode.ADD).uploadAndFinish(stream);
+      stream.close();
 
-    Files.delete(resizedImage.toPath());
+      Files.delete(resizedImage.toPath());
 
-    //Share image if not shared yet
-    if(client.sharing().listSharedLinksBuilder().withPath(fileName).start().getLinks().isEmpty()) {
+      //Share image if not shared yet
+      if (client.sharing().listSharedLinksBuilder().withPath(fileName).start().getLinks().isEmpty()) {
         client.sharing().createSharedLinkWithSettings(fileMetadata.getPathDisplay());
+      }
+
+      //Get current user
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+      person = personRepository.getByEmail(securityUser.getUsername());
+
+      deleteFile(getRelativePath(person.getPhoto()));
+
+      cache.addLink(fileName, getAbsolutePath(fileName));
+      person.setPhoto(getAbsolutePath(fileName));
+      personRepository.updatePhotoByEmail(person);
     }
-
-    //Get current user
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
-    person = personRepository.getByEmail(securityUser.getUsername());
-
-    deleteFile(getRelativePath(person.getPhoto()));
-
-    cache.addLink(fileName, getAbsolutePath(fileName));
-    person.setPhoto(getAbsolutePath(fileName));
-    personRepository.updatePhotoByEmail(person);
-
     return new FileUploadDTO(person, fileMetadata);
   }
 
