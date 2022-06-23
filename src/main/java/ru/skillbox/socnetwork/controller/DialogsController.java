@@ -79,6 +79,6 @@ public class DialogsController {
 
     @MessageMapping("/typing")
     public void typing(MessageDto info) {
-        messagingTemplate.convertAndSendToUser(String.valueOf(info.getRecipientId()), "/typing", info);
+        messagingTemplate.convertAndSendToUser(String.valueOf(info.getRecipientId()), "/messages", info);
     }
 }
