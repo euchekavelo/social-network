@@ -74,31 +74,31 @@ public class PostRepository {
         return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("count"));
     }
 
-    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
-                                                   String authorSurname, int perPage) {
-
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("name", "%" + authorName + "%");
-        parameters.addValue("surname", "%" + authorSurname + "%");
-        parameters.addValue("text", "%" + text + "%");
-        parameters.addValue("dateFrom", dateFrom);
-        parameters.addValue("dateTo", dateTo);
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("select p.*")
-                .append("from post p")
-                .append(" join person on p.author = person.id")
-                .append(" where ((first_name like :name and last_name like :surname)")
-                .append(" or (first_name like :surname and last_name like :name))")
-                .append(" and (post_text like :text or title like :text)")
-                .append(" and time > :dateFrom")
-                .append(" and time < :dateTo")
-                .append(" and p.is_blocked = 'f'");
-
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
-        return template.query(sql.toString(), parameters, new PostMapper());
-    }
+//    public List<Post> choosePostsWhichContainsText(String text, long dateFrom, long dateTo, String authorName,
+//                                                   String authorSurname, int perPage) {
+//
+//
+//        MapSqlParameterSource parameters = new MapSqlParameterSource();
+//        parameters.addValue("name", "%" + authorName + "%");
+//        parameters.addValue("surname", "%" + authorSurname + "%");
+//        parameters.addValue("text", "%" + text + "%");
+//        parameters.addValue("dateFrom", dateFrom);
+//        parameters.addValue("dateTo", dateTo);
+//
+//        StringBuilder sql = new StringBuilder();
+//        sql.append("select p.*")
+//                .append("from post p")
+//                .append(" join person on p.author = person.id")
+//                .append(" where ((first_name like :name and last_name like :surname)")
+//                .append(" or (first_name like :surname and last_name like :name))")
+//                .append(" and (post_text like :text or title like :text)")
+//                .append(" and time > :dateFrom")
+//                .append(" and time < :dateTo")
+//                .append(" and p.is_blocked = 'f'");
+//
+//        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbc);
+//        return template.query(sql.toString(), parameters, new PostMapper());
+//    }
 
     public void deleteAllPersonPosts(Integer personId) {
         String sql = "DELETE FROM post WHERE author = ?";

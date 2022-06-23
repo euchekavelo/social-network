@@ -200,4 +200,10 @@ public class PersonRepository {
         String sql = "Select * from person where id = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), personId);
     }
+
+//    //public Person getPersonBirthDay(Integer personId) {
+//
+//        String sql = "Select * from person where id = ?";
+//        return jdbc.queryForObject(sql, new PersonMapper(), personId);
+//    }
 }

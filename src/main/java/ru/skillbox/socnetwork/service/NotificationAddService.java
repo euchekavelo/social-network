@@ -32,4 +32,21 @@ public class NotificationAddService {
             notificationRepository.readUsersNotificationById(id);
         }
     }
+
+    public boolean checkIfNotificationNotExist(Integer personId, Integer distUserId) {
+        return (notificationRepository.findNotification(personId, distUserId).size() == 0);
+    }
+
+    public void deleteOldNotifications(Long time) {
+        notificationRepository.deleteOldNotifications(time);
+    }
+
+    public List<Notification> getAllBirthdaysNotifications() {
+        return notificationRepository.chooseAllBirthdayNotifications();
+    }
+
+    public void deleteNotificationById(Integer id) {
+        notificationRepository.deleteNotificationById(id);
+    }
+
 }

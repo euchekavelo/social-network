@@ -35,5 +35,6 @@ public class Constants {
     public static final String USER_WITH_EMAIL = "User with email ";
 
     public static final Long MILLISECONDS_IN_YEAR = 31718612432L;
+    public static final Long DAYS_KEEPING_NOTIFICATIONS_IN_DB = 2L;
 
 }

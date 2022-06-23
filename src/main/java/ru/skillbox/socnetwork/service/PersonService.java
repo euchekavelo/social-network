@@ -406,4 +406,8 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         return personRepository.getPersonBirthDay(personId);
     }
 
+//    public void getListOfBirthday(long date){
+//        return personRepository.getPersonBirthDay(date);
+//    }
+
 }

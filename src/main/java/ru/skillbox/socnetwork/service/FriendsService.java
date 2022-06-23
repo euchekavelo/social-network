@@ -97,6 +97,7 @@ public class FriendsService {
             } else if (friendshipInitiator.getId() == -1 && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
                 friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
                         TypeCode.FRIEND.toString());
+                //TODO add checking of birthday for new friend
             }
         } else {
             Friendship friendship = friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
@@ -104,9 +105,10 @@ public class FriendsService {
 
             NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.FRIEND_REQUEST,
                     System.currentTimeMillis(), authorizedUserId, friendship.getId(), focusPersonId,
-                    TypeReadStatus.SENT, "Давай по пивасику?!");
+                    TypeReadStatus.SENT, "Давай дружить?");
 
             notificationAddService.addNotificationForOnePerson(notificationDto);
+
         }
     }
 
