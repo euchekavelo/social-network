@@ -18,7 +18,10 @@ public class ImageScale {
     BufferedImage image = ImageIO.read(stream);
     int size = Math.min(image.getHeight(), image.getWidth());
 
-    BufferedImage croppedImage = Scalr.crop(image, size, size);
+    int leftOffset = Math.max((image.getWidth() - image.getHeight()) / 2, 0);
+    int topOffset = Math.max((image.getHeight() - image.getWidth()) / 2, 0);
+
+    BufferedImage croppedImage = Scalr.crop(image, leftOffset, topOffset, size, size);
     BufferedImage scaledImage = Scalr.resize(croppedImage, 205);
 
     File newFile = new File("/tmp/" + fileName);

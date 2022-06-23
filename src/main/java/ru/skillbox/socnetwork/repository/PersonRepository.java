@@ -117,10 +117,10 @@ public class PersonRepository {
         return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
-    public void updatePersonByEmail(Person person) {
-        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = " +
-                "(?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
-        jdbc.update(sql,
+    public Person updatePersonByEmail(Person person) {
+        String sql = "UPDATE person SET (first_name, last_name, birth_date, phone, about, city, country, is_deleted) = " +
+                "(?, ?, ?, ?, ?, ?, ?, ?) WHERE person.e_mail = ? RETURNING person.*";
+        return jdbc.queryForObject(sql, new PersonMapper(),
                 person.getFirstName(),
                 person.getLastName(),
                 person.getBirthDate(),
@@ -128,7 +128,8 @@ public class PersonRepository {
                 person.getAbout(),
                 person.getCity(),
                 person.getCountry(),
-                person.getEmail());
+                person.getEmail(),
+                person.getIsDeleted());
     }
 
     public void updatePhotoByEmail(Person person) {

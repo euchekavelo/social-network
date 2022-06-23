@@ -24,6 +24,6 @@ public class DeletedUser {
     this.photo = person.getPhoto();
     this.firstName = person.getFirstName();
     this.lastName = person.getLastName();
-    expire = System.currentTimeMillis() + 259200000;
+    expire = System.currentTimeMillis() + 300_000; // Default: 259200000
   }
 }

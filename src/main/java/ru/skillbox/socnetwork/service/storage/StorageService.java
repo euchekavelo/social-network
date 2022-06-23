@@ -73,9 +73,10 @@ public class StorageService {
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
+    if(file == null) return new FileUploadDTO();
+
     Person person = null;
     FileMetadata fileMetadata = null;
-    if(file != null) {
 
       //Generate new random file name
       String fileName = "/".concat(generateName(file.getOriginalFilename()));
@@ -100,9 +101,10 @@ public class StorageService {
       deleteFile(getRelativePath(person.getPhoto()));
 
       cache.addLink(fileName, getAbsolutePath(fileName));
+      cache.deleteLink(getRelativePath(person.getPhoto()));
       person.setPhoto(getAbsolutePath(fileName));
       personRepository.updatePhotoByEmail(person);
-    }
+
     return new FileUploadDTO(person, fileMetadata);
   }
 

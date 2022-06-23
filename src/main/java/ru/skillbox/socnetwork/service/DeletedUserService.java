@@ -32,7 +32,7 @@ public class DeletedUserService {
   private final StorageService storageService;
   private final MailService mailService;
 
-  @Scheduled(fixedRateString = "PT01H")
+  @Scheduled(fixedRateString = "PT10M")
   public void checkExpiredUsers() throws DbxException {
     List<DeletedUser> expiredUsers = deletedUsersRepository.getAllExpired();
     if(!expiredUsers.isEmpty()){

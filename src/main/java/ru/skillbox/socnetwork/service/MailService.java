@@ -34,7 +34,7 @@ public class MailService {
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");
     properties.put("mail.smtp.auth", "true");
-    properties.put("mail.debug", "true");
+//    properties.put("mail.debug", "true");
     properties.put("mail.smtp.ssl.enable", "true");
 
     return mailSender;
