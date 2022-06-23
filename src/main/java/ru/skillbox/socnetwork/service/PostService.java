@@ -110,15 +110,11 @@ public class PostService {
     }
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
-        return posts.stream().map(post -> {
-                    PostDto postDto = new PostDto(
-                            post,
-                            personDto,
-                            getCommentDtoList(post.getId()),
-                            tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(postLikeRepository.getIsPostLiked(personDto.getId(), post.getId()));
-                    return postDto;
-                }
+        return posts.stream().map(post -> new PostDto(
+                post,
+                personDto,
+                getCommentDtoList(post.getId()),
+                tagService.getPostTags(post.getId()))
         ).collect(Collectors.toList());
     }
 
@@ -234,7 +230,7 @@ public class PostService {
         String authorSurname = authorNameSurname.length >= 2 ? authorNameSurname[1] : "";
 
         List<Post> posts = postRepository.choosePostsWhichContainsTextWithTags(text, dateFrom, dateTo,
-                authorName, authorSurname, getSqlString(tags), perPage);
+                authorName, authorSurname, getSqlString(tags), perPage, securityPerson.getPersonId());
 
         return getPostDtoListOfAllPersons(posts);
     }
@@ -255,9 +251,9 @@ public class PostService {
                     tagsString.append(")");
                 }
             }
-            tagsString.append(" group by p.id order by count(t.tag) desc");
+            tagsString.append(" group by pl.person_id, p.id order by count(t.tag) desc");
         } else {
-            tagsString.append(" group by p.id");
+            tagsString.append(" group by pl.person_id, p.id");
         }
         return tagsString.toString();
     }

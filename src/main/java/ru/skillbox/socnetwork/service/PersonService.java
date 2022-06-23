@@ -16,6 +16,7 @@ import ru.skillbox.socnetwork.model.entity.Friendship;
 import ru.skillbox.socnetwork.model.entity.Person;
 import ru.skillbox.socnetwork.model.entity.TempToken;
 import ru.skillbox.socnetwork.model.entity.enums.TypeCode;
+import ru.skillbox.socnetwork.model.rqdto.EmailOrPasswordDTO;
 import ru.skillbox.socnetwork.model.rqdto.LoginDto;
 import ru.skillbox.socnetwork.model.rqdto.RegisterDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
@@ -183,14 +184,14 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         personRepository.updatePersonByEmail(updatablePerson);
     }
 
-    public void updateEmail(Map<String, String> body) throws InvalidRequestException{
-        String email = tempTokenService.getToken(body.get(Constants.TOKEN)).getEmail();
+    public void updateEmail(EmailOrPasswordDTO body) throws InvalidRequestException{
+        String email = tempTokenService.getToken(body.getToken()).getEmail();
         Person person = getByEmail(email);
         if(person == null){
             throw new InvalidRequestException(Constants.USER_WITH_EMAIL + email + Constants.NOT_REGISTERED);
         }
-        personRepository.updateEmail(person, body.get("email"));
-        tempTokenService.deleteToken(body.get(Constants.TOKEN));
+        personRepository.updateEmail(person, body.getEmail());
+        tempTokenService.deleteToken(body.getToken());
         mailService.send(email, Constants.MAIL_UPDATE_EMAIL_SUBJECT, Constants.MAIL_UPDATE_EMAIL_TEXT);
         mailService.send(person.getEmail(), Constants.MAIL_UPDATE_EMAIL_SUBJECT, Constants.MAIL_UPDATE_EMAIL_TEXT);
     }
@@ -234,18 +235,18 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         mailService.send(person.getEmail(), Constants.MAIL_RECOVER_PASSWORD_SUBJECT, link);
     }
 
-    public void setPassword(Map<String, String> body) throws InvalidRequestException{
-        if(body.get(Constants.TOKEN) == null){
-            throw new InvalidRequestException("wrong recovery link");
+    public void setPassword(EmailOrPasswordDTO body) throws InvalidRequestException{
+        if(body.getToken() == null){
+            throw new InvalidRequestException(ExceptionText.WRONG_RECOVERY_LINK.getMessage());
         }
-        TempToken token = tempTokenService.getToken(body.get(Constants.TOKEN));
+        TempToken token = tempTokenService.getToken(body.getToken());
         if(token == null){
-            throw new InvalidRequestException("invalid recovery token");
+            throw new InvalidRequestException(ExceptionText.INVALID_RECOVERY_TOKEN.getMessage());
         }
         Person person = getByEmail(token.getEmail());
-        person.setPassword(new BCryptPasswordEncoder().encode(body.get("password")));
+        person.setPassword(new BCryptPasswordEncoder().encode(body.getPassword()));
         personRepository.updatePassword(person);
-        tempTokenService.deleteToken(body.get(Constants.TOKEN));
+        tempTokenService.deleteToken(body.getToken());
 
         mailService.send(person.getEmail(), Constants.MAIL_UPDATE_PASSWORD_SUBJECT, Constants.MAIL_UPDATE_PASSWORD_TEXT);
     }
@@ -324,7 +325,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         Person person = getAuthenticatedPerson();
 
         if(person == null){
-            throw new InvalidRequestException("User not registered");
+            throw new InvalidRequestException(ExceptionText.NOT_REGISTERED.getMessage());
         }
         deletedUserService.add(person);
         person.setIsDeleted(true);

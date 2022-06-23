@@ -14,6 +14,9 @@ public enum ExceptionText {
     INCORRECT_CAPTCHA("Incorrect captcha, please try again"),
     INCORRECT_PASSWORD("Passwords do not match"),
     INCORRECT_EMAIL("Incorrect email, please try again"),
+    WRONG_RECOVERY_LINK("Wrong recovery link"),
+    INVALID_RECOVERY_TOKEN("Invalid recovery token"),
+    NOT_REGISTERED("User not registered"),
 
     DEFAULT_ERROR_DESCRIPTION ("This request was denied. " +
             "Please register or use your existing account to get the updated token value and try again.");

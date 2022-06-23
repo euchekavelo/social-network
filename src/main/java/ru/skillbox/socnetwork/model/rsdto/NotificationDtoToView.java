@@ -16,18 +16,14 @@ public class NotificationDtoToView {
     @JsonProperty("event_type")
     private String notificationType;
     @JsonProperty("sent_time")
-    private Long sentTime;//
-
+    private Long sentTime;
 
     public NotificationDtoToView(NotificationDto notificationDto, PersonDto entityAuthor, String info) {
 
         this.id = notificationDto.getId();
         this.sentTime = notificationDto.getSentTime();
         this.notificationType = notificationDto.getNotificationType().toString();
-        this.entityAuthor = entityAuthor;
+        this.entityAuthor = new PersonDto(entityAuthor);
         this.info = info;
     }
-
-
-
 }

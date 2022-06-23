@@ -12,23 +12,11 @@ drop table if exists post;
 drop table if exists person;
 drop table if exists comment_like;
 drop table if exists notification;
-drop table if exists notification_type;
+drop table if exists notification_settings;
 drop table if exists temptoken;
 drop table if exists databasechangelog;
 drop table if exists databasechangeloglock;
 drop table if exists deleted_users;
-
---drop type if exists permission_type;
---drop type if exists action_type;
---drop type if exists code_type;
---drop type if exists read_status_type;
---drop type if exists notification_code_type;
---
---create type permission_type as enum ('ALL', 'FRIENDS');
---create type action_type as enum ('BLOCK', 'UNBLOCK');
---create type code_type as enum ('REQUEST', 'FRIEND', 'BLOCKED', 'DECLINED', 'SUBSCRIBED');
---create type read_status_type as enum ('SENT', 'READ');
---create type notification_code_type as enum ('POST', 'POST_COMMENT', 'COMMENT_COMMENT', 'FRIEND_REQUEST', 'MESSAGE');
 
 create table if not exists person (
     id serial,
@@ -86,9 +74,9 @@ create table if not exists friendship (
 	status_id int4,
     src_person_id int4,
     dst_person_id int4,
-    constraint fk_friendshipstatus foreign key (status_id) references friendship_status (id) on delete cascade,
-    constraint fk_personsrc foreign key (src_person_id) references person (id) on delete cascade,
-    constraint fk_persondst foreign key (dst_person_id) references person (id) on delete cascade,
+    CONSTRAINT fk_friendShipStatus FOREIGN KEY (status_id) REFERENCES friendship_status (id) ON DELETE CASCADE,
+    CONSTRAINT fk_personSrc FOREIGN KEY (src_person_id) REFERENCES person (id) ON DELETE CASCADE,
+    CONSTRAINT fk_personDst FOREIGN KEY (dst_person_id) REFERENCES person (id) ON DELETE CASCADE,
     primary key (id)
 );
 
@@ -178,9 +166,17 @@ create table if not exists notification (
     sent_time bigint,
     person_id int4,
     entity_id int4,
-	dist_user_id int4,
+    dist_user_id int4,
     status read_status_type,
     title varchar(50),
+    primary key (id)
+);
+
+create table if not exists notification_settings (
+    id serial,
+	person_id int4,
+    type notification_code_type,
+    enable boolean,
     primary key (id)
 );
 

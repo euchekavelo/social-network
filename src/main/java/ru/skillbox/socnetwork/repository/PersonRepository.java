@@ -66,8 +66,8 @@ public class PersonRepository {
 
     public Person saveFromRegistration(Person person) {
         person.setRegDate(System.currentTimeMillis());
-        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo) " +
-                "values (?, ?, ?, ?, ?, ?) RETURNING *";
+        String sql = "insert into person (first_name, last_name, reg_date, e_mail, password, photo, is_deleted) " +
+                "values (?, ?, ?, ?, ?, ?, ?) RETURNING *";
 
         return jdbc.queryForObject(sql, new PersonMapper(),
                 person.getFirstName(),
@@ -75,7 +75,8 @@ public class PersonRepository {
                 System.currentTimeMillis(),
                 person.getEmail(),
                 person.getPassword(),
-                person.getPhoto());
+                person.getPhoto(),
+                false);
     }
 
     public List<Person> getListRecommendedFriends(String email) {

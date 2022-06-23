@@ -16,29 +16,26 @@ import java.util.Properties;
 @DebugLogs
 public class MailService {
 
-  /**
-  Нашел причину, почему не работает вызов функции таким образом. Нужно вызывать её геттером, до этого она не успевает
-   пройти инициализацию
-   **/
   @Getter
   @Value("${skillbox.app.mail.user}")
   private String username;
+
   @Getter
   @Value("${skillbox.app.mail.password}")
   private String password;
 
   private JavaMailSender getMailSender(){
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-    mailSender.setHost("smtp.gmail.com");
-    mailSender.setPort(587);
+    mailSender.setHost("smtp.yandex.ru");
+    mailSender.setPort(465);
     mailSender.setUsername(getUsername());
     mailSender.setPassword(getPassword());
 
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");
     properties.put("mail.smtp.auth", "true");
-    properties.put("mail.smtp.starttls.enable", "true");
     properties.put("mail.debug", "true");
+    properties.put("mail.smtp.ssl.enable", "true");
 
     return mailSender;
   }
@@ -48,7 +45,7 @@ public class MailService {
     JavaMailSender mailSender = getMailSender();
     SimpleMailMessage message = new SimpleMailMessage();
 
-    message.setFrom(getUsername());
+    message.setFrom(getUsername().concat("@yandex.com"));
     message.setTo(email);
     message.setSubject(subject);
     message.setText(text);
