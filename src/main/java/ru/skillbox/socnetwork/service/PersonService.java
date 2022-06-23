@@ -328,7 +328,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             throw new InvalidRequestException(ExceptionText.NOT_REGISTERED.getMessage());
         }
         deletedUserService.add(person);
-        person.setIsDeleted(true);
+        personRepository.setDeleted(person.getId(), true);
         person.setFirstName("Deleted");
         person.setLastName("");
         personRepository.updatePersonByEmail(person);
@@ -346,7 +346,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(deletedUser.getPhoto());
         person.setFirstName(deletedUser.getFirstName());
         person.setLastName(deletedUser.getLastName());
-        person.setIsDeleted(false);
+        personRepository.setDeleted(person.getId(), false);
         personRepository.updatePersonByEmail(person);
         personRepository.updatePhotoByEmail(person);
         deletedUserService.delete(deletedUser.getId());
