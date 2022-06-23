@@ -25,6 +25,7 @@ public class AccountControllerTest {
 
     @Test
     void getCaptchaTest() throws Exception {
+
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/account/register"))
                 .andDo(MockMvcResultHandlers.print())
@@ -34,6 +35,10 @@ public class AccountControllerTest {
 
     @Test
     void correctRegistrationTest() throws Exception {
+        for (int i = 0; i < 60; i++) {
+            this.mockMvc.perform(MockMvcRequestBuilders
+                    .get("/api/v1/account/register"));
+        }
         this.mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/account/register")
                 .content("{\"captcha_id\": 1655752447821," +

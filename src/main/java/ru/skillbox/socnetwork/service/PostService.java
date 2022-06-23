@@ -110,15 +110,11 @@ public class PostService {
     }
 
     private List<PostDto> getPostDtoListOfOnePerson(List<Post> posts, PersonDto personDto) {
-        return posts.stream().map(post -> {
-                    PostDto postDto = new PostDto(
-                            post,
-                            personDto,
-                            getCommentDtoList(post.getId()),
-                            tagService.getPostTags(post.getId()));
-                    postDto.setIsLiked(postLikeRepository.getIsPostLiked(personDto.getId(), post.getId()));
-                    return postDto;
-                }
+        return posts.stream().map(post -> new PostDto(
+                post,
+                personDto,
+                getCommentDtoList(post.getId()),
+                tagService.getPostTags(post.getId()))
         ).collect(Collectors.toList());
     }
 
