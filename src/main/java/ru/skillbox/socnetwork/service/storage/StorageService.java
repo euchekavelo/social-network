@@ -69,7 +69,7 @@ public class StorageService {
 
   @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
   public void deleteLogFolderInRemoteStorage() throws DbxException {
-    deleteFile("/" + getLocalRootPath());
+    deleteFile(getLocalRootPath());
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
