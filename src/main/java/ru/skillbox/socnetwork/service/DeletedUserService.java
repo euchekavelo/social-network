@@ -38,7 +38,7 @@ public class DeletedUserService {
     if(!expiredUsers.isEmpty()){
       for(DeletedUser user : expiredUsers){
         deletePersonData(user.getPersonId());
-        storageService.deleteFile(user.getPhoto());
+        storageService.deleteFile(storageService.getRelativePath(user.getPhoto()));
         deletedUsersRepository.delete(user.getId());
       }
     }
@@ -65,7 +65,7 @@ public class DeletedUserService {
 
     List<PostFile> postFiles = postFileRepository.getAllPersonFiles(personId);
     for(PostFile file : postFiles){
-      storageService.deleteFile(file.getPath());
+      storageService.deleteFile(storageService.getRelativePath(file.getPath()));
     }
     postFileRepository.deleteAllPersonFiles(personId);
 

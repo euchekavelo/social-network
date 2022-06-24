@@ -109,7 +109,7 @@ public class StorageService {
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(Constants.PHOTO_DEFAULT_NAME)) {
+    if (!path.equals(Constants.PHOTO_DEFAULT_NAME) && !path.equals(Constants.PHOTO_DELETED_NAME)) {
       client.files().deleteV2(path);
     }
   }
@@ -119,7 +119,7 @@ public class StorageService {
     client = new DbxClientV2(config, token);
   }
 
-  private String getRelativePath(String path) {
+  public String getRelativePath(String path) {
     Pattern pattern = Pattern.compile(".*(/\\w*\\.[A-z]*)\\?raw=1");
     Matcher matcher = pattern.matcher(path);
     return (matcher.find()) ? matcher.group(1) : "";
