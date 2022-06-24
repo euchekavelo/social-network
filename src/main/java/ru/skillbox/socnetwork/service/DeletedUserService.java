@@ -32,13 +32,13 @@ public class DeletedUserService {
   private final StorageService storageService;
   private final MailService mailService;
 
-  @Scheduled(fixedRateString = "PT01H")
+  @Scheduled(fixedRateString = "PT10M")
   public void checkExpiredUsers() throws DbxException {
     List<DeletedUser> expiredUsers = deletedUsersRepository.getAllExpired();
     if(!expiredUsers.isEmpty()){
       for(DeletedUser user : expiredUsers){
         deletePersonData(user.getPersonId());
-        storageService.deleteFile(user.getPhoto());
+        storageService.deleteFile(storageService.getRelativePath(user.getPhoto()));
         deletedUsersRepository.delete(user.getId());
       }
     }
@@ -65,7 +65,7 @@ public class DeletedUserService {
 
     List<PostFile> postFiles = postFileRepository.getAllPersonFiles(personId);
     for(PostFile file : postFiles){
-      storageService.deleteFile(file.getPath());
+      storageService.deleteFile(storageService.getRelativePath(file.getPath()));
     }
     postFileRepository.deleteAllPersonFiles(personId);
 

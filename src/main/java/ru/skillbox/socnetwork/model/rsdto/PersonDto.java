@@ -33,6 +33,7 @@ public class PersonDto {
     @JsonProperty("is_blocked")
     private Boolean isBlocked;
     private String token;
+    @JsonProperty("is_deleted")
     private Boolean isDeleted;
 
     public PersonDto(Person person) {

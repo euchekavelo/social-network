@@ -142,7 +142,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public void updatePerson(UpdatePersonDto changedPerson) throws ParseException {
+    public Person updatePerson(UpdatePersonDto changedPerson) throws ParseException {
         Person updatablePerson = getAuthenticatedPerson();
 
         if(changedPerson.getFirstName() != null &&
@@ -181,7 +181,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 !changedPerson.getCountry().equals(updatablePerson.getCountry())) {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
-        personRepository.updatePersonByEmail(updatablePerson);
+        return personRepository.updatePersonByEmail(updatablePerson);
     }
 
     public void updateEmail(EmailOrPasswordDTO body) throws InvalidRequestException{
@@ -328,7 +328,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             throw new InvalidRequestException(ExceptionText.NOT_REGISTERED.getMessage());
         }
         deletedUserService.add(person);
-        person.setIsDeleted(true);
+        personRepository.setDeleted(person.getId(), true);
         person.setFirstName("Deleted");
         person.setLastName("");
         personRepository.updatePersonByEmail(person);
@@ -346,6 +346,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(deletedUser.getPhoto());
         person.setFirstName(deletedUser.getFirstName());
         person.setLastName(deletedUser.getLastName());
+        personRepository.setDeleted(person.getId(), false);
         personRepository.updatePersonByEmail(person);
         personRepository.updatePhotoByEmail(person);
         deletedUserService.delete(deletedUser.getId());

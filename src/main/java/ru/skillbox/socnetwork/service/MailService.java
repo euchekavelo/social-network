@@ -34,7 +34,6 @@ public class MailService {
     Properties properties = mailSender.getJavaMailProperties();
     properties.put("mail.transport.protocol", "smtp");
     properties.put("mail.smtp.auth", "true");
-    properties.put("mail.debug", "true");
     properties.put("mail.smtp.ssl.enable", "true");
 
     return mailSender;
@@ -50,6 +49,6 @@ public class MailService {
     message.setSubject(subject);
     message.setText(text);
 
-    mailSender.send(message);
+//    mailSender.send(message); //TODO: временно отключено до преодоления спам-фильтра
   }
 }
