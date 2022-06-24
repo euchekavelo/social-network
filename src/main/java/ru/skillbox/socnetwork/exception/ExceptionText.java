@@ -17,9 +17,16 @@ public enum ExceptionText {
     WRONG_RECOVERY_LINK("Wrong recovery link"),
     INVALID_RECOVERY_TOKEN("Invalid recovery token"),
     NOT_REGISTERED("User not registered"),
-
     DEFAULT_ERROR_DESCRIPTION ("This request was denied. " +
-            "Please register or use your existing account to get the updated token value and try again.");
+            "Please register or use your existing account to get the updated token value and try again."),
+    CANT_SEND_A_REQUEST_TO_YOURSELF("You can't send a request to yourself."),
+    USERS_ARE_ALREADY_FRIENDS("It is not possible to apply as a friend, because these users are already friends."),
+    UNABLE_TO_ADD_BLOCKED_USER("The request is not possible because the specified user is blocked."),
+    DUPLICATE_FRIEND_REQUEST("It is not possible to submit a request to add as a friend, " +
+            "as it has already been submitted earlier."),
+    USERS_ARE_NOT_FRIENDS("Deletion is not possible. No friendly relationship found between the specified user."),
+    UNABLE_TO_APPLY_OPERATION_TO_SELF("Cannot apply this operation to itself."),
+    UNABLE_TO_DELETE_NON_EXISTENT_FRIEND_REQUEST("Deletion failed. The specified friend request was not found.");
 
 
 
