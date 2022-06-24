@@ -86,8 +86,7 @@ public class NotificationService {
     }
 
     public Integer getPersonId() {
-        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return auth.getId();
+        return securityPerson.getPersonId();
     }
 
     //@Scheduled(fixedRate = 10000)
