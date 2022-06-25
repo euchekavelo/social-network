@@ -1,6 +1,6 @@
 {
   "error": "string",
-  "total": 3,
+  "total": 4,
   "offset": 0,
   "perPage": 20,
   "data": [
@@ -32,6 +32,17 @@
       "phone": "+7(999)9999999",
       "first_name": "Onufriy",
       "last_name": "Onufriev",
+      "reg_date": 1649367846500,
+      "birth_date": 1649367846000,
+      "messages_permission": "ALL",
+      "is_blocked": false
+    },
+    {
+      "id": 10,
+      "email": "jonson@mail.ru",
+      "phone": "+7(999)9999999",
+      "first_name": "John",
+      "last_name": "Jonson",
       "reg_date": 1649367846500,
       "birth_date": 1649367846000,
       "messages_permission": "ALL",

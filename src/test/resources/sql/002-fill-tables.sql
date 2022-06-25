@@ -16,6 +16,8 @@ insert into person (first_name, last_name, reg_date, birth_date, e_mail, phone, 
     ('Eduard', 'Eduardov', '1649367846500', '1649367846000', 'ivanov@mail.ru', '+7(999)9999999',
      '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Tver', 'Russia'),
     ('Kirill', 'Kirilov', '1649367846500', '1649367846000', 'kirilov@mail.ru', '+7(999)9999999',
+    '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Tver', 'Russia'),
+    ('John', 'Jonson', '1649367846500', '1649367846000', 'jonson@mail.ru', '+7(999)9999999',
     '$2a$10$2bACTJ0LEKT8E36hgAu.x./IrdIe7B5S08K5vwQ2FHmZ/DoEJ1RLS', 'Tver', 'Russia');
 
 insert into post (time, author, title, post_text, is_blocked, likes) values
