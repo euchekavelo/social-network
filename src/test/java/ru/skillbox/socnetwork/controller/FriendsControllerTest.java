@@ -205,8 +205,19 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void addFriendBlockedUserTest() throws Exception {
+    void addFriendBlockedUserFromFocusPersonTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/7"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("The request is not possible " +
+                        "because the specified user is blocked."));
+    }
+
+    @Test
+    @WithUserDetails("onufriy1@mail.ru")
+    void addFriendBlockedUserFromInitiatorTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("error").value("invalid_request"))
@@ -233,8 +244,18 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void deleteFriendTest() throws Exception {
+    void deleteFriendFromInitiatorTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/5"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deleteFriendFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/9"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(Files.readString(
