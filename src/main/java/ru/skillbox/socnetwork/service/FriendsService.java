@@ -109,7 +109,7 @@ public class FriendsService {
         } else if (friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() == TypeCode.REQUEST) {
             throw new InvalidRequestException(ExceptionText.DUPLICATE_FRIEND_REQUEST.getMessage());
 
-        } else if (friendshipFocusPerson.getId() == -1 && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
+        } else if (friendshipFocusPerson.getId() != -1 && friendshipFocusPerson.getCode() == TypeCode.REQUEST) {
             friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
                     TypeCode.FRIEND.toString());
         }
