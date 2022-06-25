@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.exception.ExceptionText;
@@ -71,21 +72,26 @@ public class FriendsService {
             throw new InvalidRequestException(ExceptionText.CANT_SEND_A_REQUEST_TO_YOURSELF.getMessage());
         }
 
-        Optional<Friendship> friendshipFromInitiator = friendshipRepository
-                .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
-        Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
-                .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
+        try {
+            personRepository.getById(focusPersonId);
+            Optional<Friendship> friendshipFromInitiator = friendshipRepository
+                    .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
+            Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
+                    .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
 
-        if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
-            Friendship friendshipInitiator = friendshipFromInitiator.orElse(Friendship.getWithIncorrectId());
-            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(Friendship.getWithIncorrectId());
+            if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
+                Friendship friendshipInitiator = friendshipFromInitiator.orElse(Friendship.getWithIncorrectId());
+                Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(Friendship.getWithIncorrectId());
 
-            checkExistingFriendships(friendshipInitiator, friendshipFocusPerson, focusPersonId, authorizedUserId);
-        } else {
-            Friendship friendship = friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId,
-                    focusPersonId, TypeCode.REQUEST.toString());
+                checkExistingFriendships(friendshipInitiator, friendshipFocusPerson, focusPersonId, authorizedUserId);
+            } else {
+                Friendship friendship = friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId,
+                        focusPersonId, TypeCode.REQUEST.toString());
 
-            sendFriendRequestNotification(authorizedUserId, friendship, focusPersonId);
+                sendFriendRequestNotification(authorizedUserId, friendship, focusPersonId);
+            }
+        } catch (DataAccessException ex) {
+            throw new InvalidRequestException(ExceptionText.UNSUCCESSFUL_USER_SEARCH.getMessage());
         }
     }
 

@@ -26,10 +26,8 @@ public enum ExceptionText {
             "as it has already been submitted earlier."),
     USERS_ARE_NOT_FRIENDS("Deletion is not possible. No friendly relationship found between the specified user."),
     UNABLE_TO_APPLY_OPERATION_TO_SELF("Cannot apply this operation to itself."),
-    UNABLE_TO_DELETE_NON_EXISTENT_FRIEND_REQUEST("Deletion failed. The specified friend request was not found.");
-
-
-
+    UNABLE_TO_DELETE_NON_EXISTENT_FRIEND_REQUEST("Deletion failed. The specified friend request was not found."),
+    UNSUCCESSFUL_USER_SEARCH("Request denied. Failed to get user with specified id in database.");
 
     private final String message;
 

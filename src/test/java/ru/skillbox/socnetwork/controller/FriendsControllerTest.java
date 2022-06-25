@@ -172,8 +172,19 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void addFriendAgainTest() throws Exception {
+    void addFriendAgainFromInitiatorTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("It is not possible to apply " +
+                        "as a friend, because these users are already friends."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void addFriendAgainFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/9"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("error").value("invalid_request"))
@@ -201,6 +212,17 @@ class FriendsControllerTest {
                 .andExpect(jsonPath("error").value("invalid_request"))
                 .andExpect(jsonPath("error_description").value("The request is not possible " +
                         "because the specified user is blocked."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    public void addFriendNonExistentUserTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1232133"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("Request denied. " +
+                        "Failed to get user with specified id in database."));
     }
 
     @Test
