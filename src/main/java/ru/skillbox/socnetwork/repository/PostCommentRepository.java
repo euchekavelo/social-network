@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class PostCommentRepository {
     private final JdbcTemplate jdbc;
     private static final String SELECT = "select pc.*, (cl.person_id = ?) as is_liked from post_comment pc " +

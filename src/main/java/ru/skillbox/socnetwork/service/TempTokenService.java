@@ -8,7 +8,7 @@ import ru.skillbox.socnetwork.repository.TempTokenRepository;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class TempTokenService {
 
   private final TempTokenRepository tempTokenRepository;

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class NotificationRepository {
     private final JdbcTemplate jdbc;
 

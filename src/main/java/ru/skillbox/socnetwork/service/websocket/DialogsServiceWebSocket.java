@@ -1,29 +1,25 @@
-package ru.skillbox.socnetwork.service;
+package ru.skillbox.socnetwork.service.websocket;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.logging.DebugLogs;
-import ru.skillbox.socnetwork.model.rsdto.DialogsResponse;
-import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
-import ru.skillbox.socnetwork.model.rsdto.MessageDto;
-import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
 import ru.skillbox.socnetwork.model.rsdto.*;
 import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
+import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 
-public class DialogsService {
+public class DialogsServiceWebSocket {
 
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
+    private final PersonRepository personRepository;
 
     public GeneralResponse<DialogDto> deleteDialogByById (Integer id) {
         DialogDto dto = new DialogDto();
@@ -48,19 +44,19 @@ public class DialogsService {
         dialogDto.setId(dialogId);
         return new GeneralResponse<>("string", System.currentTimeMillis(), dialogDto);
     }
-    public GeneralResponse<MessageDto> sendMessage (String messageRequest, Integer dialogId) {
-        SecurityUser securityUser = getSecurityUser();
-        DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, securityUser.getId());
-        Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), securityUser.getId()).getDialogId();
+    public GeneralResponse<MessageDto> sendMessage (String messageRequest, Integer dialogId, String email) {
+        Integer userId = personRepository.getIdByEmail(email);
+        DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, userId);
+        Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), userId).getDialogId();
         Long time = System.currentTimeMillis();
         if (recipientDialogId == 0) {
-            dialogRepository.createDialogForMessage(recipient.getId(), securityUser.getId(), dialogId);
+            dialogRepository.createDialogForMessage(recipient.getId(), userId, dialogId);
         }
-        Integer messageId = messageRepository.sendMessage (time, securityUser.getId(),
+        Integer messageId = messageRepository.sendMessage (time, userId,
                 recipient.getId(),
                 messageRequest, dialogId);
         return new GeneralResponse<>("String", time,
-                new MessageDto(messageId, time, securityUser.getId(), recipient.getRecipientId(),
+                new MessageDto(messageId, time, userId, recipient.getRecipientId(),
                         messageRequest, "SENT"));
     }
 
@@ -132,7 +128,7 @@ public class DialogsService {
     }
 
     private SecurityUser getSecurityUser() {
-        return (ru.skillbox.socnetwork.security.SecurityUser) SecurityContextHolder.getContext()
+        return (SecurityUser) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
     }
 }

@@ -22,7 +22,13 @@ public class PersonRepository {
 
     private final JdbcTemplate jdbc;
 
-    public void updateLastOnlineTimeByEmail(String email, Long time) {
+    public Integer getIdByEmail (String email) {
+        String sql = "SELECT id FROM person WHERE e_mail LIKE ?";
+
+        return jdbc.queryForObject(sql, Integer.class, email);
+    }
+
+    public void updateLastOnlineTimeByEmail (String email, Long time) {
         String sql = "UPDATE person SET last_online_time = ? WHERE email = ?";
 
         jdbc.update(sql, time, email);

@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@DebugLogs
+
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final PersonService personRepository;

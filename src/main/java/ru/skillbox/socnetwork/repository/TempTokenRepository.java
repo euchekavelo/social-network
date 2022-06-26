@@ -9,7 +9,7 @@ import ru.skillbox.socnetwork.model.mapper.TempTokenMapper;
 
 @Repository
 @RequiredArgsConstructor
-@DebugLogs
+
 public class TempTokenRepository {
   private final JdbcTemplate jdbc;
 

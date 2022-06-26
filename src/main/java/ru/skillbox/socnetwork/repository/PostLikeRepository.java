@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-@DebugLogs
+
 public class PostLikeRepository {
     private final JdbcTemplate jdbc;
 
