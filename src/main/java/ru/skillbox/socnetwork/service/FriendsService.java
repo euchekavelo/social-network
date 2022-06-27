@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
+@DebugLogs
 public class FriendsService {
 
     private final PersonRepository personRepository;

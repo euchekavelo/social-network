@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.skillbox.socnetwork.logging.InfoLogs;
 
 @ControllerAdvice
-
+@InfoLogs
 public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(InvalidRequestException.class)

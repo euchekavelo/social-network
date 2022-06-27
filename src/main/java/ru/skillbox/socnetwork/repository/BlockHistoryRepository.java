@@ -7,7 +7,7 @@ import ru.skillbox.socnetwork.logging.DebugLogs;
 
 @RequiredArgsConstructor
 @Repository
-
+@DebugLogs
 public class BlockHistoryRepository {
     private final JdbcTemplate jdbc;
 }

@@ -2,16 +2,14 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
-import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -22,6 +20,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @EnableScheduling
+@InfoLogs
 public class NotificationService {
 
     //private final NotificationRepository notificationRepository;

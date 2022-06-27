@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
+@DebugLogs
 public class TagService {
 
     private final TagRepository tagRepository;

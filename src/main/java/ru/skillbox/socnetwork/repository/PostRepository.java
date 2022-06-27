@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-
+@DebugLogs
 public class PostRepository {
     private final JdbcTemplate jdbc;
     private static final String SELECT = "select post.*, (post_like.person_id = ?) as is_liked from post " +

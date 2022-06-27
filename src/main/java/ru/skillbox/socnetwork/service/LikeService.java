@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
+@DebugLogs
 public class LikeService {
 
     private final PostLikeRepository postLikeRepository;
