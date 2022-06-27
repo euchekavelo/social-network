@@ -42,6 +42,8 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(Files.readString(
                         Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
     @WithUserDetails("ilin@mail.ru")
     //@Sql(value = {}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void searchByPeopleBySurname() throws Exception {
@@ -125,7 +127,7 @@ public class ProfileControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/block/4"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
-}
+
 
     void searchByPeopleByName() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(
