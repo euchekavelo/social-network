@@ -1,6 +1,7 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
@@ -22,6 +23,7 @@ public class DialogsService {
     private final DialogRepository dialogRepository;
     private final NotificationService notificationService;
     private final SecurityPerson securityPerson = new SecurityPerson();
+    private static boolean dialogCheck = true;
 
     public DialogDto deleteDialogByById(Integer dialogId) {
 
@@ -31,19 +33,24 @@ public class DialogsService {
     }
 
     public DialogDto createDialog(List<Integer> userList) {
-
-        Integer dialogId;
+        DialogDto dialogDto = new DialogDto();
+        Integer dialogId = 0;
         Integer dialogCount;
         Integer recipientId = userList.get(0);
         dialogCount = dialogRepository
                 .dialogCountByAuthorIdAndRecipientId(recipientId, securityPerson.getPersonId()).getDialogId();
         if (dialogCount == 0) {
-            dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);
-        } else {
+            if (dialogCheck) {
+                dialogCheck = false;
+                dialogId = dialogRepository.createDialogForMessage(securityPerson.getPersonId(), recipientId, 1);
+            } else {
+                dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);
+            }
+        }
+        if (dialogCount == 1) {
             dialogId = dialogRepository.createDialogForMessage(securityPerson.getPersonId(), recipientId,
                     dialogRepository.getDialogIdByPerson(recipientId, securityPerson.getPersonId()).getDialogId());
         }
-        DialogDto dialogDto = new DialogDto();
         dialogDto.setId(dialogId);
         return dialogDto;
     }
@@ -66,7 +73,7 @@ public class DialogsService {
         notificationService.addNotificationForOnePerson(notificationDto, recipientId);
 
         return new MessageDto(messageId, time, currentUser, recipient.getRecipientId(),
-                        messageRequest.getMessageText(), Constants.SENT);
+                messageRequest.getMessageText(), Constants.SENT);
     }
 
     private String getShortString(String title) {
@@ -74,14 +81,14 @@ public class DialogsService {
     }
 
     public List<DialogsDto> getDialogs() {
-        List<DialogDto> dialogList = dialogRepository.getDialogList(securityPerson.getPersonId());
+        List<DialogDto> dialogList;
+        dialogList = dialogRepository.getDialogList(securityPerson.getPersonId());
         DialogsDto dialogsDto;
         List<DialogsDto> dialogsDtoList = new ArrayList<>();
         PersonForDialogsDto recipient;
         PersonForDialogsDto author;
 
         for (DialogDto dto : dialogList) {
-
             recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityPerson.getPersonId());
             author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityPerson.getPersonId());
 

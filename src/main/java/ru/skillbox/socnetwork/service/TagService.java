@@ -66,7 +66,7 @@ public class TagService {
     public void editOldTags(int postId, NewPostDto newPostDto) throws InvalidRequestException {
 
         List<Tag> allTags = tagRepository.getAllTags();
-        List<Tag> oldTags = tagRepository.getPostTags(postId);
+        post2TagRepository.deletePostTags(postId);
         HashSet<String> postTagsSet = new HashSet<>(newPostDto.getTags());
 
         for (String tag : postTagsSet) {
@@ -74,11 +74,9 @@ public class TagService {
                 this.addTag(tag);
             }
         }
+
         List<Tag> newTagsList = tagRepository.getAllTags();
-        postTagsSet
-                .stream()
-                .filter(tag -> getTagId(oldTags, tag) == -1)
-                .forEach(tag -> post2TagRepository.addTag2Post(postId, getTagId(newTagsList, tag)));
+        postTagsSet.forEach(tag -> post2TagRepository.addTag2Post(postId, getTagId(newTagsList, tag)));
     }
 
     private int getTagId(List<Tag> tags, String tag) {

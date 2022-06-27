@@ -201,4 +201,9 @@ public class PersonRepository {
         String sql = "Select * from person where id = ?";
         return jdbc.queryForObject(sql, new PersonMapper(), personId);
     }
+
+    public Integer getIdByEmail(String email) {
+        String sql = "select id from person where email = ?";
+        return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("id"));
+    }
 }
