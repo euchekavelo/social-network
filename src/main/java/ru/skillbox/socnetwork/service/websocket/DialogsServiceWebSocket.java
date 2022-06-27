@@ -1,13 +1,15 @@
 package ru.skillbox.socnetwork.service.websocket;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.model.rsdto.DialogDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
+import ru.skillbox.socnetwork.model.rsdto.MessageDto;
+import ru.skillbox.socnetwork.model.rsdto.PersonForDialogsDto;
 import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
 import ru.skillbox.socnetwork.repository.PersonRepository;
-import ru.skillbox.socnetwork.security.SecurityUser;
+import ru.skillbox.socnetwork.service.SecurityPerson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,32 +22,33 @@ public class DialogsServiceWebSocket {
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
     private final PersonRepository personRepository;
+    private final SecurityPerson securityPerson = new SecurityPerson();
 
-    public GeneralResponse<DialogDto> deleteDialogByById (Integer id) {
+    public DialogDto deleteDialogByById (Integer id) {
         DialogDto dto = new DialogDto();
 
-        dto.setId(dialogRepository.deleteDialog(id, getSecurityUser().getId()));
+        dto.setId(dialogRepository.deleteDialog(id, securityPerson.getPersonId()));
 
-        return new GeneralResponse<>("string", System.currentTimeMillis(), dto);
+        return dto;
     }
-    public GeneralResponse<DialogDto> createDialog (List<Integer> userList) {
-        SecurityUser securityUser = getSecurityUser();
+    public DialogDto createDialog (List<Integer> userList) {
+
         Integer dialogId = 0;
         Integer dialogCount = 0;
         Integer recipientId = userList.get(0);
-        dialogCount = dialogRepository.dialogCountByAuthorIdAndRecipientId(recipientId, securityUser.getId()).getDialogId();
+        dialogCount = dialogRepository.dialogCountByAuthorIdAndRecipientId(recipientId, securityPerson.getPersonId()).getDialogId();
         if (dialogCount == 0) {
-            dialogId = dialogRepository.createDialog(securityUser.getId(), recipientId);
+            dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);
         } else {
-            dialogId = dialogRepository.createDialogForMessage(securityUser.getId(), recipientId,
-                    dialogRepository.getDialogIdByPerson(recipientId, securityUser.getId()).getDialogId());
+            dialogId = dialogRepository.createDialogForMessage(securityPerson.getPersonId(), recipientId,
+                    dialogRepository.getDialogIdByPerson(recipientId, securityPerson.getPersonId()).getDialogId());
         }
         DialogDto dialogDto = new DialogDto();
         dialogDto.setId(dialogId);
-        return new GeneralResponse<>("string", System.currentTimeMillis(), dialogDto);
+        return dialogDto;
     }
-    public GeneralResponse<MessageDto> sendMessage (String messageRequest, Integer dialogId, String email) {
-        Integer userId = personRepository.getIdByEmail(email);
+    public MessageDto sendMessage (String messageRequest, Integer dialogId, String email) {
+        Integer userId = securityPerson.getPersonId();
         DialogDto recipient = dialogRepository.getRecipientIdByDialogIdAndAuthorId(dialogId, userId);
         Integer recipientDialogId = dialogRepository.getDialogIdByPerson(recipient.getId(), userId).getDialogId();
         Long time = System.currentTimeMillis();
@@ -55,26 +58,25 @@ public class DialogsServiceWebSocket {
         Integer messageId = messageRepository.sendMessage (time, userId,
                 recipient.getId(),
                 messageRequest, dialogId);
-        return new GeneralResponse<>("String", time,
-                new MessageDto(messageId, time, userId, recipient.getRecipientId(),
-                        messageRequest, "SENT"));
+        return new MessageDto(messageId, time, userId, recipient.getRecipientId(),
+                        messageRequest, "SENT");
     }
 
-    public GeneralResponse<List<DialogsResponse>> getDialogs() {
-        SecurityUser securityUser = getSecurityUser();
-        List<DialogDto> dialogList = dialogRepository.getDialogList(securityUser.getId());
-        DialogsResponse dialogsResponse = null;
-        List<DialogsResponse> dialogsResponseList = new ArrayList<>();
+    public List<DialogsDto> getDialogs() {
+
+        List<DialogDto> dialogList = dialogRepository.getDialogList(securityPerson.getPersonId());
+        DialogsDto dialogsResponse = null;
+        List<DialogsDto> dialogsResponseList = new ArrayList<>();
         PersonForDialogsDto recipient = null;
         PersonForDialogsDto author = null;
 
         for (DialogDto dto : dialogList) {
 
-            recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityUser.getId());
-            author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityUser.getId());
+            recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityPerson.getPersonId());
+            author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityPerson.getPersonId());
 
-            boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
-            dialogsResponse = new DialogsResponse();
+            boolean isSendByMe = securityPerson.getPersonId() == dto.getAuthorId();
+            dialogsResponse = new DialogsDto();
             dialogsResponse.setId(dto.getDialogId());
             dialogsResponse.setRecipient(recipient);
             dialogsResponse.setMessageDto(new MessageDto(dto.getMessageId(),
@@ -84,11 +86,10 @@ public class DialogsServiceWebSocket {
             dialogsResponseList.add(dialogsResponse);
         }
 
-        return new GeneralResponse<>("string", System.currentTimeMillis(),
-                dialogList.size(), 0, 0, dialogsResponseList);
+        return dialogsResponseList;
     }
-    public GeneralResponse<List<MessageDto>> getMessageById(Integer id) {
-        SecurityUser securityUser = getSecurityUser();
+    public List<MessageDto> getMessageById(Integer id) {
+
         List<MessageDto> messageList = messageRepository.getMessageList(id);
 
         if (messageList.stream().anyMatch(a -> a.getReadStatus().equals("SENT"))) {
@@ -97,7 +98,7 @@ public class DialogsServiceWebSocket {
         List<MessageDto> messageDtoList = new ArrayList<>();
         MessageDto messageDto = null;
         for (MessageDto dto : messageList) {
-            boolean isSendByMe = securityUser.getId() == dto.getAuthorId();
+            boolean isSendByMe = securityPerson.getPersonId() == dto.getAuthorId();
             messageDto = new MessageDto();
             PersonForDialogsDto recipient = null;
             PersonForDialogsDto author = null;
@@ -118,17 +119,9 @@ public class DialogsServiceWebSocket {
             messageDto.setReadStatus(dto.getReadStatus());
             messageDtoList.add(messageDto);
         }
-        return new GeneralResponse<>("string", System.currentTimeMillis(),
-                messageList.size(), 0, 10, messageDtoList);
+        return messageDtoList;
     }
-    public GeneralResponse<DialogsResponse> getUnreadMessageCount() {
-        SecurityUser securityUser = getSecurityUser();
-        return new GeneralResponse<>("string", System.currentTimeMillis(),
-                messageRepository.getUnreadCount(securityUser.getId()));
-    }
-
-    private SecurityUser getSecurityUser() {
-        return (SecurityUser) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+    public DialogsDto getUnreadMessageCount() {
+        return messageRepository.getUnreadCount(securityPerson.getPersonId());
     }
 }
