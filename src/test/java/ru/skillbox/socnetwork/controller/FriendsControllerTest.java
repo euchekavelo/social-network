@@ -151,6 +151,16 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
+    void acceptFriendRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/3"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
     void addFriendYourselfTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
@@ -162,8 +172,19 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void addFriendAgainTest() throws Exception {
+    void addFriendAgainFromInitiatorTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/2"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("It is not possible to apply " +
+                        "as a friend, because these users are already friends."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void addFriendAgainFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/9"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("error").value("invalid_request"))
@@ -184,7 +205,7 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void addFriendBlockedUserTest() throws Exception {
+    void addFriendBlockedUserFromFocusPersonTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/7"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -194,13 +215,25 @@ class FriendsControllerTest {
     }
 
     @Test
+    @WithUserDetails("onufriy1@mail.ru")
+    void addFriendBlockedUserFromInitiatorTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("The request is not possible " +
+                        "because the specified user is blocked."));
+    }
+
+    @Test
     @WithUserDetails("test@mail.ru")
-    void addFriendNonExistentUserTest() throws Exception {
+    public void addFriendNonExistentUserTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/friends/1232133"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("error").value("invalid_request"))
-                .andExpect(jsonPath("error_description").value("Object doesn't exists."));
+                .andExpect(jsonPath("error_description").value("Request denied. " +
+                        "Failed to get user with specified id in database."));
     }
 
     @Test
@@ -211,8 +244,18 @@ class FriendsControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void deleteFriendTest() throws Exception {
+    void deleteFriendFromInitiatorTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/5"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void deleteFriendFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/friends/9"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(Files.readString(

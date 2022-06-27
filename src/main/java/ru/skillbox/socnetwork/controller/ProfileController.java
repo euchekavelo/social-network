@@ -72,11 +72,10 @@ public class ProfileController {
                         schema = @Schema(implementation = GeneralResponse.class)
                     )))
         })
-    public ResponseEntity<GeneralResponse<DialogsDto>> updateProfile(
+    public ResponseEntity<GeneralResponse<PersonDto>> updateProfile(
         @RequestBody UpdatePersonDto updatePersonDto) throws ParseException {
 
-        personService.updatePerson(updatePersonDto);
-        return ResponseEntity.ok(GeneralResponse.getDefault());
+        return ResponseEntity.ok(new GeneralResponse<>(new PersonDto(personService.updatePerson(updatePersonDto))));
     }
 
     @DeleteMapping(path = "me")

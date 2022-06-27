@@ -78,9 +78,9 @@ public class DialogRepository {
         return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
     }
 
-    public DialogDto dialogCountByAuthorIdAndRecipientId (Integer authorId, Integer recipientId) {
+    public Integer dialogCountByAuthorIdAndRecipientId (Integer authorId, Integer recipientId) {
         String sql = "SELECT COUNT(dialog_id) AS dialog_id FROM dialog WHERE author_id = ? AND recipient_id = ? ";
-        return jdbc.queryForObject(sql, new DialogIdMapper(), authorId, recipientId);
+        return jdbc.queryForObject(sql, Integer.class, authorId, recipientId);
     }
 
     public DialogDto getRecipientIdByDialogIdAndAuthorId (Integer dialogId, Integer authorId) {

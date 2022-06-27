@@ -23,6 +23,9 @@ public class FileUploadDTO {
   private FileType fileType;
   private Long createdAt;
 
+  public FileUploadDTO() {
+  }
+
   public FileUploadDTO(Person person, FileMetadata fileMetadata) {
     id = fileMetadata.getId().substring(3);
     ownerID = person.getId();

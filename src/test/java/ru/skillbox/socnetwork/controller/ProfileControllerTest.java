@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -28,12 +29,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class ProfileControllerTest {
+public class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
+    @WithUserDetails("test@mail.ru")
+    void blockUserFromInitiatorTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/2"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
     @WithUserDetails("ilin@mail.ru")
     //@Sql(value = {}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void searchByPeopleBySurname() throws Exception {
@@ -49,6 +57,76 @@ class ProfileControllerTest {
 
     @Test
     @WithUserDetails("ilin@mail.ru")
+    void blockUserFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/1"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void blockUserAgainFromFocusPersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/7"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description")
+                        .value("Blocking is not possible, because user in relation to the current " +
+                                "user is already blocked."));
+    }
+
+    @Test
+    @WithUserDetails("onufriy1@mail.ru")
+    void blockUserAgainFromInitiatorTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/1"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description")
+                        .value("Blocking is not possible, because user in relation to the current " +
+                                "user is already blocked."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void blockUserOnNonExistentRelationship() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/10"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(Files.readString(
+                        Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void blockYourselfTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/1"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description").value("You can't block yourself."));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void blockNonExistentUser() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/112312"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("error").value("invalid_request"))
+                .andExpect(jsonPath("error_description")
+                        .value("Request denied. Failed to get user with specified id in database."));
+    }
+
+    @Test
+    void unauthorizedAccessAddFriendTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/block/4"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+}
+
     void searchByPeopleByName() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(
                         "/api/v1/users/search?first_name=Onufriy"))

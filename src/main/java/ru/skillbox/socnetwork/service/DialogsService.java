@@ -3,9 +3,11 @@ package ru.skillbox.socnetwork.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
-import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rqdto.MessageRequest;
-import ru.skillbox.socnetwork.model.rsdto.*;
+import ru.skillbox.socnetwork.model.rsdto.DialogDto;
+import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
+import ru.skillbox.socnetwork.model.rsdto.MessageDto;
+import ru.skillbox.socnetwork.model.rsdto.PersonForDialogsDto;
 import ru.skillbox.socnetwork.repository.DialogRepository;
 import ru.skillbox.socnetwork.repository.MessageRepository;
 
@@ -32,14 +34,16 @@ public class DialogsService {
 
     public DialogDto createDialog(List<Integer> userList) {
 
-        Integer dialogId;
+        Integer dialogId = 0;
         Integer dialogCount;
         Integer recipientId = userList.get(0);
         dialogCount = dialogRepository
-                .dialogCountByAuthorIdAndRecipientId(recipientId, securityPerson.getPersonId()).getDialogId();
+                .dialogCountByAuthorIdAndRecipientId(recipientId, securityPerson.getPersonId());
         if (dialogCount == 0) {
             dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);
-        } else {
+        }
+        if (dialogCount == 1 && dialogRepository
+                .dialogCountByAuthorIdAndRecipientId(securityPerson.getPersonId(), recipientId) != 1){
             dialogId = dialogRepository.createDialogForMessage(securityPerson.getPersonId(), recipientId,
                     dialogRepository.getDialogIdByPerson(recipientId, securityPerson.getPersonId()).getDialogId());
         }
@@ -58,15 +62,11 @@ public class DialogsService {
         if (recipientDialogId == 0) {
             dialogRepository.createDialogForMessage(recipientId, currentUser, dialogId);
         }
-        Integer messageId = messageRepository.sendMessage(time, currentUser,
-                recipientId, messageRequest.getMessageText(), dialogId);
-
-        NotificationDto notificationDto = new NotificationDto(TypeNotificationCode.MESSAGE, time, currentUser,
-                messageId, getShortString(messageRequest.getMessageText()));
-        notificationService.addNotificationForOnePerson(notificationDto, recipientId);
-
-        return new MessageDto(messageId, time, currentUser, recipient.getRecipientId(),
-                        messageRequest.getMessageText(), Constants.SENT);
+        Integer messageId = messageRepository.sendMessage (time, securityPerson.getPersonId(),
+                recipient.getId(),
+                messageRequest.getMessageText(), dialogId);
+        return new MessageDto(messageId, time, securityPerson.getPersonId(), recipient.getRecipientId(),
+                        messageRequest.getMessageText(), "SENT");
     }
 
     private String getShortString(String title) {
@@ -107,7 +107,7 @@ public class DialogsService {
             messageRepository.updateReadStatus(id);
         }
         List<MessageDto> messageDtoList = new ArrayList<>();
-        MessageDto messageDto;
+        MessageDto messageDto = null;
         for (MessageDto dto : messageList) {
             boolean isSendByMe = Objects.equals(securityPerson.getPersonId(), dto.getAuthorId());
             messageDto = new MessageDto();

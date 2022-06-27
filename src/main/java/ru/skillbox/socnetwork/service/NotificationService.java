@@ -1,8 +1,10 @@
 package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
@@ -23,6 +25,8 @@ import static ru.skillbox.socnetwork.service.Constants.DAYS_KEEPING_NOTIFICATION
 
 @Service
 @AllArgsConstructor
+@EnableScheduling
+@InfoLogs
 public class NotificationService {
 
     private final NotificationAddService notificationAddService;
@@ -56,6 +60,7 @@ public class NotificationService {
     public List<NotificationDtoToView> getAllNotifications() {
 
         personService.addOnlinePerson(securityPerson.getPersonId());
+
         List<Notification> notifications = notificationAddService.getAllNotifications(securityPerson.getPersonId());
         return notificationsToDto(notifications);
     }
@@ -86,8 +91,7 @@ public class NotificationService {
     }
 
     public Integer getPersonId() {
-        SecurityUser auth = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return auth.getId();
+        return securityPerson.getPersonId();
     }
 
     public void checkAllBirthdays() {

@@ -26,6 +26,10 @@ public class MessageDto {
     @JsonProperty("recipient_id")
     private Integer recipientId;
 
+    @JsonProperty("dialog_id")
+    private Integer dialogId;
+
+    private String token;
 
     public MessageDto(Integer id, PersonForDialogsDto author, PersonForDialogsDto recipient, Long time, boolean isSentByMe, String messageText, String readStatus) {
         this.id = id;

@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.socnetwork.exception.ErrorResponseDto;
 import ru.skillbox.socnetwork.logging.InfoLogs;
@@ -21,7 +21,9 @@ import ru.skillbox.socnetwork.model.rsdto.DialogDto;
 import ru.skillbox.socnetwork.model.rsdto.DialogsDto;
 import ru.skillbox.socnetwork.model.rsdto.GeneralResponse;
 import ru.skillbox.socnetwork.model.rsdto.MessageDto;
+import ru.skillbox.socnetwork.security.JwtTokenProvider;
 import ru.skillbox.socnetwork.service.DialogsService;
+import ru.skillbox.socnetwork.service.websocket.DialogsServiceWebSocket;
 
 import java.util.List;
 
@@ -33,6 +35,9 @@ import java.util.List;
 public class DialogsController {
 
     private final DialogsService dialogsService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final DialogsServiceWebSocket dialogsServiceWebSocket;
 
     @GetMapping
     @Operation(summary = "Получение списка диалогов",
@@ -72,12 +77,12 @@ public class DialogsController {
     })
     public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds()), true));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds())));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
-        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById(id), true));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById (id)));
     }
 
     @GetMapping("/{id}/messages")
@@ -137,19 +142,24 @@ public class DialogsController {
             @ApiResponse(responseCode = "200", description = "Успешная отправка сообщения")
         })
     public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
-        @RequestBody MessageRequest messageRequest,
-        @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
-
-        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id), true));
+            @RequestBody MessageRequest messageRequest,
+            @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
+        if (!messageRequest.getMessageText().equals("")) {
+            return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id)));
+        }
+        return ResponseEntity.ok().build();
     }
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/activity")
-    public MessageDto message(MessageDto message) {
-        System.out.println("!!!!!!!!");
-        if (!message.getMessageText().equals("")) {
-            //return ResponseEntity.ok(dialogsService.sendMessage(messageRequest, id));
-        }
-        return message;
+    @MessageMapping("/messages")
+    public void message(MessageDto message) {
+        GeneralResponse<MessageDto> generalResponse = new GeneralResponse<>(dialogsServiceWebSocket.sendMessage(
+                message.getMessageText(), message.getId(), jwtTokenProvider.getEmailFromToken(message.getToken())));
+
+        messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", generalResponse);
+    }
+
+    @MessageMapping("/typing")
+    public void typing(MessageDto info) {
+        messagingTemplate.convertAndSendToUser(String.valueOf(info.getRecipientId()), "/messages", info);
     }
 }

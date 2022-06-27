@@ -69,13 +69,14 @@ public class StorageService {
 
   @Scheduled(cron = "${skillbox.app.cronDeleteLogFolderInRemoteStorage}")
   public void deleteLogFolderInRemoteStorage() throws DbxException {
-    deleteFile("/" + getLocalRootPath());
+    deleteFile(getLocalRootPath());
   }
 
   public FileUploadDTO uploadFile(MultipartFile file) throws IOException, DbxException {
+    if(file == null) return new FileUploadDTO();
+
     Person person = null;
     FileMetadata fileMetadata = null;
-    if(file != null) {
 
       //Generate new random file name
       String fileName = "/".concat(generateName(file.getOriginalFilename()));
@@ -100,14 +101,15 @@ public class StorageService {
       deleteFile(getRelativePath(person.getPhoto()));
 
       cache.addLink(fileName, getAbsolutePath(fileName));
+      cache.deleteLink(getRelativePath(person.getPhoto()));
       person.setPhoto(getAbsolutePath(fileName));
       personRepository.updatePhotoByEmail(person);
-    }
+
     return new FileUploadDTO(person, fileMetadata);
   }
 
   public void deleteFile(String path) throws DbxException {
-    if (!path.equals(Constants.PHOTO_DEFAULT_NAME)) {
+    if (!path.equals(Constants.PHOTO_DEFAULT_NAME) && !path.equals(Constants.PHOTO_DELETED_NAME)) {
       client.files().deleteV2(path);
     }
   }
@@ -117,7 +119,7 @@ public class StorageService {
     client = new DbxClientV2(config, token);
   }
 
-  private String getRelativePath(String path) {
+  public String getRelativePath(String path) {
     Pattern pattern = Pattern.compile(".*(/\\w*\\.[A-z]*)\\?raw=1");
     Matcher matcher = pattern.matcher(path);
     return (matcher.find()) ? matcher.group(1) : "";

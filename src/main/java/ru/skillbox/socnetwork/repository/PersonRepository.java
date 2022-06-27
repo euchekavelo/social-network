@@ -22,7 +22,13 @@ public class PersonRepository {
 
     private final JdbcTemplate jdbc;
 
-    public void updateLastOnlineTimeByEmail(String email, Long time) {
+    public Integer getIdByEmail (String email) {
+        String sql = "SELECT id FROM person WHERE e_mail LIKE ?";
+
+        return jdbc.queryForObject(sql, Integer.class, email);
+    }
+
+    public void updateLastOnlineTimeByEmail (String email, Long time) {
         String sql = "UPDATE person SET last_online_time = ? WHERE email = ?";
 
         jdbc.update(sql, time, email);
@@ -117,10 +123,10 @@ public class PersonRepository {
         return jdbc.query(sqlQuery.toString(), new PersonMapper(), email);
     }
 
-    public void updatePersonByEmail(Person person) {
-        String sql = "update person set (first_name, last_name, birth_date, phone, about, city, country) = " +
-                "(?, ?, ?, ?, ?, ?, ?) where person.e_mail = ?";
-        jdbc.update(sql,
+    public Person updatePersonByEmail(Person person) {
+        String sql = "UPDATE person SET (first_name, last_name, birth_date, phone, about, city, country) = " +
+                "(?, ?, ?, ?, ?, ?, ?) WHERE person.e_mail = ? RETURNING person.*";
+        return jdbc.queryForObject(sql, new PersonMapper(),
                 person.getFirstName(),
                 person.getLastName(),
                 person.getBirthDate(),

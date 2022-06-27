@@ -30,8 +30,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${skillbox.app.server}")
     private String server;
     @Getter
+    @Value("${skillbox.app.server.sexy}")
+    private String serverSexy;
+    @Getter
+    @Value("${skillbox.app.server.mcsoft}")
+    private String serverMcsoft;
+    @Getter
     @Value("${skillbox.app.localhost}")
     private String localhost;
+
 
     private final JwtCsrfFilter jwtCsrfFilter;
 
@@ -51,6 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/account/password/**", "/actuator/prometheus").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .antMatchers("/ws/**").permitAll()
+                .antMatchers("/app/**").permitAll()
+                .antMatchers("/topic/**", "/queue/**", "/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -87,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private List<String> getHosts() {
         List<String> links = new ArrayList<>();
         String http = "http://";
-        String[] hosts = new String[]{getLocalhost(), getServer()};
+        String[] hosts = new String[]{getLocalhost(), getServer(), getServerSexy(), getServerMcsoft()};
         String[] ports = new String[]{":8080", ":8086", "", ":9091"};
         for (String host : hosts) {
             for (String port : ports) {

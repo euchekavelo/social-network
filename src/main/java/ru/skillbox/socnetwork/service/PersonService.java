@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,10 @@ import ru.skillbox.socnetwork.service.storage.StorageService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -142,7 +146,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 tokenProvider.generateToken(loginDto.getEmail()));
         }
     }
-    public void updatePerson(UpdatePersonDto changedPerson) throws ParseException {
+    public Person updatePerson(UpdatePersonDto changedPerson) throws ParseException {
         Person updatablePerson = getAuthenticatedPerson();
 
         if(changedPerson.getFirstName() != null &&
@@ -181,7 +185,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
                 !changedPerson.getCountry().equals(updatablePerson.getCountry())) {
             updatablePerson.setCountry(changedPerson.getCountry());
         }
-        personRepository.updatePersonByEmail(updatablePerson);
+        return personRepository.updatePersonByEmail(updatablePerson);
     }
 
     public void updateEmail(EmailOrPasswordDTO body) throws InvalidRequestException{
@@ -264,30 +268,43 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             throw new InvalidRequestException("You can't block yourself.");
         }
 
-        Optional<Friendship> friendshipFromInitiator = friendshipRepository
-                .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
-        Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
-                .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
+        try {
+            personRepository.getById(focusPersonId);
+            Optional<Friendship> friendshipFromInitiator = friendshipRepository
+                    .getFriendlyStatusByPersonIds(authorizedUserId, focusPersonId);
+            Optional<Friendship> friendshipFromFocusPerson = friendshipRepository
+                    .getFriendlyStatusByPersonIds(focusPersonId, authorizedUserId);
 
-        if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
-            Friendship friendshipInitiator = friendshipFromInitiator.orElse(null);
-            Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(null);
+            if (friendshipFromInitiator.isPresent() || friendshipFromFocusPerson.isPresent()) {
+                Friendship friendshipInitiator = friendshipFromInitiator.orElse(Friendship.getWithIncorrectId());
+                Friendship friendshipFocusPerson = friendshipFromFocusPerson.orElse(Friendship.getWithIncorrectId());
 
-            if ((friendshipInitiator != null && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
-                    (friendshipFocusPerson != null && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
-
-                throw new InvalidRequestException("Blocking is not possible, because user in relation to the current " +
-                        "user is already blocked.");
-
-            } else if (friendshipInitiator != null && friendshipInitiator.getCode() != TypeCode.BLOCKED) {
-                friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
-                        TypeCode.BLOCKED.toString());
-            } else if (friendshipFocusPerson != null && friendshipFocusPerson.getCode() != TypeCode.BLOCKED){
-                friendshipRepository.fullUpdateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
+                checkRelationshipsBeforeBlocking(friendshipInitiator, friendshipFocusPerson, authorizedUserId,
+                        focusPersonId);
+            } else {
+                friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
                         TypeCode.BLOCKED.toString());
             }
-        } else {
-            friendshipRepository.createFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+        } catch (DataAccessException ex) {
+            throw new InvalidRequestException(ExceptionText.UNSUCCESSFUL_USER_SEARCH.getMessage());
+        }
+    }
+
+    private void checkRelationshipsBeforeBlocking(Friendship friendshipInitiator, Friendship friendshipFocusPerson,
+                                                  Integer authorizedUserId, Integer focusPersonId)
+            throws InvalidRequestException {
+
+        if ((friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() == TypeCode.BLOCKED) ||
+                (friendshipFocusPerson.getId() != -1 && friendshipFocusPerson.getCode() == TypeCode.BLOCKED)) {
+
+            throw new InvalidRequestException("Blocking is not possible, because user in relation to the current " +
+                    "user is already blocked.");
+
+        } else if (friendshipInitiator.getId() != -1 && friendshipInitiator.getCode() != TypeCode.BLOCKED) {
+            friendshipRepository.updateFriendlyStatusByPersonIdsAndCode(authorizedUserId, focusPersonId,
+                    TypeCode.BLOCKED.toString());
+        } else if (friendshipFocusPerson.getId() != -1 && friendshipFocusPerson.getCode() != TypeCode.BLOCKED){
+            friendshipRepository.fullUpdateFriendlyStatusByPersonIdsAndCode(focusPersonId, authorizedUserId,
                     TypeCode.BLOCKED.toString());
         }
     }
@@ -328,7 +345,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
             throw new InvalidRequestException(ExceptionText.NOT_REGISTERED.getMessage());
         }
         deletedUserService.add(person);
-        person.setIsDeleted(true);
+        personRepository.setDeleted(person.getId(), true);
         person.setFirstName("Deleted");
         person.setLastName("");
         personRepository.updatePersonByEmail(person);
@@ -346,6 +363,7 @@ public class PersonService implements ApplicationListener<AuthenticationSuccessE
         person.setPhoto(deletedUser.getPhoto());
         person.setFirstName(deletedUser.getFirstName());
         person.setLastName(deletedUser.getLastName());
+        personRepository.setDeleted(person.getId(), false);
         personRepository.updatePersonByEmail(person);
         personRepository.updatePhotoByEmail(person);
         deletedUserService.delete(deletedUser.getId());
