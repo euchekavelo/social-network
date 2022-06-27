@@ -23,7 +23,7 @@ public class NotificationDtoToView {
         this.id = notificationDto.getId();
         this.sentTime = notificationDto.getSentTime();
         this.notificationType = notificationDto.getNotificationType().toString();
-        this.entityAuthor = new PersonDto(entityAuthor);
+        this.entityAuthor = entityAuthor;
         this.info = info;
     }
 }

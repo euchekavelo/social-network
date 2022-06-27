@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
@@ -25,32 +28,36 @@ import java.nio.file.Path;
 @Sql(value = {"/sql/001-create-schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/002-fill-tables.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/sql/003-delete-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class NotificationControllerTest {
+class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @WithUserDetails("test@mail.ru")
-    void getNotification() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/notifications"))
+    @WithUserDetails("ilin@mail.ru")
+    //@Sql(value = {}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void searchByPeopleBySurname() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/v1/users/search?last_name=Test"))
                 .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
                         .json(Files.readString(Path.of(
-                                "src/test/resources/json/notifications_test/notification_get_test.json"))));
+                                "src/test/resources/json/profile_test/people_search_by_surname.json"))));
     }
 
     @Test
-    @WithUserDetails("test@mail.ru")
-    void readNotification() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/notifications?all=true"))
+    @WithUserDetails("ilin@mail.ru")
+    void searchByPeopleByName() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/v1/users/search?first_name=Onufriy"))
                 .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json("{}"));
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/profile_test/people_search_by_name.json"))));
     }
+
 }

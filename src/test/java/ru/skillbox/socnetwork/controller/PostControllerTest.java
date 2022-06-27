@@ -50,6 +50,32 @@ class PostControllerTest {
 
     @Test
     @WithUserDetails("ilin@mail.ru")
+    void searchPostByCriteriaTextAndAuthorTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/v1/post?text=example&date_from=1649367846500&date_to=1649367846700&author=Ivan&tags="))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/post_platform_likes/post_search_test.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void searchPostByCriteriaTextAndTagTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                "/api/v1/post?text=example&date_from=1649367846500&date_to=1649367846700&author=&tags=code,java"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/post_platform_likes/post_search_tag_test.json"))));
+    }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
     void searchPostByTextWithTagsTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/post?text=title&tags=java,code"))
