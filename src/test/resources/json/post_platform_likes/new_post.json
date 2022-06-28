@@ -1,7 +1,7 @@
 {
   "error": "string",
   "data": {
-    "id": 6,
+    "id": 7,
     "author": {
       "id": 3,
       "email": "petrov@mail.ru",

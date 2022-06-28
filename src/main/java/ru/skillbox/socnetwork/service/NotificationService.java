@@ -2,15 +2,16 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.socnetwork.logging.InfoLogs;
 import ru.skillbox.socnetwork.model.entity.Notification;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDto;
 import ru.skillbox.socnetwork.model.rsdto.NotificationDtoToView;
 import ru.skillbox.socnetwork.model.rsdto.PersonDto;
 import ru.skillbox.socnetwork.repository.NotificationSettingsRepository;
+import ru.skillbox.socnetwork.repository.PersonRepository;
 import ru.skillbox.socnetwork.security.SecurityUser;
 
 import java.time.Instant;
@@ -18,17 +19,21 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static ru.skillbox.socnetwork.service.Constants.DAYS_KEEPING_NOTIFICATIONS_IN_DB;
 
 @Service
 @AllArgsConstructor
 @EnableScheduling
+@InfoLogs
 public class NotificationService {
 
-    //private final NotificationRepository notificationRepository;
     private final NotificationAddService notificationAddService;
     private final PersonService personService;
     private final FriendsService friendsService;
     private final NotificationSettingsRepository notificationSettingsRepository;
+    private final PersonRepository personRepository;
 
     private final SecurityPerson securityPerson = new SecurityPerson();
 
@@ -74,7 +79,7 @@ public class NotificationService {
         List<NotificationDtoToView> notificationDtoToView = new ArrayList<>();
         for (NotificationDto notification : notificationsDto) {
             notificationDtoToView.add(new NotificationDtoToView(notification,
-                    personService.getById(notification.getPersonId()),
+                    new PersonDto(personService.getById(notification.getPersonId())),
                     notification.getTitle()
             ));
         }
@@ -89,17 +94,20 @@ public class NotificationService {
         return securityPerson.getPersonId();
     }
 
-    //@Scheduled(fixedRate = 10000)
-    public void checkIfBirthdayOfFriends() {
-        System.out.println("Running sheduling method...");
-
-        List<PersonDto> friends = friendsService.getUserFriends();
-        for (PersonDto friend : friends) {
-            int friendId = friend.getId();
-            if (checkIfBirthDayToday(friendId)) {
-                //createNotificationAboutBirthdayFriend(friendId);
+    public void checkAllBirthdays() {
+        System.out.println("Running scheduling method...");
+        List<PersonDto> allUsers = getAllPersons();
+        for (PersonDto person : allUsers) {
+            if (checkIfBirthDayToday(person.getId())) {
+                createNotificationForAllFriends(person);
             }
         }
+    }
+
+    public List<PersonDto> getAllPersons() {
+        return personRepository.getAll().stream()
+                .map(PersonDto::new)
+                .collect(Collectors.toList());
     }
 
     private boolean checkIfBirthDayToday(Integer personId) {
@@ -110,7 +118,6 @@ public class NotificationService {
         int dayOfBirthday = birthDayDay.getDayOfMonth();
         String monthOfBirthday = birthDayDay.getMonth().toString();
 
-
         LocalDate today = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault())
                 .toLocalDate();
         int dayOfYear = today.getDayOfMonth();
@@ -119,10 +126,52 @@ public class NotificationService {
         return (dayOfBirthday == dayOfYear) && (month.equals(monthOfBirthday));
     }
 
-    private void createNotificationAboutBirthdayFriend(Integer personId) {
-        NotificationDto notificationDto = new NotificationDto(
-                TypeNotificationCode.FRIEND_BIRTHDAY, System.currentTimeMillis(), personId,
-                "У вашего друга сегодня день рождения!");
-        addNotificationForOnePerson(notificationDto, securityPerson.getPersonId());
+    private void createNotificationForAllFriends(PersonDto person) {
+
+        List<PersonDto> friends = personRepository.getUserFriends(person.getEmail()).stream()
+                .map(PersonDto::new)
+                .collect(Collectors.toList());
+
+        for (PersonDto friend : friends) {
+            createNotificationAboutBirthdayFriend(person.getId(), friend.getId());
+        }
     }
+
+    private void createNotificationAboutBirthdayFriend(Integer birthdayPersonId, Integer personId) {
+        boolean check = notificationAddService.checkIfNotificationNotExist(birthdayPersonId, personId);
+
+        if (check) {
+            NotificationDto notificationDto = new NotificationDto(
+                    TypeNotificationCode.FRIEND_BIRTHDAY, System.currentTimeMillis(), birthdayPersonId,
+                    "У вашего друга сегодня день рождения!");
+            addNotificationForOnePerson(notificationDto, personId);
+        }
+    }
+
+    public void deleteOldNotifications() {
+        LocalDate today = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault())
+                .toLocalDate();
+         today = today.minusDays(DAYS_KEEPING_NOTIFICATIONS_IN_DB);
+        long time = today.atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000;
+
+        notificationAddService.deleteOldNotifications(time);
+    }
+
+    public void deleteNotActualBirthdayNotification() {
+        List<NotificationDto> notifications = notificationAddService.getAllBirthdaysNotifications().stream()
+                .map(NotificationDto::new)
+                .collect(Collectors.toList());
+        for (NotificationDto notification : notifications) {
+            if (!checkIfBirthDayToday(notification.getPersonId())){
+                notificationAddService.deleteNotificationById(notification.getId());
+            }
+        }
+    }
+
+    public void addNotificationIfBirthdayToday(Integer personId, Integer destinationId){
+        if (checkIfBirthDayToday(personId)) {
+            createNotificationAboutBirthdayFriend(personId, destinationId);
+        }
+    }
+
 }

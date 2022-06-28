@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.skillbox.socnetwork.model.entity.Person;
 
 @Data
 @AllArgsConstructor
@@ -19,12 +18,12 @@ public class NotificationDtoToView {
     @JsonProperty("sent_time")
     private Long sentTime;
 
-    public NotificationDtoToView(NotificationDto notificationDto, Person entityAuthor, String info) {
+    public NotificationDtoToView(NotificationDto notificationDto, PersonDto entityAuthor, String info) {
 
         this.id = notificationDto.getId();
         this.sentTime = notificationDto.getSentTime();
         this.notificationType = notificationDto.getNotificationType().toString();
-        this.entityAuthor = new PersonDto(entityAuthor);
+        this.entityAuthor = entityAuthor;
         this.info = info;
     }
 }

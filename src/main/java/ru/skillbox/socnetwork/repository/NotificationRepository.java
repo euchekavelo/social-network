@@ -52,4 +52,26 @@ public class NotificationRepository {
         jdbc.update(sql, TypeReadStatus.READ.toString(), notificationId);
     }
 
+    public List<Notification> findNotification(Integer personId, Integer distUserId) {
+
+        String sql = "select * from notification where notification_type = 'FRIEND_BIRTHDAY' and " +
+                "person_id = ? and  dist_user_id = ?";
+        return jdbc.query(sql, new NotificationMapper(), personId, distUserId);
+    }
+
+    public void deleteOldNotifications(Long time) {
+        String sql = "delete from notification where sent_time < ? and status = 'READ'";
+        jdbc.update(sql, time);
+    }
+
+    public List<Notification> chooseAllBirthdayNotifications(){
+        String sql = "select * from notification where notification_type = 'FRIEND_BIRTHDAY'";
+        return jdbc.query(sql, new NotificationMapper());
+    }
+
+
+    public void deleteNotificationById(Integer id) {
+        String sql = "delete from notification where id = ?";
+        jdbc.update(sql, id);
+    }
 }

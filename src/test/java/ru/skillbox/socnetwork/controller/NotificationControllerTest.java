@@ -13,6 +13,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
@@ -35,7 +38,9 @@ public class NotificationControllerTest {
                         .get("/api/v1/notifications"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json("{}"));
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/notifications_test/notification_get_test.json"))));
     }
 
     @Test

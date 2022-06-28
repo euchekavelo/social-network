@@ -25,7 +25,8 @@ insert into post (time, author, title, post_text, is_blocked, likes) values
     ('1649367846502', 2, 'ivan title example', 'ivan post text example', 'false', 1),
     ('1649367846503', 3, 'petr title example', 'petr post text example', 'false', 1),
     ('1649367846504', 4, 'tihon title example', 'tihon post text example', 'false', 1),
-    ('1649367846505', 5, 'ilya title example', 'ilya post text example', 'false', 1);
+    ('1649367846505', 5, 'ilya title example', 'ilya post text example', 'false', 1),
+    ('1649367846506', 2, 'ivan title example2', 'ivan post text example2', 'false', 0);
 
 insert into post_like (time, person_id, post_id) values
     ('1649367846501', 1, 1),
@@ -43,7 +44,8 @@ insert into post2tag (post_id, tag_id) values
     (1, 4),
     (1, 5),
     (1, 6),
-    (1, 7);
+    (1, 7),
+    (6, 2);
 
 INSERT INTO message (time, author_id, recipient_id, message_text, read_status, dialog_id) values
     ('1649367846503', 2, 1, 'test', 'SENT', 1),
@@ -92,3 +94,57 @@ insert into friendship (time, code, src_person_id, dst_person_id) values
    ('1653834026780', 'BLOCKED', 7, 1),
    ('1653834026780', 'REQUEST', 1, 8),
    ('1653834026780', 'FRIEND', 9, 1);
+
+insert into notification_settings (person_id, type, enable) values
+    ( 1, 'POST', 'true'),
+    ( 1, 'POST_COMMENT', 'true'),
+    ( 1, 'COMMENT_COMMENT', 'true'),
+    ( 1, 'FRIEND_REQUEST', 'true'),
+    ( 1, 'MESSAGE', 'true'),
+	( 1, 'FRIEND_BIRTHDAY', 'true'),
+    ( 2, 'POST', 'true'),
+    ( 2, 'POST_COMMENT', 'true'),
+    ( 2, 'COMMENT_COMMENT', 'true'),
+    ( 2, 'FRIEND_REQUEST', 'true'),
+	( 2, 'FRIEND_BIRTHDAY', 'true'),
+    ( 2, 'MESSAGE', 'true'),
+	( 3, 'POST', 'true'),
+    ( 3, 'POST_COMMENT', 'true'),
+    ( 3, 'COMMENT_COMMENT', 'true'),
+    ( 3, 'FRIEND_REQUEST', 'true'),
+    ( 3, 'MESSAGE', 'true'),
+	( 3, 'FRIEND_BIRTHDAY', 'true'),
+    ( 4, 'POST', 'true'),
+    ( 4, 'POST_COMMENT', 'true'),
+    ( 4, 'COMMENT_COMMENT', 'true'),
+    ( 4, 'FRIEND_REQUEST', 'true'),
+	( 4, 'FRIEND_BIRTHDAY', 'true'),
+    ( 4, 'MESSAGE', 'true'),
+	( 5, 'POST', 'true'),
+    ( 5, 'POST_COMMENT', 'true'),
+    ( 5, 'COMMENT_COMMENT', 'true'),
+    ( 5, 'FRIEND_REQUEST', 'true'),
+    ( 5, 'MESSAGE', 'true'),
+	( 5, 'FRIEND_BIRTHDAY', 'true'),
+    ( 6, 'POST', 'true'),
+    ( 6, 'POST_COMMENT', 'true'),
+    ( 6, 'COMMENT_COMMENT', 'true'),
+    ( 6, 'FRIEND_REQUEST', 'true'),
+	( 6, 'FRIEND_BIRTHDAY', 'true'),
+    ( 6, 'MESSAGE', 'true'),
+	( 7, 'POST', 'true'),
+    ( 7, 'POST_COMMENT', 'true'),
+    ( 7, 'COMMENT_COMMENT', 'true'),
+    ( 7, 'FRIEND_REQUEST', 'true'),
+    ( 7, 'MESSAGE', 'true'),
+	( 7, 'FRIEND_BIRTHDAY', 'true'),
+    ( 8, 'POST', 'true'),
+    ( 8, 'POST_COMMENT', 'true'),
+    ( 8, 'COMMENT_COMMENT', 'true'),
+    ( 8, 'FRIEND_REQUEST', 'true'),
+	( 8, 'FRIEND_BIRTHDAY', 'true'),
+    ( 8, 'MESSAGE', 'true');
+
+insert into notification (notification_type, sent_time, person_id, entity_id, dist_user_id, status, title) values
+ (cast('POST' as notification_code_type), 1649367846501, 1, 1, 2, cast('SENT' as read_status_type), 'test title example'),
+ (CAST('POST' AS notification_code_type), 1649367846502, 2, 2, 1, CAST('SENT' AS read_status_type), 'ivan title example');

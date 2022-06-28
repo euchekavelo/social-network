@@ -11,6 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.file.Files;
@@ -40,6 +41,19 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(Files.readString(
                         Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
+    }
+
+    @WithUserDetails("ilin@mail.ru")
+    //@Sql(value = {}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void searchByPeopleBySurname() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/v1/users/search?last_name=Test"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/profile_test/people_search_by_surname.json"))));
     }
 
     @Test
@@ -112,4 +126,18 @@ public class ProfileControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/block/4"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    @WithUserDetails("test@mail.ru")
+    void searchByPeopleByName() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/v1/users/search?first_name=Onufriy"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content()
+                        .json(Files.readString(Path.of(
+                                "src/test/resources/json/profile_test/people_search_by_name.json"))));
+    }
+
 }
