@@ -42,6 +42,8 @@ public class ProfileControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/me"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+        deletedUserService.deletePersonData(5);
+        deletedUserService.delete(5);
     }
 
     @Test
