@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.skillbox.socnetwork.model.mapper.DialogIdMapper;
 import ru.skillbox.socnetwork.model.mapper.DialogsMapper;
@@ -10,6 +11,8 @@ import ru.skillbox.socnetwork.model.mapper.RecipientMapper;
 import ru.skillbox.socnetwork.model.rsdto.DialogDto;
 import ru.skillbox.socnetwork.model.rsdto.PersonForDialogsDto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -56,9 +59,9 @@ public class DialogRepository {
         return jdbc.queryForObject(sql, new PersonForDialogsMapper(), dialogId, authorId);
     }
     public void updateDialog(Integer authorId, Integer recipientId, Integer dialogId) {
-        String sql = "UPDATE dialog SET author_id = ?, recipient_id = ? " +
-                "WHERE dialog_id = ?";
-        jdbc.update(sql, authorId, recipientId, dialogId);
+        String sql = "update dialog set dialog_id = 5 where (recipient_id = 1 and author_id = 2) " +
+                "or (recipient_id = 2 and author_id = 1)";
+        jdbc.update(sql, dialogId, authorId, recipientId, recipientId, authorId);
     }
 
     public Integer createDialogForMessage(Integer authorId, Integer recipientId, Integer dialogId) {
@@ -71,6 +74,17 @@ public class DialogRepository {
         String sql = "INSERT INTO dialog (author_id, recipient_id, dialog_id) " +
                 "VALUES (?, ?, (SELECT MAX(dialog_id) + 1 FROM dialog)) RETURNING id";
         return jdbc.queryForObject(sql, Integer.class, authorId, recipientId);
+    }
+
+    public Integer getDialogCount() {
+        String sql = "select count(*) from dialog";
+        return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("count"));
+    }
+
+    public void createInitialDialog(Integer authorId, Integer recipientId) {
+        String sql = "INSERT INTO dialog (author_id, recipient_id, dialog_id) " +
+                "VALUES (?, ?, 1), (?, ?, 1)";
+        jdbc.update(sql, authorId, recipientId, recipientId, authorId);
     }
 
     public DialogDto getDialogIdByPerson (Integer authorId, Integer recipientId) {

@@ -2,6 +2,7 @@ package ru.skillbox.socnetwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.skillbox.socnetwork.logging.DebugLogs;
 import ru.skillbox.socnetwork.model.entity.enums.TypeNotificationCode;
@@ -39,10 +40,13 @@ public class DialogsService {
         Integer recipientId = userList.get(0);
         dialogCount = dialogRepository
                 .dialogCountByAuthorIdAndRecipientId(recipientId, securityPerson.getPersonId()).getDialogId();
-        if (dialogCount == 0) {
+        if (dialogCount < 1) {
             if (dialogCheck) {
                 dialogCheck = false;
-                dialogId = dialogRepository.createDialogForMessage(securityPerson.getPersonId(), recipientId, 1);
+                if (dialogRepository.getDialogCount() == 0) {
+                dialogRepository.createInitialDialog(recipientId, securityPerson.getPersonId());
+                    dialogId = 1;}
+                else {dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);}
             } else {
                 dialogId = dialogRepository.createDialog(securityPerson.getPersonId(), recipientId);
             }
@@ -89,18 +93,20 @@ public class DialogsService {
         PersonForDialogsDto author;
 
         for (DialogDto dto : dialogList) {
-            recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityPerson.getPersonId());
-            author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityPerson.getPersonId());
+            try {
+                recipient = dialogRepository.getRecipientBydialogId(dto.getDialogId(), securityPerson.getPersonId());
+                author = dialogRepository.getAuthorByDialogId(dto.getDialogId(), securityPerson.getPersonId());
 
-            boolean isSendByMe = Objects.equals(securityPerson.getPersonId(), dto.getAuthorId());
-            dialogsDto = new DialogsDto();
-            dialogsDto.setId(dto.getDialogId());
-            dialogsDto.setRecipient(recipient);
-            dialogsDto.setMessageDto(new MessageDto(dto.getMessageId(),
-                    author, recipient, dto.getTime(),
-                    isSendByMe, dto.getMessageText(), dto.getReadStatus()));
-            dialogsDto.setUnreadCount(dto.getUnreadCount());
-            dialogsDtoList.add(dialogsDto);
+                boolean isSendByMe = Objects.equals(securityPerson.getPersonId(), dto.getAuthorId());
+                dialogsDto = new DialogsDto();
+                dialogsDto.setId(dto.getDialogId());
+                dialogsDto.setRecipient(recipient);
+                dialogsDto.setMessageDto(new MessageDto(dto.getMessageId(),
+                        author, recipient, dto.getTime(),
+                        isSendByMe, dto.getMessageText(), dto.getReadStatus()));
+                dialogsDto.setUnreadCount(dto.getUnreadCount());
+                dialogsDtoList.add(dialogsDto);
+            } catch (IncorrectResultSizeDataAccessException ignored) {}
         }
 
         return dialogsDtoList;
