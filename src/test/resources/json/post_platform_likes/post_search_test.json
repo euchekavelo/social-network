@@ -9,14 +9,14 @@
         "phone": "+7(999)9999999",
         "city": "Tver",
         "country": "Russia",
-        "isDeleted": false,
         "first_name": "Ivan",
         "last_name": "Ivanov",
         "reg_date": 1649367846500,
         "birth_date": 1649367846000,
         "messages_permission": "ALL",
         "last_online_time": 0,
-        "is_blocked": false
+        "is_blocked": false,
+        "is_deleted": false
       },
       "title": "ivan title example",
       "likes": 1,
@@ -36,18 +36,20 @@
         "phone": "+7(999)9999999",
         "city": "Tver",
         "country": "Russia",
-        "isDeleted": false,
         "first_name": "Ivan",
         "last_name": "Ivanov",
         "reg_date": 1649367846500,
         "birth_date": 1649367846000,
         "messages_permission": "ALL",
         "last_online_time": 0,
-        "is_blocked": false
+        "is_blocked": false,
+        "is_deleted": false
       },
       "title": "ivan title example2",
       "likes": 0,
-      "tags": ["java"],
+      "tags": [
+        "java"
+      ],
       "comments": [
         {
           "id": 6,
@@ -63,14 +65,14 @@
             "phone": "+7(999)9999999",
             "city": "Kaliningrad",
             "country": "Russia",
-            "isDeleted": false,
             "first_name": "Petr",
             "last_name": "Petrov",
             "reg_date": 1649367846500,
             "birth_date": 1649367846000,
             "messages_permission": "ALL",
             "last_online_time": 0,
-            "is_blocked": false
+            "is_blocked": false,
+            "is_deleted": false
           },
           "is_blocked": false,
           "sub_comments": []
@@ -89,14 +91,14 @@
             "phone": "+7(999)9999999",
             "city": "Tbilisi",
             "country": "Georgia",
-            "isDeleted": false,
             "first_name": "Ilya",
             "last_name": "Ilin",
             "reg_date": 1649367846500,
             "birth_date": 1649367846000,
             "messages_permission": "ALL",
             "last_online_time": 0,
-            "is_blocked": false
+            "is_blocked": false,
+            "is_deleted": false
           },
           "is_blocked": false,
           "sub_comments": []

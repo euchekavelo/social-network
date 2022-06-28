@@ -94,7 +94,6 @@ insert into friendship (time, code, src_person_id, dst_person_id) values
    ('1653834026780', 'BLOCKED', 7, 1),
    ('1653834026780', 'REQUEST', 1, 8),
    ('1653834026780', 'FRIEND', 9, 1);
-   ('1653834026780', 'REQUEST', 1, 8);
 
 insert into notification_settings (person_id, type, enable) values
     ( 1, 'POST', 'true'),

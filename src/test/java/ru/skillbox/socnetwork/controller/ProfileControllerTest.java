@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -128,7 +127,8 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
-
+    @Test
+    @WithUserDetails("test@mail.ru")
     void searchByPeopleByName() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(
                         "/api/v1/users/search?first_name=Onufriy"))
