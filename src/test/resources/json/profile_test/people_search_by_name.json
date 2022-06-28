@@ -11,9 +11,7 @@
       "reg_date": 1649367846500,
       "birth_date": 1649367846000,
       "messages_permission": "ALL",
-      "last_online_time": 0,
-      "is_blocked": false,
-      "is_deleted": false
+      "is_blocked": false
     },
     {
       "id": 7,
@@ -26,9 +24,7 @@
       "reg_date": 1649367846500,
       "birth_date": 1649367846000,
       "messages_permission": "ALL",
-      "last_online_time": 0,
-      "is_blocked": false,
-      "is_deleted": false
+      "is_blocked": false
     }
   ]
 }

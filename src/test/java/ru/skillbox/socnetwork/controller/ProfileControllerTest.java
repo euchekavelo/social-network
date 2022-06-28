@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ru.skillbox.socnetwork.service.DeletedUserService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,16 @@ public class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    private DeletedUserService deletedUserService;
+
+
+    @Test
+    @WithUserDetails("ilin@mail.ru")
+    void deletePersonTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/me"))
+                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
     @Test
     @WithUserDetails("test@mail.ru")
@@ -43,9 +54,9 @@ public class ProfileControllerTest {
                         Path.of("src/test/resources/json/friends_controller_test/positive_response.json"))));
     }
 
+    @Test
     @WithUserDetails("ilin@mail.ru")
-    //@Sql(value = {}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void searchByPeopleBySurname() throws Exception {
+    void searchByPeopleBySurnameTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(
                         "/api/v1/users/search?last_name=Test"))
                 .andDo(MockMvcResultHandlers.print())
@@ -92,7 +103,7 @@ public class ProfileControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void blockUserOnNonExistentRelationship() throws Exception {
+    void blockUserOnNonExistentRelationshipTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/10"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -112,7 +123,7 @@ public class ProfileControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void blockNonExistentUser() throws Exception {
+    void blockNonExistentUserTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/block/112312"))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -129,7 +140,7 @@ public class ProfileControllerTest {
 
     @Test
     @WithUserDetails("test@mail.ru")
-    void searchByPeopleByName() throws Exception {
+    void searchByPeopleByNameTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(
                         "/api/v1/users/search?first_name=Onufriy"))
                 .andDo(MockMvcResultHandlers.print())
