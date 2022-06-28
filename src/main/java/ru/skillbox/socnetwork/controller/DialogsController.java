@@ -77,12 +77,12 @@ public class DialogsController {
     })
     public ResponseEntity<GeneralResponse<DialogDto>> createDialog(@RequestBody DialogRequest request) {
 
-        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds())));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.createDialog(request.getUserIds()), true));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse<DialogDto>> deleteDialog(@PathVariable Integer id) {
-        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById (id)));
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.deleteDialogByById(id), true));
     }
 
     @GetMapping("/{id}/messages")
@@ -144,22 +144,21 @@ public class DialogsController {
     public ResponseEntity<GeneralResponse<MessageDto>> sendMessage(
             @RequestBody MessageRequest messageRequest,
             @PathVariable @Parameter(description = "Идентификатор диалога") Integer id) {
-        if (!messageRequest.getMessageText().equals("")) {
-            return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id)));
-        }
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(new GeneralResponse<>(dialogsService.sendMessage(messageRequest, id), true));
     }
 
     @MessageMapping("/messages")
     public void message(MessageDto message) {
-        GeneralResponse<MessageDto> generalResponse = new GeneralResponse<>(dialogsServiceWebSocket.sendMessage(
-                message.getMessageText(), message.getId(), jwtTokenProvider.getEmailFromToken(message.getToken())));
+        GeneralResponse<MessageDto> generalResponse = new GeneralResponse<>(
+                dialogsServiceWebSocket.sendMessage(message.getMessageText(), message.getId(),
+                        jwtTokenProvider.getEmailFromToken(message.getToken())), true);
 
         messagingTemplate.convertAndSendToUser(String.valueOf(message.getId()),"/messages", generalResponse);
     }
 
     @MessageMapping("/typing")
     public void typing(MessageDto info) {
-        messagingTemplate.convertAndSendToUser(String.valueOf(info.getRecipientId()), "/messages", info);
+        messagingTemplate.convertAndSendToUser(String.valueOf(info.getDialogId()), "/messages", info);
     }
 }

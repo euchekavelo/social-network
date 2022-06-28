@@ -58,7 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/account/password/**", "/actuator/prometheus").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .antMatchers("/ws/**").permitAll()
-                .antMatchers("/app/**").permitAll()
                 .antMatchers("/topic/**", "/queue/**", "/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
