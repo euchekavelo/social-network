@@ -203,7 +203,7 @@ public class PersonRepository {
     }
 
     public Integer getIdByEmail(String email) {
-        String sql = "select id from person where email = ?";
+        String sql = "select id from person where person.e_mail = ?";
         return jdbc.queryForObject(sql, (rs, rowNum) -> rs.getInt("id"), email);
     }
 }
