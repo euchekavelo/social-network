@@ -50,9 +50,9 @@ public class StorageCache {
   }
 
   public void deleteLink(String fileName){
-    if(!Objects.equals(fileName, Constants.PHOTO_DELETED_NAME) && !Objects.equals(fileName, Constants.PHOTO_DEFAULT_NAME)){
-      cache.remove(fileName);
-    }
+//    if(!Objects.equals(fileName, Constants.PHOTO_DELETED_NAME) && !Objects.equals(fileName, Constants.PHOTO_DEFAULT_NAME)){
+//      cache.remove(fileName);
+//    }
   }
 
   private static RedissonClient connect(){
