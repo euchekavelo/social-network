@@ -24,7 +24,7 @@ public class ImageScale {
     BufferedImage croppedImage = Scalr.crop(image, leftOffset, topOffset, size, size);
     BufferedImage scaledImage = Scalr.resize(croppedImage, 205);
 
-    File newFile = new File("/tmp/" + fileName);
+    File newFile = new File(fileName);
     ImageIO.write(scaledImage, getExtension(fileName), newFile);
 
     return newFile;

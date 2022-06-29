@@ -49,6 +49,6 @@ public class MailService {
     message.setSubject(subject);
     message.setText(text);
 
-//    mailSender.send(message); //TODO: временно отключено до преодоления спам-фильтра
+    mailSender.send(message);
   }
 }

@@ -14,6 +14,7 @@ import ru.skillbox.socnetwork.service.Constants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +50,9 @@ public class StorageCache {
   }
 
   public void deleteLink(String fileName){
-    cache.remove(fileName);
+    if(!Objects.equals(fileName, Constants.PHOTO_DELETED_NAME) && !Objects.equals(fileName, Constants.PHOTO_DEFAULT_NAME)){
+      cache.remove(fileName);
+    }
   }
 
   private static RedissonClient connect(){

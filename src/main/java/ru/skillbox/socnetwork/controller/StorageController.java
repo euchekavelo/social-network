@@ -51,7 +51,7 @@ public class StorageController {
                   )))
       })
   public ResponseEntity<GeneralResponse<FileUploadDTO>> uploadImage(@RequestBody MultipartFile file)
-      throws IOException, DbxException { //TODO: сделать разметку requestBody
+      throws IOException, DbxException {
 
     return ResponseEntity.ok(new GeneralResponse<>(storageService.uploadFile(file), true));
   }

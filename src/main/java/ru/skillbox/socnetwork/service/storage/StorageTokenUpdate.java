@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class StorageTokenUpdate {
 
-  private static DbxCredential credential;
-
   @Getter
   @Value("${skillbox.app.mail.db.appId}")
   private String appId;
@@ -32,13 +30,10 @@ public class StorageTokenUpdate {
   @Scheduled(fixedRateString = "PT03H", initialDelayString = "PT3M")
   public void refreshToken() throws DbxException {
 
-    credential = new DbxCredential("", System.currentTimeMillis(), refreshToken, appId, appSecret);
+    DbxCredential credential = new DbxCredential("", System.currentTimeMillis(), refreshToken, appId, appSecret);
 
     DbxRequestConfig config = new DbxRequestConfig(appId);
     DbxRefreshResult result = credential.refresh(config);
-
-    credential = new DbxCredential(result.getAccessToken(), result.getExpiresAt(), refreshToken,
-            appId, appSecret);
 
     StorageService.updateToken(result.getAccessToken());
   }
