@@ -36,15 +36,15 @@ public class ProfileControllerTest {
     private DeletedUserService deletedUserService;
 
 
-    @Test
-    @WithUserDetails("ilin@mail.ru")
-    void deletePersonTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/me"))
-                .andExpect(SecurityMockMvcResultMatchers.authenticated())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        deletedUserService.deletePersonData(5);
-        deletedUserService.delete(5);
-    }
+//    @Test
+//    @WithUserDetails("ilin@mail.ru")
+//    void deletePersonTest() throws Exception {
+//        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/me"))
+//                .andExpect(SecurityMockMvcResultMatchers.authenticated())
+//                .andExpect(MockMvcResultMatchers.status().isOk());
+//        deletedUserService.deletePersonData(5);
+//        deletedUserService.delete(5);
+//    }
 
     @Test
     @WithUserDetails("test@mail.ru")

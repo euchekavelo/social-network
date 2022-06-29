@@ -25,7 +25,7 @@ public class StorageCache {
   private final PersonRepository personRepository;
   private static RMap<String, String> cache;
 
-  private static String redissonServer = "redis://127.0.0.1:6379";
+  private static String redissonServer = "redis://195.133.201.227:6379";
 
   @Scheduled(initialDelayString = "PT5M", fixedDelay=Long.MAX_VALUE)
   private void initCache(){
